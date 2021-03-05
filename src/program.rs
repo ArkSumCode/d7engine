@@ -1,5 +1,14 @@
 use crate::shader::Shader;
 
+/*
+a program is more or less the render pipline
+it holds the vertex and fragment shaders
+
+we need to store the id of the program,
+mainly for droping it after we dont need it anymore
+and calling set_used when we want this render program
+for the next drawing operations
+*/
 pub struct Program {
     id: gl::types::GLuint,
 }
@@ -25,7 +34,7 @@ impl Program {
                 gl::GetProgramiv(program_id, gl::INFO_LOG_LENGTH, &mut len);
             }
 
-            let error = crate::create_whitespace_cstring_with_len(len as usize);
+            let error = crate::create_whitespace_cstring(len as usize);
 
             unsafe {
                 gl::GetProgramInfoLog(
@@ -47,10 +56,12 @@ impl Program {
 
     }
 
+    // get the programs id
     pub fn id(&self) -> gl::types::GLuint {
         self.id
     }
 
+    // tell opengl that we want to use this program for the next drawing operation
     pub fn set_used(&self) {
         unsafe {
             gl::UseProgram(self.id);
@@ -58,6 +69,11 @@ impl Program {
     }
 }
 
+/*
+we want to impl Drop, 
+so we can free the memory on the graphics card, 
+once we dont need the program anymore
+*/
 impl Drop for Program {
     fn drop(&mut self) {
         unsafe {

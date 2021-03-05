@@ -1,12 +1,10 @@
 pub mod shader;
 pub mod program;
+pub mod api;
 
 use std::ffi::CString;
 
-const WIN_WIDTH: u32 = 1280;
-const WIN_HEIGHT: u32 = 720;
-
-pub fn init() {
+pub fn init(config: &impl api::Config, runtime: &mut impl api::Runtime) {
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
 
@@ -16,7 +14,7 @@ pub fn init() {
     gl_attr.set_double_buffer(true);
 
     let window = video_subsystem
-        .window("Game", WIN_WIDTH, WIN_HEIGHT)
+        .window(&config.title(), config.width(), config.height())
         .opengl()
         .resizable()
         .build()
@@ -32,9 +30,11 @@ pub fn init() {
     video_subsystem.gl_set_swap_interval(1).unwrap();
 
     unsafe {
-        gl::Viewport(0, 0, WIN_WIDTH as i32, WIN_HEIGHT as i32);
+        gl::Viewport(0, 0, config.width() as i32, config.height() as i32);
         gl::ClearColor(0.3, 0.3, 0.5, 1.0);
     }
+
+    runtime.load();
   
     'main: loop {
         for event in event_pump.poll_iter() {
@@ -46,15 +46,16 @@ pub fn init() {
 
         unsafe {
             gl::Clear(gl::COLOR_BUFFER_BIT);
-        
         }
+
+        runtime.draw();
         
         window.gl_swap_window();
     }
 
 }
 
-fn create_whitespace_cstring_with_len(len: usize) -> CString {
+fn create_whitespace_cstring(len: usize) -> CString {
     let mut buffer: Vec<u8> = Vec::with_capacity(len + 1);
     buffer.extend([b' '].iter().cycle().take(len));
     unsafe { CString::from_vec_unchecked(buffer) }
