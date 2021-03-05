@@ -1,0 +1,15 @@
+# reference tutorial
+# http://nercury.github.io/rust/opengl/tutorial/2018/02/11/opengl-in-rust-from-scratch-04-triangle.html
+
+[package]
+name = "d7engine"
+version = "0.1.0"
+authors = ["Markus Dick"]
+edition = "2018"
+
+[dependencies]
+gl = "0.14.0"
+
+[dependencies.sdl2]
+version = "0.34.3"
+features = ["bundled", "static-link"]
