@@ -14,29 +14,40 @@ pub struct Program {
 }
 
 impl Program {
+    /*
+    create a program, attach the shaders 
+    and link the program
+    */
     pub fn from_shaders(shaders: &[Shader]) -> Result<Program, String> {
+        // opengl creates an id
         let program_id = unsafe { gl::CreateProgram() };
 
         for shader in shaders {
+            // attach every shader to the program
             unsafe { gl::AttachShader(program_id, shader.id()); }
         }
 
+        // link the program
         unsafe { gl::LinkProgram(program_id); }
 
+        // write linking status into "success"
         let mut success: gl::types::GLint = 1;
         unsafe {
             gl::GetProgramiv(program_id, gl::LINK_STATUS, &mut success);
         }
 
         if success == 0 {
+            // write the error messages length to "len"
             let mut len: gl::types::GLint = 0;
             unsafe {
                 gl::GetProgramiv(program_id, gl::INFO_LOG_LENGTH, &mut len);
             }
 
+            // create a whitespace c string
             let error = crate::create_whitespace_cstring(len as usize);
 
             unsafe {
+                // write the error message to "error"
                 gl::GetProgramInfoLog(
                     program_id,
                     len,
@@ -45,15 +56,17 @@ impl Program {
                 );
             }
 
-            return Err(error.to_string_lossy().into_owned());
+            // c string to rust String conversion
+            let msg = error.to_string_lossy().into_owned();
+            return Err(msg);
         }
 
         for shader in shaders {
+            // clean up memmory after linking
             unsafe { gl::DetachShader(program_id, shader.id()); }
         }
 
         Ok(Program {id: program_id})
-
     }
 
     // get the programs id
