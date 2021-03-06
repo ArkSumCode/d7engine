@@ -85,9 +85,8 @@ impl Shader {
 }
 
 /*
-we want to impl Drop, 
-so we can free the memory on the graphics card, 
-once we dont need the shader anymore
+impl Drop, so the memory is freed on the graphics card, 
+once the shader is not in use anymore
 */
 impl Drop for Shader {
     fn drop(&mut self) {
@@ -95,4 +94,79 @@ impl Drop for Shader {
             gl::DeleteShader(self.id);
         }
     }
+}
+
+/*
+creating the default shader buffer
+*/
+pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
+    let mut buffer: gl::types::GLuint = 0;
+    let mut array: gl::types::GLuint = 0;
+    unsafe {
+        // create unused integers from opengl we can write tp
+        gl::GenBuffers(1, &mut buffer);
+        gl::GenVertexArrays(1, &mut array);
+        /*
+        tell opengl that at point "buffer" we want to pass vertices 
+        gl::ARRAY_BUFFER tells opengl that the data are vertices and not
+        for example a texture
+        then tell opengl the position of "array"
+        */
+        gl::BindBuffer(gl::ARRAY_BUFFER, buffer);
+        gl::BindVertexArray(array);
+
+        // describe the buffers data 
+        let size = vertices.len() * std::mem::size_of::<f32>();
+        let data = vertices.as_ptr();
+        gl::BufferData(
+            gl::ARRAY_BUFFER,
+            size as gl::types::GLsizeiptr,
+            data as *const gl::types::GLvoid,
+            gl::STATIC_DRAW,
+        );
+
+        let attr_position = 0;
+        let attr_color = 1;
+
+        let size_vec3 = 3 * std::mem::size_of::<f32>();
+
+        /*
+        vertexattribpointer (
+            location in the vertex shader eg. 0,1,2,3 etc,
+            the number of the vertices eg triangle has 3,
+            type of one value in one vertex eg 0.0, 0.1, 0.4 etc..,
+            we have float so set to false (integers are true),
+            size of one vertex position plus color are 6 floats,
+            offset data eg when position is at 0 color is 3 values further,
+        )
+        */
+      
+        gl::VertexAttribPointer(
+            attr_position, 
+            vertices.len() as i32,
+            gl::FLOAT,
+            gl::FALSE,
+            (size_vec3 * 2) as gl::types::GLint,
+            0 as *const gl::types::GLvoid,
+        );
+       
+        gl::VertexAttribPointer(
+            attr_color, 
+            vertices.len() as i32,
+            gl::FLOAT,
+            gl::FALSE,
+            (size_vec3 * 2) as gl::types::GLint,
+            size_vec3 as *const gl::types::GLvoid,
+        );
+
+        // enable the 
+        gl::EnableVertexAttribArray(attr_position);
+        gl::EnableVertexAttribArray(attr_color);
+
+        // clear bindings
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+        gl::BindVertexArray(0);
+    }
+
+    array
 }

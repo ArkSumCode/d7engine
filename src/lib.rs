@@ -1,6 +1,8 @@
 pub mod shader;
 pub mod program;
 pub mod project;
+pub mod color;
+pub mod shapes;
 
 use std::ffi::CString;
 
@@ -31,7 +33,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
         .build()
         .unwrap();
 
-    // create a opengl context
+    // create an opengl context
     let _gl_context = window.gl_create_context().unwrap();
 
     // tell opengl where the video subsystem is on the memeory
@@ -48,7 +50,8 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     unsafe {
         // set the viewport and set the default background color
         gl::Viewport(0, 0, config.width() as i32, config.height() as i32);
-        gl::ClearColor(0.3, 0.3, 0.5, 1.0);
+        let color = config.background_color();
+        gl::ClearColor(color.r, color.g, color.b, 1.0);
     }
 
     // call the projects load funtion

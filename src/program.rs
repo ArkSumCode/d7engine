@@ -1,4 +1,5 @@
 use crate::shader::Shader;
+use std::ffi::CString;
 
 /*
 a program is more or less the render pipline
@@ -14,6 +15,20 @@ pub struct Program {
 }
 
 impl Program {
+    /*
+    the default render pipline
+    every vertex has a position and color, they will not be modiefied in the shader
+    */
+    pub fn default() -> Result<Program, String> {
+        let vertex_source = CString::new(include_str!("shaders/default.vert")).unwrap();
+        let vertex_shader = Shader::from_vertex(&vertex_source)?;
+    
+        let fragment_source = CString::new(include_str!("shaders/default.frag")).unwrap();
+        let fragment_shader = Shader::from_fragment(&fragment_source)?;
+    
+        Program::from_shaders(&[vertex_shader, fragment_shader])
+    }
+
     /*
     create a program, attach the shaders 
     and link the program
@@ -83,9 +98,8 @@ impl Program {
 }
 
 /*
-we want to impl Drop, 
-so we can free the memory on the graphics card, 
-once we dont need the program anymore
+impl Drop, so the memory is freed on the graphics card, 
+once the program is not in use anymore
 */
 impl Drop for Program {
     fn drop(&mut self) {

@@ -1,3 +1,5 @@
+use crate::color;
+
 /*
 used as argument in the main init function
 in the project make a struct that implements Config 
@@ -14,6 +16,9 @@ pub trait Config {
 
     // the height of the window at the start of the program
     fn height(&self) -> u32;
+
+    // the default background and clear color of the window
+    fn background_color(&self) -> color::Color;
 }
 
 
