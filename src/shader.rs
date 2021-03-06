@@ -98,6 +98,7 @@ impl Drop for Shader {
 
 /*
 creating the default shader buffer
+used in triangle and rect shapes
 */
 pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
     let mut buffer: gl::types::GLuint = 0;
@@ -129,11 +130,13 @@ pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
         let attr_color = 1;
 
         let size_vec3 = 3 * std::mem::size_of::<f32>();
+        let out_vec_3 = 3;
 
         /*
+        explaining each attribute to opengl
         vertexattribpointer (
             location in the vertex shader eg. 0,1,2,3 etc,
-            the number of the vertices eg triangle has 3,
+            specify the output vector (max is vec4 = 4),
             type of one value in one vertex eg 0.0, 0.1, 0.4 etc..,
             we have float so set to false (integers are true),
             size of one vertex position plus color are 6 floats,
@@ -143,7 +146,7 @@ pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
       
         gl::VertexAttribPointer(
             attr_position, 
-            vertices.len() as i32,
+            out_vec_3,
             gl::FLOAT,
             gl::FALSE,
             (size_vec3 * 2) as gl::types::GLint,
@@ -152,14 +155,14 @@ pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
        
         gl::VertexAttribPointer(
             attr_color, 
-            vertices.len() as i32,
+            out_vec_3,
             gl::FLOAT,
             gl::FALSE,
             (size_vec3 * 2) as gl::types::GLint,
             size_vec3 as *const gl::types::GLvoid,
         );
 
-        // enable the 
+        // enable the attributes
         gl::EnableVertexAttribArray(attr_position);
         gl::EnableVertexAttribArray(attr_color);
 

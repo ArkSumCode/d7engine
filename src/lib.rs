@@ -58,14 +58,24 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     runtime.load();
   
     'main: loop {
-        // handling of user events
+        // handling of events
         for event in event_pump.poll_iter() {
             match event {
                 sdl2::event::Event::Quit{..} => break 'main,
                 _ => {}
             }
+
+            // resize the viewport after resizing the window
+            if let sdl2::event::Event::Window { win_event, .. } = event {
+                if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
+                    unsafe {
+                        gl::Viewport(0, 0, width, height);
+                    }
+                }
+            }
         }
 
+     
         unsafe {
             // clear the screen
             gl::Clear(gl::COLOR_BUFFER_BIT);
