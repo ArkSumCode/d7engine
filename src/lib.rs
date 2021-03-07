@@ -4,6 +4,7 @@ pub mod project;
 pub mod color;
 pub mod shapes;
 pub mod texture;
+pub mod core;
 
 use std::ffi::CString;
 
