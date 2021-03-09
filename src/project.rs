@@ -35,5 +35,5 @@ pub trait Runtime {
     fn load(&mut self);
 
     // draw is called every frame
-    fn draw(&mut self);
+    fn draw(&mut self, delta: f32);
 }

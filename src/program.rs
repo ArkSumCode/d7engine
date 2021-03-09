@@ -110,6 +110,22 @@ impl Program {
             gl::UseProgram(self.id);
         }
     }
+
+    /* 
+    get the position of a uniform in the vertex shader
+    used when passing data to the shader
+    */
+    pub fn uniform_location(&self, name: &str) -> gl::types::GLint {
+        // create a c string from parameter and transform it to a pointer
+        let name = CString::new(name).expect("cannot create c-string");
+        let name = name.as_bytes_with_nul().as_ptr() as *const i8;
+
+        let loc = unsafe {
+            gl::GetUniformLocation(self.id, name)
+        };
+
+        loc
+    }
 }
 
 /*

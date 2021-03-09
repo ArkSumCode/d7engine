@@ -7,6 +7,7 @@ pub mod texture;
 pub mod core;
 
 use std::ffi::CString;
+use std::time::Instant;
 
 /*
 entry function for every project
@@ -58,6 +59,10 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
 
     // call the projects load funtion
     runtime.load();
+
+    // create the performance object
+    let mut performance = Performance::new();
+    let mut delta = 0.0;
   
     'main: loop {
         // handling of events
@@ -84,10 +89,13 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
         }
 
         // call the projects draw method
-        runtime.draw();
+        runtime.draw(delta);
         
         // sdl will change the window its draing to
         window.gl_swap_window();
+
+        // performance tick
+        delta = performance.frame();
     }
 
 }
@@ -100,4 +108,30 @@ fn create_whitespace_cstring(len: usize) -> CString {
     let mut buffer: Vec<u8> = Vec::with_capacity(len + 1);
     buffer.extend([b' '].iter().cycle().take(len));
     unsafe { CString::from_vec_unchecked(buffer) }
+}
+
+/*
+structure for keeping track of performance
+it holds the timestamp of the last frame and the current fps
+*/
+struct Performance {
+    last_frame: Instant,
+    fps: f32, 
+}
+
+impl Performance {
+    // create a new performance object, init timestamp and fps initialize
+    pub fn new() -> Performance {
+        let last_frame = Instant::now();
+        let fps = 0.0;
+        Performance { last_frame, fps }
+    }
+
+    // calculates fps and returns the delta time
+    pub fn frame(&mut self) -> f32 {
+        let elapsed = self.last_frame.elapsed();
+        self.last_frame =  Instant::now();
+        self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
+        1.0 / self.fps
+    }
 }
