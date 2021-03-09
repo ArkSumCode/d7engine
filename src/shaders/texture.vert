@@ -14,5 +14,9 @@ void main()
 {
     gl_Position = vec4(Position, 1.0);
     OUT.TexCoord = TexCoord;
-    OUT.Color = vec4(sin(delta), 0.0, 0.0, 0.4);
+    float r = sin(delta);
+    if(r < 0) {
+        r = r * -1;
+    }
+    OUT.Color = vec4(0.5, r, 0.5, 1.0);
 }
