@@ -19,11 +19,11 @@ impl Program {
     the default render pipline
     every vertex has a position and color, they will not be modiefied in the shader
     */
-    pub fn default() -> Result<Program, String> {
-        let vertex_source = CString::new(include_str!("shaders/default.vert")).unwrap();
+    pub fn rect() -> Result<Program, String> {
+        let vertex_source = CString::new(include_str!("shaders/rect.vert")).unwrap();
         let vertex_shader = Shader::from_vertex(&vertex_source)?;
     
-        let fragment_source = CString::new(include_str!("shaders/default.frag")).unwrap();
+        let fragment_source = CString::new(include_str!("shaders/rect.frag")).unwrap();
         let fragment_shader = Shader::from_fragment(&fragment_source)?;
     
         Program::from_shaders(&[vertex_shader, fragment_shader])

@@ -1,11 +1,12 @@
 use crate::core::chunk::Chunk;
 use crate::program::Program;
 use crate::core::seed::Seed;
+use crate::transform::Camera;
 use std::cell::RefCell;
 
 /*
 a map holds all chunks,
-the default and texture shader programs
+the rect and texture shader programs
 */
 pub struct Map {
     chunks: Vec<Chunk>,
@@ -34,7 +35,7 @@ impl Map {
     pub fn load(&mut self) {
         // create the used shaders
         self.programs = vec![
-            Program::default().unwrap(),
+            Program::rect().unwrap(),
             Program::texture().unwrap(),
         ];
 
@@ -45,7 +46,15 @@ impl Map {
     }
 
     // draw the map to the screen
-    pub fn draw(&self) {
+    pub fn draw(&self, camera: &Camera) {
+        // apply uniform camera to shaders
+        self.programs[0].set_used();
+        let loc = self.programs[0].uniform_location("zoom");
+       
+        unsafe {
+            gl::Uniform1f(loc, camera.zoom); 
+        }
+
         for chunk in &self.chunks {
             // default shaders, texture shaders
             chunk.draw(&self.programs[0], &self.programs[1]);

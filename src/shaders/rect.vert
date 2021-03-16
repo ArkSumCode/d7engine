@@ -7,8 +7,12 @@ out VS_OUTPUT {
     vec3 Color;
 } OUT;
 
+uniform float zoom;
+
 void main()
 {
-    gl_Position = vec4(Position, 1.0);
+    vec3 new_position = vec3(Position.x * zoom, Position.y * zoom, Position.z);
+
+    gl_Position = vec4(new_position, 1.0);
     OUT.Color = Color;
 }

@@ -48,12 +48,18 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     // event_pump holds all user input events like key or mouse button clicks
     let mut event_pump = sdl.event_pump().unwrap();
 
+    // set the viewport to a square
+    set_viewport(config.width() as i32, config.height() as i32);
+
+    // set the default background color
     unsafe {
-        // set the viewport and set the default background color
-        gl::Viewport(0, 0, config.width() as i32, config.height() as i32);
+      
         let color = config.background_color();
         gl::ClearColor(color.r, color.g, color.b, 1.0);
     }
+
+    // create the windows camera
+    let mut camera = transform::Camera::new(config.width() as i32, config.height() as i32);
 
     // call the projects load funtion
     runtime.load();
@@ -73,11 +79,38 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
             // resize the viewport after resizing the window
             if let sdl2::event::Event::Window { win_event, .. } = event {
                 if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
-                    unsafe {
-                        gl::Viewport(0, 0, width, height);
-                    }
+                    // set the viewport to a square
+                    set_viewport(width, height);
+                    // change the camers values
+                    camera.set_dim(width, height);
                 }
             }
+
+            /*
+            transform sdl event into our own format
+            so we dont have to include sdl in the project
+            */
+
+            use sdl2::event::Event;
+            use sdl2::keyboard::Keycode;
+            let mut project_event = match event {
+                Event::KeyDown{keycode: Some(Keycode::W), repeat: false, ..} => project::Event::KeyUp,                  // w
+                Event::KeyDown{keycode: Some(Keycode::A), repeat: false, ..} => project::Event::KeyLeft,                // a
+                Event::KeyDown{keycode: Some(Keycode::D), repeat: false, ..} => project::Event::KeyRight,               // s
+                Event::KeyDown{keycode: Some(Keycode::S), repeat: false, ..} => project::Event::KeyDown,                // d
+                _ => project::Event::None,
+            };
+
+            // handle the mouse wheel, check if y greater or less than 0 
+            if let Event::MouseWheel {y, ..} = event {
+                project_event = if y < 0 {
+                    project::Event::WheelDown
+                } else {
+                    project::Event::WheelUp
+                };
+            }
+
+            runtime.inputs(project_event);
         }
 
      
@@ -87,7 +120,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
         }
 
         // call the projects draw method
-        runtime.draw(delta);
+        runtime.draw(delta, &mut camera);
         
         // sdl will change the window its draing to
         window.gl_swap_window();
@@ -131,5 +164,27 @@ impl Performance {
         self.last_frame =  Instant::now();
         self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
         1.0 / self.fps
+    }
+}
+
+/*
+always set the viewport to be a square so 
+rects on different resolutions are the same ratio
+*/
+fn set_viewport(width: i32, height: i32) {
+    let mut y_offset = 0;
+    let mut x_offset = 0; 
+    let side: i32;
+
+    if height < width {
+        side = width;
+        y_offset = ((height as f32 / 2.0) - (width as f32 / 2.0)) as i32;
+    } else {
+        side = height;
+        x_offset = ((width as f32 / 2.0) - (height as f32 / 2.0)) as i32;
+    }
+  
+    unsafe {
+        gl::Viewport(x_offset, y_offset, side, side);
     }
 }
