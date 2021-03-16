@@ -1,5 +1,5 @@
-use crate::color::Color;
-use crate::shapes::Transform;
+use crate::core::color::Color;
+use crate::transform::Transform;
 
 /*
 generic rectangle struct
@@ -28,6 +28,14 @@ impl Rect {
         unsafe {
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
+        }
+    }
+
+    // draw only the borders of the rectangle
+    pub fn draw_borders(&self) {
+        unsafe {
+            gl::BindVertexArray(self.shader_buffer);
+            gl::DrawArrays(gl::LINE_STRIP, 0, 4);
         }
     }
 

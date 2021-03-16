@@ -1,9 +1,7 @@
 pub mod shader;
 pub mod program;
 pub mod project;
-pub mod color;
-pub mod shapes;
-pub mod texture;
+pub mod transform;
 pub mod core;
 
 use std::ffi::CString;

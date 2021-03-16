@@ -1,7 +1,9 @@
-use crate::texture::Texture;
-use crate::shapes::{Transform, rect::Rect};
-use crate::color::Color;
+use crate::core::texture::Texture;
+use crate::transform::Transform;
+use crate::program::Program;
+use crate::core::color::Color;
 use crate::core::seed::Seed;
+use crate::core::rect::Rect;
 use std::cell::RefCell;
 
 pub mod layer;
@@ -27,7 +29,7 @@ impl Chunk {
         let mut background = vec![];
         for tile_coord_y in 0..rows {
             for tile_coord_x in 0..cols {
-                let transform = map_coords_to_transform(x, y, rows,cols,tile_coord_x, tile_coord_y, 0.05, 0.05);
+                let transform = Transform::from_map_coords(x, y, rows,cols,tile_coord_x, tile_coord_y, 0.2, 0.2);
                 let color = match seed.borrow_mut().next_bool() {
                     true => Color::from(27, 125, 60), // greenish
                     false => Color::from(112, 59, 42), // brownish
@@ -37,7 +39,6 @@ impl Chunk {
             }
         }
      
-
         Chunk{background,layers}
     }
 
@@ -63,50 +64,25 @@ impl Chunk {
         }
     }
 
-    // draw the background to the screen
-    pub fn draw_background(&self) {
+    // draw the chunk, needs the shaders created in map 
+    pub fn draw(&self, default_program: &Program, texture_program: &Program) {
+        // draw the background to the screen
+        default_program.set_used();
         for rect in &self.background {
             rect.draw();
         }
-    }
 
-    // draw the layers to the screen
-    pub fn draw_layers(&self) {
         /*
         go throug all layers
         by their respective order 
         and draw them if they are active
         */
+        texture_program.set_used();
         for i in 0..3 {
             if self.layers[i].active {
                 self.layers[i].draw();
             }
         }
-    }
+    } 
 }
 
-/* 
-transforming x and y coords into a real transform
-width and height is real height of one tile
-*/
-fn map_coords_to_transform
-(
-    chunk_x: i32, 
-    chunk_y: i32, 
-    rows: u32, 
-    cols: u32, 
-    x: u32, 
-    y: u32, 
-    width: f32, 
-    height: f32
-) -> Transform {
-        let chunk_width = cols as f32 * width;
-        let chunk_height = rows as f32 * height;
-        let chunk_x = chunk_x as f32 * chunk_width;
-        let chunk_y = chunk_y as f32 * chunk_height;
-        let tile_x = x as f32 * width;
-        let tile_y = y as f32 * height;
-        let x = chunk_x + tile_x;
-        let y = chunk_y - tile_y;
-        Transform{x, y, width, height}
-}

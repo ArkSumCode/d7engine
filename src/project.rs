@@ -1,4 +1,4 @@
-use crate::color;
+use crate::core::color;
 
 /*
 used as argument in the main init function

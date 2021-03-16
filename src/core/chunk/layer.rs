@@ -1,4 +1,4 @@
-use crate::texture::Texture;
+use crate::core::texture::Texture;
 
 // reference a layer with a more coherent name
 pub enum LayerName {

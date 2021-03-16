@@ -1,5 +1,5 @@
-use crate::color::Color;
-use crate::shapes::Transform;
+use crate::core::color::Color;
+use crate::transform::Transform;
 
 /*
 generic triangle struct

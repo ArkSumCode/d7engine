@@ -21,7 +21,6 @@ impl Map {
         
         for y in -2..3 {
             for x in -2..2 {
-                
                 let chunk = Chunk::new(x, y, 10, 10, &seed);
                 chunks.push(chunk);
             }
@@ -48,11 +47,8 @@ impl Map {
     // draw the map to the screen
     pub fn draw(&self) {
         for chunk in &self.chunks {
-            self.programs[0].set_used(); // default shaders
-            chunk.draw_background();
-
-            self.programs[1].set_used(); // texture shaders
-            chunk.draw_layers();
+            // default shaders, texture shaders
+            chunk.draw(&self.programs[0], &self.programs[1]);
         }
     }
 }
