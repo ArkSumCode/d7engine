@@ -64,6 +64,9 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     // call the projects load funtion
     runtime.load();
 
+    // the mouse wheel does not stop the scrolling event, count and every other frame deny 
+    let mut mouse_wheel_stopper = false;
+
     // create the performance object
     let mut performance = Performance::new();
     let mut delta = 0.0;
@@ -101,14 +104,23 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
                 _ => project::Event::None,
             };
 
-            // handle the mouse wheel, check if y greater or less than 0 
-            if let Event::MouseWheel {y, ..} = event {
-                project_event = if y < 0 {
-                    project::Event::WheelDown
+            mouse_wheel_stopper = if !mouse_wheel_stopper {
+                // handle the mouse wheel, check if y greater or less than 0 
+                if let Event::MouseWheel {y, ..} = event {
+                    project_event = if y < 0 {
+                        project::Event::WheelDown
+                    } else {
+                        project::Event::WheelUp
+                    };
+
+                    true
                 } else {
-                    project::Event::WheelUp
-                };
-            }
+                    false
+                }
+            } else {
+                false
+            };
+            
 
             runtime.inputs(project_event);
         }
