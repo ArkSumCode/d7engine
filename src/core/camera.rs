@@ -21,4 +21,6 @@ impl Camera {
         self.width = width;
         self.height = height;
     }
+
+   
 }

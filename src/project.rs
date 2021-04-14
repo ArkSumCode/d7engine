@@ -33,7 +33,7 @@ and holds a lot of opengl code
 */
 pub trait Runtime {
     // load is called before the actual gameloop
-    fn load(&mut self);
+    fn load(&mut self, camera: &mut Camera);
 
     // inputs is called every frame before draw, handle the inputs from sdl
     fn inputs(&mut self, event: Event);

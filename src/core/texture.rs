@@ -1,4 +1,6 @@
-use crate::transform::Transform;
+use crate::core::transform;
+use crate::core::camera;
+
 
 /*
 struct that can draw a image/texture to the window
@@ -8,21 +10,21 @@ and its transform in the world
 pub struct Texture {
     shader_buffer: gl::types::GLuint,
     shader_texture_buffer: gl::types::GLuint,
-    transform: Transform,
+    transform: transform::Transform,
 }
 
 impl Texture {
     // creates a new texture object with uninitialies buffers
-    pub fn new(transform: Transform) -> Texture {
+    pub fn new(transform: transform::Transform) -> Texture {
         let shader_buffer = 0;
         let shader_texture_buffer = 0;
         Texture {shader_buffer, shader_texture_buffer, transform}
     }
 
     // create the shader buffer, for that we need the image
-    pub fn create_shader_buffer(&mut self, image: &image::RgbImage) {
+    pub fn create_shader_buffer(&mut self, image: &image::RgbImage, camera: &camera::Camera) {
         let (shader_texture_buffer, shader_buffer) = crate::shader::create_texture_shader_buffer(
-            self.vertices(), 
+            self.vertices(camera), 
             image
         );
         self.shader_texture_buffer = shader_texture_buffer;
@@ -39,15 +41,16 @@ impl Texture {
     }
 
     // get the vertices passed to the program
-    fn vertices(&self) -> Vec<f32> {
-        let bot_y = self.transform.y - self.transform.height;
-        let right_x = self.transform.x + self.transform.width;
+    fn vertices(&self, camera: &camera::Camera) -> Vec<f32> {
+        let ct = transform::CanvasTransform::new(&self.transform, camera);
+        let bot_y = ct.y - ct.height;
+        let right_x = ct.x + ct.width;
 
         vec![
-            self.transform.x,  self.transform.y,  0.0,  0.0, 1.0, // top left
-            right_x,           self.transform.y,  0.0,  1.0, 1.0, // top right
-            right_x,           bot_y,             0.0,  1.0, 0.0, // bot right
-            self.transform.x,  bot_y,             0.0,  0.0, 0.0, // bot left
+            ct.x,     ct.y,    0.0,  0.0, 1.0, // top left
+            right_x,  ct.y,    0.0,  1.0, 1.0, // top right
+            right_x,  bot_y,   0.0,  1.0, 0.0, // bot right
+            ct.x,     bot_y,   0.0,  0.0, 0.0, // bot left
         ]
     }
 }

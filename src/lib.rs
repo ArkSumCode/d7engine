@@ -58,7 +58,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     let mut camera = core::camera::Camera::new(config.width() as i32, config.height() as i32);
 
     // call the projects load funtion
-    runtime.load();
+    runtime.load(&mut camera);
 
     // the mouse wheel does not stop the scrolling event, count and every other frame deny 
     let mut mouse_wheel_stopper = false;
