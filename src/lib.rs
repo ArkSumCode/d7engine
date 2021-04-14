@@ -44,6 +44,9 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     // set vsync
     video_subsystem.gl_set_swap_interval(1).unwrap();
 
+    // set the viewport to a the initial values
+    set_viewport(config.width() as i32, config.height() as i32);
+
     // event_pump holds all user input events like key or mouse button clicks
     let mut event_pump = sdl.event_pump().unwrap();
 
@@ -78,8 +81,9 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
             // resize the viewport after resizing the window
             if let sdl2::event::Event::Window { win_event, .. } = event {
                 if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
-                    // change the camers values
+                    // change the camers values and set the viewport
                     camera.set_dim(width, height);
+                    set_viewport(width, height);
                 }
             }
 
@@ -170,5 +174,15 @@ impl Performance {
         self.last_frame =  Instant::now();
         self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
         1.0 / self.fps
+    }
+}
+
+/*
+always set the viewport to be a square so 
+rects on different resolutions are the same ratio
+*/
+fn set_viewport(width: i32, height: i32) {
+    unsafe {
+        gl::Viewport(0, 0, width, height);
     }
 }
