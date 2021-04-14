@@ -1,5 +1,5 @@
 use crate::core::color;
-use crate::transform::Camera;
+use crate::core::camera::Camera;
 
 /*
 used as argument in the main init function

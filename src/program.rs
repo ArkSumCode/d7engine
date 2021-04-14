@@ -16,36 +16,16 @@ pub struct Program {
 
 impl Program {
     /*
-    the default render pipline
-    every vertex has a position and color, they will not be modiefied in the shader
-    */
-    pub fn rect() -> Result<Program, String> {
-        let vertex_source = CString::new(include_str!("shaders/rect.vert")).unwrap();
-        let vertex_shader = Shader::from_vertex(&vertex_source)?;
-    
-        let fragment_source = CString::new(include_str!("shaders/rect.frag")).unwrap();
-        let fragment_shader = Shader::from_fragment(&fragment_source)?;
-    
-        Program::from_shaders(&[vertex_shader, fragment_shader])
-    }
+    create a program, attach the shaders use like: 
 
-    /*
-    the texture render pipline
-    every vertex has a position and a texture coordinate, 
-    they will not be modified in the shader
-    */
-    pub fn texture() -> Result<Program, String> {
         let vertex_source = CString::new(include_str!("shaders/texture.vert")).unwrap();
         let vertex_shader = Shader::from_vertex(&vertex_source)?;
     
         let fragment_source = CString::new(include_str!("shaders/texture.frag")).unwrap();
         let fragment_shader = Shader::from_fragment(&fragment_source)?;
-    
-        Program::from_shaders(&[vertex_shader, fragment_shader])
-    }
 
-    /*
-    create a program, attach the shaders 
+        Program::from_shaders(&[vertex_shader, fragment_shader])
+
     and link the program
     */
     pub fn from_shaders(shaders: &[Shader]) -> Result<Program, String> {

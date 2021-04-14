@@ -1,7 +1,6 @@
 pub mod shader;
 pub mod program;
 pub mod project;
-pub mod transform;
 pub mod core;
 
 use std::ffi::CString;
@@ -48,9 +47,6 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     // event_pump holds all user input events like key or mouse button clicks
     let mut event_pump = sdl.event_pump().unwrap();
 
-    // set the viewport to a square
-    set_viewport(config.width() as i32, config.height() as i32);
-
     // set the default background color
     unsafe {
       
@@ -59,7 +55,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     }
 
     // create the windows camera
-    let mut camera = transform::Camera::new(config.width() as i32, config.height() as i32);
+    let mut camera = core::camera::Camera::new(config.width() as i32, config.height() as i32);
 
     // call the projects load funtion
     runtime.load();
@@ -82,8 +78,6 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
             // resize the viewport after resizing the window
             if let sdl2::event::Event::Window { win_event, .. } = event {
                 if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
-                    // set the viewport to a square
-                    set_viewport(width, height);
                     // change the camers values
                     camera.set_dim(width, height);
                 }
@@ -176,27 +170,5 @@ impl Performance {
         self.last_frame =  Instant::now();
         self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
         1.0 / self.fps
-    }
-}
-
-/*
-always set the viewport to be a square so 
-rects on different resolutions are the same ratio
-*/
-fn set_viewport(width: i32, height: i32) {
-    let mut y_offset = 0;
-    let mut x_offset = 0; 
-    let side: i32;
-
-    if height < width {
-        side = width;
-        y_offset = ((height as f32 / 2.0) - (width as f32 / 2.0)) as i32;
-    } else {
-        side = height;
-        x_offset = ((width as f32 / 2.0) - (height as f32 / 2.0)) as i32;
-    }
-  
-    unsafe {
-        gl::Viewport(x_offset, y_offset, side, side);
     }
 }
