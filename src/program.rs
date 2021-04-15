@@ -46,6 +46,21 @@ impl Program {
     }
 
     /*
+    the same as texture but we are loading the different
+    shader font.frag and font.vert
+    */
+    pub fn font() -> Result<Program, String> {
+        let vertex_source = CString::new(include_str!("shaders/font.vert")).unwrap();
+        let vertex_shader = Shader::from_vertex(&vertex_source)?;
+    
+        let fragment_source = CString::new(include_str!("shaders/font.frag")).unwrap();
+        let fragment_shader = Shader::from_fragment(&fragment_source)?;
+    
+
+        Program::from_shaders(&[vertex_shader, fragment_shader])
+    }
+
+    /*
     create a program, attach the shaders use like: 
 
         let vertex_source = CString::new(include_str!("shaders/texture.vert")).unwrap();

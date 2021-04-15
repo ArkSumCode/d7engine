@@ -1,7 +1,6 @@
 use crate::core::transform;
 use crate::core::camera;
 
-
 /*
 struct that can draw a image/texture to the window
 it holds the shader buffer, a shader texture buffer
@@ -64,4 +63,10 @@ pub fn image_data(path: &str) -> Result<image::RgbImage, String> {
     }
   
     Err(format!("could not open image '{}'", path))
+}
+
+// crop an image out of another image
+pub fn crop_image(image: &mut image::RgbImage, x: i32, y: i32, width: i32, height: i32) -> image::RgbImage {
+    let img = image::imageops::crop(image, x as u32, y as u32, width as u32, height as u32);
+    img.to_image()
 }
