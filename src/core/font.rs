@@ -21,14 +21,12 @@ impl Font {
     }
 
     /* 
-    load the font file, the chars is a string 
-    like "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!"
-
     specify the number of rows and cols in the font file
     dimension is the width and height of one cell in px
     */
-    pub fn load(&mut self, file: String, chars: String, rows: u8, cols: u8) {
-        let mut charstest = chars.chars();
+    pub fn load(&mut self, file: String, rows: u8, cols: u8) {
+        // the sequence of the chars from top left to bottom right
+        let mut chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!".chars();
         let mut image = texture::image_data(&file).unwrap();
 
         // run through all rows and columns
@@ -39,7 +37,7 @@ impl Font {
                 let y = (rows as i32 * self.dimension) - (j as i32 * self.dimension);
                 let cropped = texture::crop_image(&mut image, x, y, self.dimension, self.dimension);
               
-                if let Some(c) = charstest.next() {
+                if let Some(c) = chars.next() {
                     self.chars.insert(c.to_string(), cropped);
                 }
             }

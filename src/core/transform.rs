@@ -13,6 +13,13 @@ pub struct Transform {
     pub height: i32,
 }
 
+impl Transform {
+    // returns a Transform with zero width and height
+    pub fn location(x: i32, y: i32) -> Transform {
+        Transform {x, y, width: 0, height: 0}
+    }
+}
+
 /*
 Canvas transform is transform in the coordinate system
 of the opengl canvas
