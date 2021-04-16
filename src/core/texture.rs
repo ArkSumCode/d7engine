@@ -1,5 +1,4 @@
-use crate::core::transform;
-use crate::core::camera;
+use crate::core::*;
 
 /*
 struct that can draw a image/texture to the window
@@ -30,6 +29,16 @@ impl Texture {
         self.shader_buffer = shader_buffer;
     } 
 
+    // create a shader buffer with a pos, texture and color attribute 
+    pub fn create_colored_shader_buffer(&mut self, image: &image::RgbImage, camera: &camera::Camera, color: &color::Color) {
+        let (shader_texture_buffer, shader_buffer) = crate::shader::create_colored_texture_shader_buffer(
+            self.colored_vertices(camera, color), 
+            image
+        );
+        self.shader_texture_buffer = shader_texture_buffer;
+        self.shader_buffer = shader_buffer;
+    }
+
     // draw the texture to the screen
     pub fn draw(&self) {
         unsafe {
@@ -52,6 +61,21 @@ impl Texture {
             ct.x,     bot_y,   0.0,  0.0, 0.0, // bot left
         ]
     }
+
+    // get the vertices for the program with pos vec3 textCoord vec2 and color vec3
+    fn colored_vertices(&self, camera: &camera::Camera, color: &color::Color) -> Vec<f32> {
+        let ct = transform::CanvasTransform::new(&self.transform, camera);
+        let bot_y = ct.y - ct.height;
+        let right_x = ct.x + ct.width;
+
+        vec![
+            ct.x,     ct.y,    0.0,  0.0, 1.0, color.r, color.g, color.b, // top left
+            right_x,  ct.y,    0.0,  1.0, 1.0, color.r, color.g, color.b, // top right
+            right_x,  bot_y,   0.0,  1.0, 0.0, color.r, color.g, color.b, // bot right
+            ct.x,     bot_y,   0.0,  0.0, 0.0, color.r, color.g, color.b, // bot left
+        ]
+    }
+
 }
 
 // get data from an image file

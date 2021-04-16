@@ -50,11 +50,13 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     // event_pump holds all user input events like key or mouse button clicks
     let mut event_pump = sdl.event_pump().unwrap();
 
-    // set the default background color
     unsafe {
-      
+        // set the default background color
         let color = config.background_color();
         gl::ClearColor(color.r, color.g, color.b, 1.0);
+        // enable alpha drawing
+        gl::Enable(gl::BLEND);
+        gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
     }
 
     // create the windows camera

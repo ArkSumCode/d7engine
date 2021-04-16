@@ -5,3 +5,5 @@ pub mod rect;
 pub mod triangle;
 pub mod color;
 pub mod camera;
+pub mod font;
+pub mod label;

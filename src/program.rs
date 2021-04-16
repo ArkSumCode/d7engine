@@ -1,5 +1,22 @@
 use crate::shader::Shader;
 use std::ffi::CString;
+use std::collections::HashMap;
+
+/*
+load all programs and return them
+as a map, fails if one or more programs could not be created
+
+create the map, create and insert the programs
+
+call them in the runtime load opengl has to be initialzed
+*/
+pub fn load() -> Result<HashMap<String, Program>, String> {
+    let mut programs = HashMap::new();
+    programs.insert("rect".to_string(), Program::rect()?);
+    programs.insert("texture".to_string(), Program::texture()?);
+    programs.insert("font".to_string(), Program::font()?);
+    Ok(programs)
+}
 
 /*
 a program is more or less the render pipline
