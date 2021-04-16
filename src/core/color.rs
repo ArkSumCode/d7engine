@@ -9,10 +9,16 @@ pub struct Color {
 
 impl Color {
     // create a color from the 0 to 255 format
-    pub fn from(red: u8, green: u8, blue: u8) -> Color {
+    pub fn rgb(red: u8, green: u8, blue: u8) -> Color {
         let r = red as f32 / 255.0;
         let g = green as f32 / 255.0;
         let b = blue as f32 / 255.0;
         Color {r, g, b}
     }
+
+    // create a Color that has all values the same like white black or some grey
+    pub fn grey(value: u8) -> Color {
+        let v = value as f32 / 255.0;
+        Color {r: v, g: v, b: v}
+    } 
 }
