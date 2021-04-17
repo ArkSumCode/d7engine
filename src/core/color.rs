@@ -1,6 +1,7 @@
 /*
 Colors in opengl are 3 values in range of 0.0 to 1.0
 */
+
 pub struct Color {
     pub r: f32,
     pub g: f32,
@@ -22,4 +23,14 @@ impl Color {
         let v = value as f32 / 255.0;
         Color {r: v, g: v, b: v, a: 1.0}
     } 
+
+    // create a new color from another color
+    pub fn copy(color: &Color) -> Color {
+        Color {
+            r: color.r,
+            g: color.g,
+            b: color.b,
+            a: color.a,
+        }
+    }
 }

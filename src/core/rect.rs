@@ -66,4 +66,9 @@ impl Rect {
             gl::DrawArrays(gl::LINE_STRIP, 0, 4);
         }
     }
+
+    // set the position of the rect
+    pub fn set_pos(&mut self, x: f32, y: f32) {
+        self.transform.set_pos(x, y);
+    }
 }

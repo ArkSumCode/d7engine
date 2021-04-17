@@ -21,10 +21,10 @@ impl Texture {
         Texture {shader_buffer, shader_texture_buffer, transform, color: None}
     }
 
-    pub fn colored(transform: transform::Transform, color: color::Color) -> Texture {
+    pub fn colored(transform: transform::Transform, color: &color::Color) -> Texture {
         let shader_buffer = 0;
         let shader_texture_buffer = 0;
-        Texture {shader_buffer, shader_texture_buffer, transform, color: Some(color)}
+        Texture {shader_buffer, shader_texture_buffer, transform, color: Some(color::Color::copy(color))}
     }
 
     // create the shader buffer, for that we need the image
@@ -55,9 +55,9 @@ impl Texture {
 
         unsafe {
             // set values for the uniforms in the shader
-            gl::Uniform2f(cam, camera.width as f32, camera.height as f32);
-            gl::Uniform2f(pos, self.transform.x as f32, self.transform.y as f32);
-            gl::Uniform2f(dim, self.transform.width as f32, self.transform.height as f32);
+            gl::Uniform2f(cam, camera.width, camera.height);
+            gl::Uniform2f(pos, self.transform.x, self.transform.y);
+            gl::Uniform2f(dim, self.transform.width, self.transform.height);
 
             if let Some(color) = &self.color {
                 if let Some(c) = col {
@@ -82,7 +82,8 @@ impl Texture {
         ]
     }
 
-    pub fn set_pos(&mut self, x: i32, y: i32) {
+    // set the position of the texture
+    pub fn set_pos(&mut self, x: f32, y: f32) {
         self.transform.set_pos(x, y);
     }
 }

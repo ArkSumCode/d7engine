@@ -60,7 +60,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     }
 
     // create the windows camera
-    let mut camera = core::camera::Camera::new(config.width() as i32, config.height() as i32);
+    let mut camera = core::camera::Camera::new(config.width() as f32, config.height() as f32);
 
     // call the projects load funtion
     runtime.load(&mut camera);
@@ -87,7 +87,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
             if let sdl2::event::Event::Window { win_event, .. } = event {
                 if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
                     // change the camers values and set the viewport
-                    camera.set_dim(width, height);
+                    camera.set_dim(width as f32, height as f32);
                     set_viewport(width, height);
                 }
             }
