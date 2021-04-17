@@ -1,4 +1,4 @@
-use crate::core::color;
+use crate::core::{mouse,color};
 use crate::core::camera::Camera;
 
 /*
@@ -39,7 +39,7 @@ pub trait Runtime {
     fn inputs(&mut self, event: Event);
 
     // draw is called every frame
-    fn draw(&mut self, delta: f32, camera: &mut Camera);
+    fn draw(&mut self, delta: f32, camera: &mut Camera, mouse: &mouse::Mouse);
 }
 
 /*
@@ -56,5 +56,7 @@ pub enum Event {
     KeyRight,
     WheelUp,
     WheelDown,
+    MouseLeft,
+    MouseRight,
     None,
 }

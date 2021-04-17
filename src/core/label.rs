@@ -1,4 +1,5 @@
 use crate::core::*;
+use crate::program;
 
 /*
 Label holds the text of the label
@@ -13,13 +14,14 @@ pub struct Label {
 
 impl Label {
     // create a new label with the transform and the text of the label
-    pub fn new(transform: transform::Transform, text: String) -> Label {
-        Label{textures: vec![], text, transform}
+    pub fn new(transform: transform::Transform, text: &str) -> Label {
+        Label{textures: vec![], text: text.to_string(), transform}
     }
 
     // create all the textures and all transforms of the textures, camera font and color therfore needed
-    pub fn load(&mut self, camera: &camera::Camera, font: &font::Font, color: &color::Color) {
+    pub fn load(&mut self, font: &font::Font) {
         let mut x = 0;
+        
 
         for d in self.text.chars() {
             if d == ' ' {
@@ -36,9 +38,11 @@ impl Label {
                     width: font.dimension(),
                     height: font.dimension(),
                 };
+
+                let c = color::Color::rgb(252, 186, 3);
     
-                let mut texture = texture::Texture::new(transform);
-                texture.create_colored_shader_buffer(&img, camera, &color);
+                let mut texture = texture::Texture::colored(transform, c);
+                texture.create_shader_buffer(&img);
                 self.textures.push(texture);
                 x += 1;
             }
@@ -46,9 +50,9 @@ impl Label {
     }
 
     // draw the label aka all the chars textures
-    pub fn draw(&self) {
+    pub fn draw(&self, program: &program::Program, camera: &camera::Camera) {
         for img in &self.textures {
-            img.draw();
+            img.draw(program, camera);
         }
     }
 }

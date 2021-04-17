@@ -1,6 +1,7 @@
 use crate::core::color::Color;
 use crate::core::transform;
 use crate::core::camera;
+use crate::program;
 
 /*
 generic rectangle struct
@@ -20,37 +21,49 @@ impl Rect {
     }
 
     // create the shaderbuffer and the default shader
-    pub fn create_shader_buffer(&mut self, camera: &camera::Camera) {
-        self.shader_buffer = crate::shader::create_default_shader_buffer(self.vertices(camera));
+    pub fn create_shader_buffer(&mut self) {
+        self.shader_buffer = crate::shader::create_default_shader_buffer(vec![
+            0.0,  0.0,  0.0, 0.0
+        ]);
     } 
 
     // call this function every frame to display the rectangle
-    pub fn draw(&self) {
+    pub fn draw(&self, program: &program::Program, camera: &camera::Camera) {
+        let pos = program.uniform_location("pos");
+        let dim = program.uniform_location("dim");
+        let cam = program.uniform_location("cam");
+        let col = program.uniform_location("color");
+       
+        program.active();
+
         unsafe {
+            gl::Uniform2f(cam, camera.width as f32, camera.height as f32);
+            gl::Uniform2f(pos, self.transform.x as f32, self.transform.y as f32);
+            gl::Uniform2f(dim, self.transform.width as f32, self.transform.height as f32);
+            gl::Uniform4f(col, self.color.r as f32, self.color.g as f32, self.color.b as f32, self.color.a as f32);
+
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
     }
 
     // draw only the borders of the rectangle
-    pub fn draw_borders(&self) {
+    pub fn draw_borders(&self, program: &program::Program, camera: &camera::Camera) {
+        let pos = program.uniform_location("pos");
+        let dim = program.uniform_location("dim");
+        let cam = program.uniform_location("cam");
+        let col = program.uniform_location("color");
+       
+        program.active();
+
         unsafe {
+            gl::Uniform2f(cam, camera.width as f32, camera.height as f32);
+            gl::Uniform2f(pos, self.transform.x as f32, self.transform.y as f32);
+            gl::Uniform2f(dim, self.transform.width as f32, self.transform.height as f32);
+            gl::Uniform4f(col, self.color.r as f32, self.color.g as f32, self.color.b as f32, self.color.a as f32);
+
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::LINE_STRIP, 0, 4);
         }
-    }
-
-    // calculate the vertices of the rectangle, used for creating the shader buffer
-    fn vertices(&self, camera: &camera::Camera) -> Vec<f32> {
-        let ct = transform::CanvasTransform::new(&self.transform, camera);
-        let bot_y = ct.y - ct.height;
-        let right_x = ct.x + ct.width;
-
-        vec![
-            ct.x,  ct.y,  0.0,  self.color.r, self.color.g, self.color.b, // top left
-            right_x,           ct.y,  0.0,  self.color.r, self.color.g, self.color.b, // top right
-            right_x,           bot_y,             0.0,  self.color.r, self.color.g, self.color.b, // bot right
-            ct.x,  bot_y,             0.0,  self.color.r, self.color.g, self.color.b, // bot left
-        ]
     }
 }

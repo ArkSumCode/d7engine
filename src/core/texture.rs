@@ -1,4 +1,5 @@
 use crate::core::*;
+use crate::program;
 
 /*
 struct that can draw a image/texture to the window
@@ -9,6 +10,7 @@ pub struct Texture {
     shader_buffer: gl::types::GLuint,
     shader_texture_buffer: gl::types::GLuint,
     transform: transform::Transform,
+    color: Option<color::Color>,
 }
 
 impl Texture {
@@ -16,66 +18,73 @@ impl Texture {
     pub fn new(transform: transform::Transform) -> Texture {
         let shader_buffer = 0;
         let shader_texture_buffer = 0;
-        Texture {shader_buffer, shader_texture_buffer, transform}
+        Texture {shader_buffer, shader_texture_buffer, transform, color: None}
+    }
+
+    pub fn colored(transform: transform::Transform, color: color::Color) -> Texture {
+        let shader_buffer = 0;
+        let shader_texture_buffer = 0;
+        Texture {shader_buffer, shader_texture_buffer, transform, color: Some(color)}
     }
 
     // create the shader buffer, for that we need the image
-    pub fn create_shader_buffer(&mut self, image: &image::RgbImage, camera: &camera::Camera) {
+    pub fn create_shader_buffer(&mut self, image: &image::RgbImage) {
         let (shader_texture_buffer, shader_buffer) = crate::shader::create_texture_shader_buffer(
-            self.vertices(camera), 
+            self.vertices(), 
             image
         );
         self.shader_texture_buffer = shader_texture_buffer;
         self.shader_buffer = shader_buffer;
     } 
 
-    // create a shader buffer with a pos, texture and color attribute 
-    pub fn create_colored_shader_buffer(&mut self, image: &image::RgbImage, camera: &camera::Camera, color: &color::Color) {
-        let (shader_texture_buffer, shader_buffer) = crate::shader::create_colored_texture_shader_buffer(
-            self.colored_vertices(camera, color), 
-            image
-        );
-        self.shader_texture_buffer = shader_texture_buffer;
-        self.shader_buffer = shader_buffer;
-    }
-
     // draw the texture to the screen
-    pub fn draw(&self) {
+    pub fn draw(&self, program: &program::Program, camera: &camera::Camera) {
+        let pos = program.uniform_location("pos");
+        let dim = program.uniform_location("dim");
+        let cam = program.uniform_location("cam");
+
+        // programs like font can use the uniform color
+        // use the colored constructor to get one
+        let col = if let Some(_) = &self.color {
+            Some(program.uniform_location("color"))
+        } else {
+            None
+        };
+       
+        program.active();
+
         unsafe {
+            // set values for the uniforms in the shader
+            gl::Uniform2f(cam, camera.width as f32, camera.height as f32);
+            gl::Uniform2f(pos, self.transform.x as f32, self.transform.y as f32);
+            gl::Uniform2f(dim, self.transform.width as f32, self.transform.height as f32);
+
+            if let Some(color) = &self.color {
+                if let Some(c) = col {
+                    gl::Uniform4f(c, color.r as f32, color.g as f32, color.b as f32, color.a as f32);
+                }
+            }
+           
             gl::BindTexture(gl::TEXTURE_2D, self.shader_texture_buffer);
             gl::BindVertexArray(self.shader_buffer);
+
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
     }
 
     // get the vertices passed to the program
-    fn vertices(&self, camera: &camera::Camera) -> Vec<f32> {
-        let ct = transform::CanvasTransform::new(&self.transform, camera);
-        let bot_y = ct.y - ct.height;
-        let right_x = ct.x + ct.width;
-
+    fn vertices(&self) -> Vec<f32> {
         vec![
-            ct.x,     ct.y,    0.0,  0.0, 1.0, // top left
-            right_x,  ct.y,    0.0,  1.0, 1.0, // top right
-            right_x,  bot_y,   0.0,  1.0, 0.0, // bot right
-            ct.x,     bot_y,   0.0,  0.0, 0.0, // bot left
+            0.0, 1.0, // top left
+            1.0, 1.0, // top right
+            1.0, 0.0, // bot right
+            0.0, 0.0, // bot left
         ]
     }
 
-    // get the vertices for the program with pos vec3 textCoord vec2 and color vec3
-    fn colored_vertices(&self, camera: &camera::Camera, color: &color::Color) -> Vec<f32> {
-        let ct = transform::CanvasTransform::new(&self.transform, camera);
-        let bot_y = ct.y - ct.height;
-        let right_x = ct.x + ct.width;
-
-        vec![
-            ct.x,     ct.y,    0.0,  0.0, 1.0, color.r, color.g, color.b, // top left
-            right_x,  ct.y,    0.0,  1.0, 1.0, color.r, color.g, color.b, // top right
-            right_x,  bot_y,   0.0,  1.0, 0.0, color.r, color.g, color.b, // bot right
-            ct.x,     bot_y,   0.0,  0.0, 0.0, color.r, color.g, color.b, // bot left
-        ]
+    pub fn set_pos(&mut self, x: i32, y: i32) {
+        self.transform.set_pos(x, y);
     }
-
 }
 
 // get data from an image file

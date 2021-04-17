@@ -2,7 +2,7 @@
 
 in VS_OUTPUT {
     vec2 TexCoord;
-    vec3 Color;
+    vec4 Color;
 } IN;
 
 out vec4 Color;
@@ -18,6 +18,7 @@ void main()
         img.r = IN.Color.r;
         img.g = IN.Color.g;
         img.b = IN.Color.b;
+        img.a = IN.Color.a;
     }
 
     Color = img;

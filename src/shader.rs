@@ -126,46 +126,6 @@ pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
             gl::STATIC_DRAW,
         );
 
-        let attr_position = 0;
-        let attr_color = 1;
-
-        let size_vec3 = 3 * std::mem::size_of::<f32>();
-        let out_vec_3 = 3;
-
-        /*
-        explaining each attribute to opengl
-        vertexattribpointer (
-            location in the vertex shader eg. 0,1,2,3 etc,
-            specify the output vector (max is vec4 = 4),
-            type of one value in one vertex eg 0.0, 0.1, 0.4 etc..,
-            we have float so set to false (integers are true),
-            size of one vertex position plus color are 6 floats,
-            offset data eg when position is at 0 color is 3 values further,
-        )
-        */
-      
-        gl::VertexAttribPointer(
-            attr_position, 
-            out_vec_3,
-            gl::FLOAT,
-            gl::FALSE,
-            (size_vec3 * 2) as gl::types::GLint,
-            0 as *const gl::types::GLvoid,
-        );
-       
-        gl::VertexAttribPointer(
-            attr_color, 
-            out_vec_3,
-            gl::FLOAT,
-            gl::FALSE,
-            (size_vec3 * 2) as gl::types::GLint,
-            size_vec3 as *const gl::types::GLvoid,
-        );
-
-        // enable the attributes
-        gl::EnableVertexAttribArray(attr_position);
-        gl::EnableVertexAttribArray(attr_color);
-
         // clear bindings
         gl::BindBuffer(gl::ARRAY_BUFFER, 0);
         gl::BindVertexArray(0);
@@ -230,12 +190,11 @@ pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbImage)
             gl::STATIC_DRAW,
         );
 
-        let attr_position = 0;
-        let attr_texture_coord = 1;
+        let attr_texture_coord = 0;
 
-        let size_vec3 = 3 * std::mem::size_of::<f32>();
+        let _size_vec3 = 3 * std::mem::size_of::<f32>();
         let size_vec2 = 2 * std::mem::size_of::<f32>();
-        let out_vec_3 = 3;
+        let _out_vec_3 = 3;
         let out_vec_2 = 2;
 
         /*
@@ -251,143 +210,16 @@ pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbImage)
         */
         
         gl::VertexAttribPointer(
-            attr_position, 
-            out_vec_3,
-            gl::FLOAT,
-            gl::FALSE,
-            (size_vec3 + size_vec2) as gl::types::GLint,
-            0 as *const gl::types::GLvoid,
-        );
-        
-        gl::VertexAttribPointer(
             attr_texture_coord, 
             out_vec_2,
             gl::FLOAT,
             gl::FALSE,
-            (size_vec3 + size_vec2) as gl::types::GLint,
-            size_vec3 as *const gl::types::GLvoid,
-        );
-
-        // enable the attributes
-        gl::EnableVertexAttribArray(attr_position);
-        gl::EnableVertexAttribArray(attr_texture_coord);
-
-        // clear bindings
-        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
-        gl::BindVertexArray(0);
-    }
-
-    (texture, array)
-}
-
-/*
-creates the texture shader infos with a color attribute and returns the
-id of the texture buffer and the vertex array buffer 
-(texture, array)
-*/
-pub fn create_colored_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbImage) -> (gl::types::GLuint, gl::types::GLuint) {
-    let (width, height) = image.dimensions();
-    let mut texture: gl::types::GLuint = 0;
-    let mut buffer: gl::types::GLuint = 0;
-    let mut array: gl::types::GLuint = 0;
-
-    unsafe {
-        // create unused integers from opengl we can write tp
-        gl::GenTextures(1, &mut texture);
-        gl::GenBuffers(1, &mut buffer);
-        gl::GenVertexArrays(1, &mut array);
-        /*
-        tell opengl that at point "buffer" we want to pass vertices 
-        gl::ARRAY_BUFFER tells opengl that the data are vertices and not
-        for example a texture
-        then tell opengl the position of "array"
-        */
-        gl::BindTexture(gl::TEXTURE_2D, texture);
-        gl::BindBuffer(gl::ARRAY_BUFFER, buffer);
-        gl::BindVertexArray(array);
-
-        // pixelate the image when scaling down
-        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
-        // pixelate the image when scaling up
-        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
-
-        // structure of the texture, with width height and texture data
-        gl::TexImage2D(
-            gl::TEXTURE_2D,
-            0,
-            gl::RGB as i32,
-            width as i32,
-            height as i32,
-            0,
-            gl::RGB,
-            gl::UNSIGNED_BYTE,
-            image.as_ptr() as *const gl::types::GLvoid,
-        );
-        // generate the neccessasary mipmap textures, (needed when texture is very near or far away)
-        gl::GenerateMipmap(gl::TEXTURE_2D);
-   
-        // describe the buffers data 
-        let size = vertices.len() * std::mem::size_of::<f32>();
-        let data = vertices.as_ptr();
-        gl::BufferData(
-            gl::ARRAY_BUFFER,
-            size as gl::types::GLsizeiptr,
-            data as *const gl::types::GLvoid,
-            gl::STATIC_DRAW,
-        );
-
-        let attr_position = 0;
-        let attr_texture_coord = 1;
-        let attr_color = 2;
-
-        let size_vec3 = 3 * std::mem::size_of::<f32>();
-        let size_vec2 = 2 * std::mem::size_of::<f32>();
-        let out_vec_3 = 3;
-        let out_vec_2 = 2;
-
-        /*
-        explaining each attribute to opengl
-        vertexattribpointer (
-            location in the vertex shader eg. 0,1,2,3 etc,
-            specify the output vector (max is vec4 = 4),
-            type of one value in one vertex eg 0.0, 0.1, 0.4 etc..,
-            we have float so set to false (integers are true),
-            size of one vertex position plus color are 6 floats,
-            offset data eg when position is at 0 color is 3 values further,
-        )
-        */
-        
-        gl::VertexAttribPointer(
-            attr_position, 
-            out_vec_3,
-            gl::FLOAT,
-            gl::FALSE,
-            (size_vec3 + size_vec2 + size_vec3) as gl::types::GLint,
+            size_vec2 as gl::types::GLint,
             0 as *const gl::types::GLvoid,
         );
-        
-        gl::VertexAttribPointer(
-            attr_texture_coord, 
-            out_vec_2,
-            gl::FLOAT,
-            gl::FALSE,
-            (size_vec3 + size_vec2 + size_vec3) as gl::types::GLint,
-            size_vec3 as *const gl::types::GLvoid,
-        );
-
-        gl::VertexAttribPointer(
-            attr_color, 
-            out_vec_3,
-            gl::FLOAT,
-            gl::FALSE,
-            (size_vec3 + size_vec2 + size_vec3) as gl::types::GLint,
-            (size_vec3 + size_vec2) as *const gl::types::GLvoid,
-        );
 
         // enable the attributes
-        gl::EnableVertexAttribArray(attr_position);
         gl::EnableVertexAttribArray(attr_texture_coord);
-        gl::EnableVertexAttribArray(attr_color);
 
         // clear bindings
         gl::BindBuffer(gl::ARRAY_BUFFER, 0);

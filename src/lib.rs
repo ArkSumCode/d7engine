@@ -65,14 +65,17 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     // call the projects load funtion
     runtime.load(&mut camera);
 
-    // the mouse wheel does not stop the scrolling event, count and every other frame deny 
-    let mut mouse_wheel_stopper = false;
-
     // create the performance object
     let mut performance = Performance::new();
     let mut delta = 0.0;
+
+    // create the mouse structure
+    use crate::core::mouse;
+    let mut mouse = mouse::Mouse::new();
   
     'main: loop {
+        let mouse_state = event_pump.mouse_state();
+
         // handling of events
         for event in event_pump.poll_iter() {
             match event {
@@ -93,9 +96,9 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
             transform sdl event into our own format
             so we dont have to include sdl in the project
             */
-
             use sdl2::event::Event;
             use sdl2::keyboard::Keycode;
+         
             let mut project_event = match event {
                 Event::KeyDown{keycode: Some(Keycode::W), repeat: false, ..} => project::Event::KeyUp,                  // w
                 Event::KeyDown{keycode: Some(Keycode::A), repeat: false, ..} => project::Event::KeyLeft,                // a
@@ -104,27 +107,29 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
                 _ => project::Event::None,
             };
 
-            mouse_wheel_stopper = if !mouse_wheel_stopper {
-                // handle the mouse wheel, check if y greater or less than 0 
-                if let Event::MouseWheel {y, ..} = event {
-                    project_event = if y < 0 {
-                        project::Event::WheelDown
-                    } else {
-                        project::Event::WheelUp
-                    };
-
-                    true
+            // handle the mouse wheel, check if y greater or less than 0 
+            if let Event::MouseWheel {y, ..} = event {
+                project_event = if y < 0 {
+                    project::Event::WheelDown
                 } else {
-                    false
-                }
-            } else {
-                false
-            };
-            
+                    project::Event::WheelUp
+                };
+            }
 
             runtime.inputs(project_event);
         }
 
+        // handle left mouse button click
+        if mouse_state.left() {
+            runtime.inputs(project::Event::MouseLeft);
+        }
+        // handle right mouse button click
+        if mouse_state.right() {
+            runtime.inputs(project::Event::MouseRight);
+        }
+
+        // update the mouse position
+        mouse.set_pos(mouse_state.x(), mouse_state.y());
      
         unsafe {
             // clear the screen
@@ -132,7 +137,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
         }
 
         // call the projects draw method
-        runtime.draw(delta, &mut camera);
+        runtime.draw(delta, &mut camera, &mouse);
         
         // sdl will change the window its draing to
         window.gl_swap_window();
