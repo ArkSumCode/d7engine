@@ -12,7 +12,7 @@ supply the config and runtime structs
 
 init sdl and opengl and run the gameloop
 */
-pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) {
+pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
     // init sdl and the video subsystem
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
@@ -27,7 +27,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
 
     // create the window using opengl and make it resizable
     let window = video_subsystem
-        .window(&config.title(), config.width(), config.height())
+        .window(&config.title, config.width, config.height)
         .opengl()
         .resizable()
         .build()
@@ -45,14 +45,14 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     video_subsystem.gl_set_swap_interval(1).unwrap();
 
     // set the viewport to a the initial values
-    set_viewport(config.width() as i32, config.height() as i32);
+    set_viewport(config.width as i32, config.height as i32);
 
     // event_pump holds all user input events like key or mouse button clicks
     let mut event_pump = sdl.event_pump().unwrap();
 
     unsafe {
         // set the default background color
-        let color = config.background_color();
+        let color = config.background_color;
         gl::ClearColor(color.r, color.g, color.b, 1.0);
         // enable alpha drawing
         gl::Enable(gl::BLEND);
@@ -60,7 +60,7 @@ pub fn init(config: &impl project::Config, runtime: &mut impl project::Runtime) 
     }
 
     // create the windows camera
-    let mut camera = core::camera::Camera::new(config.width() as f32, config.height() as f32);
+    let mut camera = core::camera::Camera::new(config.width as f32, config.height as f32);
 
     // call the projects load funtion
     runtime.load(&mut camera);

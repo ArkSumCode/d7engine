@@ -3,25 +3,18 @@ use crate::core::camera::Camera;
 
 /*
 used as argument in the main init function
-in the project make a struct that implements Config 
+in the project make a struct that is Config
 and pass it over to the engine
 
 holds standard information usefull for SDL2
 */
-pub trait Config {
-    // the title at the top of the window
-    fn title(&self) -> String;
-    
-    // the width of the window at the start of the program
-    fn width(&self) -> u32;
 
-    // the height of the window at the start of the program
-    fn height(&self) -> u32;
-
-    // the default background and clear color of the window
-    fn background_color(&self) -> color::Color;
+pub struct Config {
+    pub title: String,
+    pub width: u32,
+    pub height: u32,
+    pub background_color: color::Color,
 }
-
 
 /*
 used as argument in the main init function
