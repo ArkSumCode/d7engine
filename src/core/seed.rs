@@ -52,6 +52,7 @@ impl Seed {
     /*
     get the next 8 bits in the seed as an u8
     from 0 to 255
+    offsets by one
     */
     pub fn next_u8(&mut self) -> u8 {
         let mut num: u8 = 0;
