@@ -1,10 +1,21 @@
-use std::fs::create_dir;
+use std::fs::{create_dir, File};
+use std::io::Write;
 use std::path::{PathBuf, Path};
 use directories::BaseDirs;
 
-// creates a folder for the game in appdata
-// call this method first if the game needs some file storage on a user pc
-pub fn install(title: &str) -> Result<(), String> {
+/* 
+files system only works with an installation struct, so 
+it is save that the %appdata%/d7engine/<title> folders exist
+*/
+pub struct Installation {
+    path: String
+}
+
+/*
+creates a folder for the game in appdata
+call this method first if the game needs some file storage on a user pc
+*/
+pub fn install(title: &str) -> Result<Installation, String> {
     let path = appdata()?;
     let mut path = PathBuf::from(&path);
     
@@ -12,15 +23,36 @@ pub fn install(title: &str) -> Result<(), String> {
     update_folder(&mut path, "d7engine")?;
     update_folder(&mut path, title)?;
 
-    Ok(())
+    let path = path_as_string(path.as_path())?;
+    Ok(Installation{path: path})
+}
+
+// create or overwrite a file in %appdata%/d7engine/<title>
+pub fn overwrite(installation: &Installation, file: &str, text: &str) -> Result<(), String> {
+    // create pathbuffer and add the file that
+    let mut path = PathBuf::from(&installation.path);
+    path.push(file);
+    let path = path_as_string(path.as_path())?;
+
+    // create the filestream
+    if let Ok(mut open) = File::create(&path) {
+        // write to the filestream
+        if let Ok(_) = open.write_all(text.as_bytes()) {
+            return Ok(())
+        }
+    } 
+
+    Err(format!("could not write file {}.", file))
 }
 
 // returns os string to appdata
 fn appdata() -> Result<String, String> {
     
-    // Linux:   /home/markus/.config
-    // Windows: C:\Users\Markus\AppData\Roaming
-    // macOS:   /Users/Markus/Library/Application Support
+    /*
+    Linux:   /home/markus/.config
+    Windows: C:\Users\Markus\AppData\Roaming
+    macOS:   /Users/Markus/Library/Application Support
+    */
 
     if let Some(base_dirs) = BaseDirs::new() {
         let path = base_dirs.config_dir();

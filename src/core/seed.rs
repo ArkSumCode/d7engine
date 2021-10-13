@@ -1,4 +1,3 @@
-
 /*
 seed can get the bytes from a string
 and give you certain RANDOM information like a random bool
@@ -48,5 +47,28 @@ impl Seed {
 
         self.bit += 1;
         new_byte == 1
+    }
+
+    /*
+    get the next 8 bits in the seed as an u8
+    from 0 to 255
+    */
+    pub fn next_u8(&mut self) -> u8 {
+        let mut num: u8 = 0;
+        
+        for _ in 0..8 {
+            // left shift by one place (00010) => (00100)
+            num = num << 1;
+
+            num = if self.next_bool() {
+                num | 1
+            } else {
+                num | 0
+            };
+        } 
+
+        // offsets 1 so you cant always get the same u8
+        self.next_bool();
+        num
     }
 }
