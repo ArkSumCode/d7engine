@@ -7,3 +7,4 @@ pub mod camera;
 pub mod font;
 pub mod label;
 pub mod mouse;
+pub mod file;
