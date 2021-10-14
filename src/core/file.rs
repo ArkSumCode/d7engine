@@ -1,5 +1,5 @@
 use std::fs::{create_dir, File};
-use std::io::Write;
+use std::io::{Write, Read};
 use std::path::{PathBuf, Path};
 use directories::BaseDirs;
 
@@ -43,6 +43,21 @@ pub fn overwrite(installation: &Installation, file: &str, text: &str) -> Result<
     } 
 
     Err(format!("could not write file {}.", file))
+}
+
+// read a file
+pub fn read(file: String) -> Result<String, String> {
+    // open one file
+    if let Ok(mut file) = File::open(&file) {
+        let mut contents = String::new();
+
+        // put the file into a string
+        if let Ok(_) = file.read_to_string(&mut contents) {
+            return Ok(contents)
+        }
+    }
+
+    Err(format!("could not read file {}.", file))
 }
 
 // returns os string to appdata

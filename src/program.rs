@@ -1,6 +1,7 @@
 use crate::shader::Shader;
 use std::ffi::CString;
 use std::collections::HashMap;
+use crate::core::file;
 
 /*
 load all programs and return them
@@ -37,13 +38,7 @@ impl Program {
     every vertex has a position and color, they will not be modiefied in the shader
     */
     pub fn rect() -> Result<Program, String> {
-        let vertex_source = CString::new(include_str!("shaders/rect.vert")).unwrap();
-        let vertex_shader = Shader::from_vertex(&vertex_source)?;
-    
-        let fragment_source = CString::new(include_str!("shaders/rect.frag")).unwrap();
-        let fragment_shader = Shader::from_fragment(&fragment_source)?;
-    
-        Program::from_shaders(&[vertex_shader, fragment_shader])
+        Program::custom("shaders/rect")
     }
 
     /*
@@ -52,14 +47,7 @@ impl Program {
     they will not be modified in the shader
     */
     pub fn texture() -> Result<Program, String> {
-        let vertex_source = CString::new(include_str!("shaders/texture.vert")).unwrap();
-        let vertex_shader = Shader::from_vertex(&vertex_source)?;
-    
-        let fragment_source = CString::new(include_str!("shaders/texture.frag")).unwrap();
-        let fragment_shader = Shader::from_fragment(&fragment_source)?;
-    
-
-        Program::from_shaders(&[vertex_shader, fragment_shader])
+        Program::custom("shaders/texture")
     }
 
     /*
@@ -67,12 +55,30 @@ impl Program {
     shader font.frag and font.vert
     */
     pub fn font() -> Result<Program, String> {
-        let vertex_source = CString::new(include_str!("shaders/font.vert")).unwrap();
+        Program::custom("shaders/font")
+    }
+
+    /*
+    create a vertex and fragment shader
+    the shaders must have the same name, like
+
+    shader1.vert and shader1.frag
+    */
+    pub fn custom(path: &str) -> Result<Program, String> {
+        let vertex = format!("{}.vert", path);
+        let fragment = format!("{}.frag", path);
+
+        // read the files
+        let vertex_file = file::read(vertex)?;
+        let fragment_file = file::read(fragment)?;
+
+        // create the vertex shader
+        let vertex_source = CString::new(vertex_file.as_str()).unwrap();
         let vertex_shader = Shader::from_vertex(&vertex_source)?;
     
-        let fragment_source = CString::new(include_str!("shaders/font.frag")).unwrap();
+        // create the fragment shader
+        let fragment_source = CString::new(fragment_file.as_str()).unwrap();
         let fragment_shader = Shader::from_fragment(&fragment_source)?;
-    
 
         Program::from_shaders(&[vertex_shader, fragment_shader])
     }
@@ -130,6 +136,7 @@ impl Program {
 
             // c string to rust String conversion
             let msg = error.to_string_lossy().into_owned();
+            let msg = format!("shaders: {}", msg);
             return Err(msg);
         }
 

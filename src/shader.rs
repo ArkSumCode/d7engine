@@ -76,7 +76,7 @@ impl Shader {
 
             // cstring to rust String
             let msg = error.to_string_lossy().into_owned();
-
+            let msg = format!("shaders: {}", msg);
             return Err(msg);
         }
         
