@@ -28,9 +28,12 @@ impl Seed {
     }
 
     // create a seed object from the current timestamp
-    pub fn from_time() -> Seed {
-        let unix = SystemTime::now().duration_since(UNIX_EPOCH).expect("Could not read system time.");
-        return Seed::from_str(&unix.as_secs().to_string())
+    pub fn from_time() -> Result<Seed, String> {
+        if let Ok(unix) = SystemTime::now().duration_since(UNIX_EPOCH) {
+            Ok(Seed::from_str(&unix.as_secs().to_string()))
+        } else {
+            Err("Could not read system time.".to_string())
+        }
     }
  
     /*
