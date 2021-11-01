@@ -1,3 +1,6 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+use sha2::{Sha512, Digest};
+
 /*
 seed can get the bytes from a string
 and give you certain RANDOM information like a random bool
@@ -14,17 +17,20 @@ pub struct Seed {
 impl Seed {
     // create a seed object from a string, sets default index and bit indizes
     pub fn from_str(seed: &str) -> Seed {
-        let string = seed.to_string().into_bytes();
-        let mut bytes = vec![];
-       
-        for byte in string {
-            bytes.push(byte);
-        }
+        let mut hasher = Sha512::new();
+        hasher.update(seed);
+        let bytes = hasher.finalize().to_vec();
 
         let index = 0;
         let bit = 0;
 
         Seed {bytes, index, bit}
+    }
+
+    // create a seed object from the current timestamp
+    pub fn from_time() -> Seed {
+        let unix = SystemTime::now().duration_since(UNIX_EPOCH).expect("Could not read system time.");
+        return Seed::from_str(&unix.as_secs().to_string())
     }
  
     /*
@@ -52,7 +58,6 @@ impl Seed {
     /*
     get the next 8 bits in the seed as an u8
     from 0 to 255
-    offsets by one
     */
     pub fn next_u8(&mut self) -> u8 {
         let mut num: u8 = 0;
@@ -68,8 +73,6 @@ impl Seed {
             };
         } 
 
-        // offsets 1 so you cant always get the same u8
-        self.next_bool();
         num
     }
 }
