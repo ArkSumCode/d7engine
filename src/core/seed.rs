@@ -14,16 +14,21 @@ pub struct Seed {
     bit: u8,
 }
 
+/*
+enum used as a return to the Seed::roll method
+holds the result of the roll and the number that was used
+*/
+pub enum Roll {
+    HIT(u8),
+    MISS(u8),
+}
+
 impl Seed {
     // create a seed object from a string, sets default index and bit indizes
     pub fn from_str(seed: &str) -> Seed {
-        let mut hasher = Sha512::new();
-        hasher.update(seed);
-        let bytes = hasher.finalize().to_vec();
-
+        let bytes = Seed::hash(seed);
         let index = 0;
         let bit = 0;
-
         Seed {bytes, index, bit}
     }
 
@@ -48,6 +53,7 @@ impl Seed {
 
         if self.bytes.len() - 1 < self.index {
             self.index = 0;
+            self.next_hash_iteration();
         }
 
         let byte = self.bytes[self.index];
@@ -78,4 +84,38 @@ impl Seed {
 
         num
     }
+
+    /*
+    roll a u8 number. if its below max return true, 
+    the closer to 255 the more likely true is  
+    */
+    pub fn roll(&mut self, max: u8) -> Roll {
+        let roll = self.next_u8();
+        if roll < max {
+            Roll::HIT(roll)
+        } else {
+            Roll::MISS(roll)
+        }
+    }
+
+    // hash a string and return it as a vector of u8
+    fn hash(seed: &str) -> Vec<u8> {
+        let mut hasher = Sha512::new();
+        hasher.update(seed);
+        hasher.finalize().to_vec()
+    }
+
+    /* 
+    take the hash and hash it, 
+    this way we have unlimited different randomness
+    */
+    fn next_hash_iteration(&mut self) {
+        let mut iteration = String::from("");
+
+        for byte in &self.bytes {
+            iteration.push_str(&byte.to_string());
+        }
+
+        self.bytes = Seed::hash(&iteration);
+    } 
 }
