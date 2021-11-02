@@ -6,6 +6,8 @@ pub mod prelude;
 
 use std::ffi::CString;
 use std::time::Instant;
+use sdl2::surface::Surface;
+
 
 /*
 entry function for every project
@@ -27,7 +29,7 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
     gl_attr.set_double_buffer(true);
 
     // create the window using opengl and make it resizable
-    let window = video_subsystem
+    let mut window = video_subsystem
         .window(&config.title, config.width, config.height)
         .opengl()
         .resizable()
@@ -36,6 +38,11 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
 
     // create an opengl context
     let _gl_context = window.gl_create_context().unwrap();
+
+    // set the window icon
+    if let Ok(window_icon) = Surface::load_bmp("icon.bmp") {
+        window.set_icon(window_icon);
+    }
 
     // tell opengl where the video subsystem is on the memeory
     let _gl = gl::load_with(

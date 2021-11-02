@@ -16,6 +16,18 @@ pub struct Config {
     pub background_color: Color,
 }
 
+impl Config {
+    // returns a default configuration
+    pub fn default() -> Config {
+        Config {
+            title: String::from("d7engine"),
+            width: 1270,
+            height: 700,
+            background_color: Color::grey(44),
+        }
+    }
+}
+
 /*
 used as argument in the main init function
 in the project make a struct that implements Runtime

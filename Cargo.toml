@@ -14,5 +14,6 @@ directories = "4.0.1"
 sha2 = "0.9.8"
 
 [dependencies.sdl2]
-version = "0.34.3"
+version = "0.35.1"
+default-features = false
 features = ["bundled", "static-link"]
