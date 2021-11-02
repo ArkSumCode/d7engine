@@ -1,4 +1,4 @@
-use crate::core::{mouse,color};
+use crate::core::{mouse::Mouse,color::Color};
 use crate::core::camera::Camera;
 
 /*
@@ -13,7 +13,7 @@ pub struct Config {
     pub title: String,
     pub width: u32,
     pub height: u32,
-    pub background_color: color::Color,
+    pub background_color: Color,
 }
 
 /*
@@ -32,7 +32,7 @@ pub trait Runtime {
     fn inputs(&mut self, event: Event);
 
     // draw is called every frame
-    fn draw(&mut self, delta: f32, camera: &mut Camera, mouse: &mouse::Mouse);
+    fn draw(&mut self, delta: f32, camera: &mut Camera, mouse: &Mouse);
 }
 
 /*

@@ -2,6 +2,7 @@ pub mod shader;
 pub mod program;
 pub mod project;
 pub mod core;
+pub mod prelude;
 
 use std::ffi::CString;
 use std::time::Instant;
