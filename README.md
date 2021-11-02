@@ -4,6 +4,7 @@ d7engine is a homemade games engine for fun.
 
 Basic setup:
 
+#![windows_subsystem = "windows"]
 use d7engine::prelude::*;
 
 struct Runt {
