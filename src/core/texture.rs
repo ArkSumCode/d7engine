@@ -28,7 +28,7 @@ impl Texture {
     }
 
     // create the shader buffer, for that we need the image
-    pub fn create_shader_buffer(&mut self, image: &image::RgbImage) {
+    pub fn create_shader_buffer(&mut self, image: &image::RgbaImage) {
         let (shader_texture_buffer, shader_buffer) = crate::shader::create_texture_shader_buffer(
             self.vertices(), 
             image
@@ -89,11 +89,11 @@ impl Texture {
 }
 
 // get data from an image file
-pub fn image_data(path: &str) -> Result<image::RgbImage, String> {
+pub fn image_data(path: &str) -> Result<image::RgbaImage, String> {
     if let Ok(data) = image::open(path) {
         // need to flip because opengl starts bottom left
         let flipped = data.flipv();
-        return Ok(flipped.to_rgb8())
+        return Ok(flipped.to_rgba8())
     }
   
     Err(format!("could not open image '{}'", path))

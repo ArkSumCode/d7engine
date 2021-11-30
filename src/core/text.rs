@@ -10,40 +10,38 @@ pub struct Text {
     text: String,
     transform: transform::Transform,
     textures: Vec<texture::Texture>,
-    font_spacing: f32,
 }
 
 impl Text {
     // create a new Text with the transform and the text of the Text
     pub fn new(transform: transform::Transform, text: &str) -> Text {
-        Text{textures: vec![], text: text.to_string(), transform, font_spacing: 0.0}
+        Text{textures: vec![], text: text.to_string(), transform}
     }
 
     // create all the textures and all transforms of the textures, camera font and color therfore needed
-    pub fn load(&mut self, font: &font::Font, color: &color::Color) {
-        let mut x = 0;
-        self.font_spacing = font.spacing() as f32;
+    pub fn load(&mut self, font: &mut font::Font, color: &color::Color) {
+        let mut cursor = 0;
 
         for d in self.text.chars() {
             if d == ' ' {
-                x += 1;
+                cursor += 1;
                 continue;
             }
 
-            if let Some(img) = font.get(&d.to_string()) {
+            if let Ok(img) = font.char(d) {
              
                 // the textures transform
                 let transform = transform::Transform{
-                    x: self.transform.x + x as f32 * self.font_spacing,
+                    x: self.transform.x + cursor as f32,
                     y: self.transform.y,
-                    width: font.dimension() as f32,
-                    height: font.dimension() as f32,
+                    width: 150.0,
+                    height: 150.0,
                 };
 
                 let mut texture = texture::Texture::colored(transform, color);
                 texture.create_shader_buffer(&img);
                 self.textures.push(texture);
-                x += 1;
+                cursor += 1;
             }
         }
     }
@@ -67,7 +65,7 @@ impl Text {
                 continue;
             }
 
-            self.textures[i].set_pos(self.transform.x + cursor as f32 * self.font_spacing, self.transform.y);
+            self.textures[i].set_pos(self.transform.x + cursor as f32, self.transform.y);
 
             i += 1;
             cursor += 1;

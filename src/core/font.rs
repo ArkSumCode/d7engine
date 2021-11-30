@@ -6,7 +6,7 @@ Font holds the hashmap that connects a char
 to an image of a char
 */
 pub struct Font {
-    cache: HashMap<char, image::RgbImage>,
+    cache: HashMap<char, image::RgbaImage>,
     face: Option<Face>,
 }
 
@@ -36,18 +36,25 @@ impl Font {
     uses a cache system so we dont have to 
     crop images out every time
     */
-    pub fn char(&self, c: char) -> Result<image::RgbImage, String> {
+    pub fn char(&mut self, c: char) -> Result<image::RgbaImage, String> {
         if let Some(cached) = self.cache.get(&c) {
-            return Ok(*cached);
+            let img = cached.clone();
+            return Ok(img);
         } 
 
-        match self.face {
+        match &self.face {
             Some(face) => {
-                if let Ok(loaded) = face.load_char(c as usize, LoadFlag::RENDER) {
+                if let Ok(_) = face.load_char(c as usize, LoadFlag::RENDER) {
                     let glyph = face.glyph();
                     let bmap = glyph.bitmap();
-                    self.cache.insert(c, bmap);
-                    return Ok(bmap);
+                    let buffer = bmap.buffer();
+                   
+                    if let Some(img) = image::RgbaImage::from_raw(bmap.width() as u32, bmap.width() as u32, Vec::from(buffer)) {
+                        self.cache.insert(c, img.clone());
+                        return Ok(img);
+                    }
+
+                    return Err("font conversion bmap to rbgimage failed".to_string());
                 } 
             },
             None => return Err("font has not bee loaded".to_string()),

@@ -25,7 +25,5 @@ impl Runtime for Runt {
 }
 
 fn main() {
-    let mut runt = Runt{};
-
-    init(Config::default(), &mut runt);
+    init(Config::default(), &mut Runt{});
 }

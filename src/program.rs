@@ -38,7 +38,19 @@ impl Program {
     every vertex has a position and color, they will not be modiefied in the shader
     */
     pub fn rect() -> Result<Program, String> {
-        Program::custom("shaders/rect")
+        if let Ok(fragment_source) = CString::new(include_str!("shaders/rect.frag")) {
+            if let Ok(vertex_source) = CString::new(include_str!("shaders/rect.vert")) {
+                // create the vertex shader
+                let vertex_shader = Shader::from_vertex(&vertex_source)?;
+                // create the fragment shader
+                let fragment_shader = Shader::from_fragment(&fragment_source)?;
+                // create the program
+                let program = Program::from_shaders(&[vertex_shader, fragment_shader])?;
+                return Ok(program);
+            }
+        }
+
+        Err("creating rect shader failed".to_string())
     }
 
     /*
@@ -47,7 +59,19 @@ impl Program {
     they will not be modified in the shader
     */
     pub fn texture() -> Result<Program, String> {
-        Program::custom("shaders/texture")
+        if let Ok(fragment_source) = CString::new(include_str!("shaders/texture.frag")) {
+            if let Ok(vertex_source) = CString::new(include_str!("shaders/texture.vert")) {
+                // create the vertex shader
+                let vertex_shader = Shader::from_vertex(&vertex_source)?;
+                // create the fragment shader
+                let fragment_shader = Shader::from_fragment(&fragment_source)?;
+                // create the program
+                let program = Program::from_shaders(&[vertex_shader, fragment_shader])?;
+                return Ok(program);
+            }
+        }
+
+        Err("creating texture shader failed".to_string())
     }
 
     /*
@@ -55,7 +79,19 @@ impl Program {
     shader font.frag and font.vert
     */
     pub fn font() -> Result<Program, String> {
-        Program::custom("shaders/font")
+        if let Ok(fragment_source) = CString::new(include_str!("shaders/font.frag")) {
+            if let Ok(vertex_source) = CString::new(include_str!("shaders/font.vert")) {
+                // create the vertex shader
+                let vertex_shader = Shader::from_vertex(&vertex_source)?;
+                // create the fragment shader
+                let fragment_shader = Shader::from_fragment(&fragment_source)?;
+                // create the program
+                let program = Program::from_shaders(&[vertex_shader, fragment_shader])?;
+                return Ok(program);
+            }
+        }
+
+        Err("creating rect shader failed".to_string())
     }
 
     /*
@@ -72,15 +108,19 @@ impl Program {
         let vertex_file = file::read(vertex)?;
         let fragment_file = file::read(fragment)?;
 
-        // create the vertex shader
-        let vertex_source = CString::new(vertex_file.as_str()).unwrap();
-        let vertex_shader = Shader::from_vertex(&vertex_source)?;
-    
-        // create the fragment shader
-        let fragment_source = CString::new(fragment_file.as_str()).unwrap();
-        let fragment_shader = Shader::from_fragment(&fragment_source)?;
+       
+        if let Ok(vertex_source) = CString::new(vertex_file.as_str()) {
+            if let Ok(fragment_source) = CString::new(fragment_file.as_str()) {
+                // create the vertex shader
+                let vertex_shader = Shader::from_vertex(&vertex_source)?;
+                 // create the fragment shader
+                let fragment_shader = Shader::from_fragment(&fragment_source)?;
+                let program = Program::from_shaders(&[vertex_shader, fragment_shader])?;
+                return Ok(program);
+            }
+        }
 
-        Program::from_shaders(&[vertex_shader, fragment_shader])
+        Err(format!("creating program failed for: {}", path))
     }
 
     /*

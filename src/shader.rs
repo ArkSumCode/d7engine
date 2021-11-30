@@ -139,7 +139,7 @@ creates the texture shader infos and returns the
 id of the texture buffer and the vertex array buffer 
 (texture, array)
 */
-pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbImage) -> (gl::types::GLuint, gl::types::GLuint) {
+pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbaImage) -> (gl::types::GLuint, gl::types::GLuint) {
     let (width, height) = image.dimensions();
     let mut texture: gl::types::GLuint = 0;
     let mut buffer: gl::types::GLuint = 0;
@@ -169,11 +169,11 @@ pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbImage)
         gl::TexImage2D(
             gl::TEXTURE_2D,
             0,
-            gl::RGB as i32,
+            gl::RGBA as i32,
             width as i32,
             height as i32,
             0,
-            gl::RGB,
+            gl::RGBA,
             gl::UNSIGNED_BYTE,
             image.as_ptr() as *const gl::types::GLvoid,
         );
