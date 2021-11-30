@@ -2,6 +2,7 @@
 a little structure to hold the data
 from the mouse it comes from sdl2 and is set in lib.rs
 */
+#[derive(Clone)]
 pub struct Mouse {
     x: i32,
     y: i32,

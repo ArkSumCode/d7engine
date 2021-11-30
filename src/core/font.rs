@@ -64,8 +64,7 @@ impl Font {
                     // run through the cols 
                     for i in x .. x_max {
                         let mut j = y_max - 1;
-                        let mut row_empty = true;
-                        // run through the rows
+                        // run through the rows backwards because images for opengl have to be upsidedown
                         loop {
                             if i < WIDTH && j < HEIGHT {
                                 // calculate byte in the buffer -> returns u8 single value color
@@ -77,10 +76,8 @@ impl Font {
                                     *image.get_pixel_mut(i as u32, j as u32) = image::Rgba([0, 0, 0, 0]);
                                 } else if result < 69 {
                                     *image.get_pixel_mut(i as u32, j as u32) = image::Rgba([255, 255, 255, 77]);
-                                    row_empty = false;
                                 } else {
                                     *image.get_pixel_mut(i as u32, j as u32) = image::Rgba([255, 255, 255, 255]);
-                                    row_empty = false;
                                 }
                                
                                 q += 1;
@@ -93,13 +90,11 @@ impl Font {
 
                             j = j - 1;
                         }
-                        if row_empty {
-                            println!("theres some empty row");
-                        }
+                       
                         q = 0;
                         p += 1;
                     }
-                    image.save(format!("{}.png", c).as_str()).unwrap();
+                    // image.save(format!("{}.png", c).as_str()).unwrap();
                     self.cache.insert(c, image.clone());
                     return Ok(image);
                 } 

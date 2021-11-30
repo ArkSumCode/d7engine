@@ -71,6 +71,9 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
     // create the windows camera
     let mut camera = core::camera::Camera::new(config.width as f32, config.height as f32);
 
+    // create the default shaders
+    let default_shaders = program::load().unwrap();
+
     // call the projects load funtion
     runtime.load(&mut camera);
 
@@ -145,8 +148,15 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
 
+        let draw = project::Draw {
+            shaders: &default_shaders,
+            delta,
+            camera: camera.clone(),
+            mouse: mouse.clone(),
+        };
+
         // call the projects draw method
-        runtime.draw(delta, &mut camera, &mouse);
+        runtime.draw(&draw);
         
         // sdl will change the window its draing to
         window.gl_swap_window();

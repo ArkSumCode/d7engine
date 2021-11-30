@@ -17,6 +17,11 @@ impl Transform {
         Transform {x, y, width: 0.0, height: 0.0}
     }
 
+    // returns a transform shorter notation than writing it yourself
+    pub fn new(x: f32, y: f32, width: f32, height: f32) -> Transform {
+        Transform {x, y, width, height}
+    }
+
     pub fn set_pos(&mut self, x: f32, y: f32) {
         self.x = x;
         self.y = y;

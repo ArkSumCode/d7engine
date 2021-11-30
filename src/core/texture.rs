@@ -1,5 +1,4 @@
-use crate::core::*;
-use crate::program;
+use crate::prelude::*;
 
 /*
 struct that can draw a image/texture to the window
@@ -9,22 +8,22 @@ and its transform in the world
 pub struct Texture {
     shader_buffer: gl::types::GLuint,
     shader_texture_buffer: gl::types::GLuint,
-    transform: transform::Transform,
-    color: Option<color::Color>,
+    transform: Transform,
+    color: Option<Color>,
 }
 
 impl Texture {
     // creates a new texture object with uninitialies buffers
-    pub fn new(transform: transform::Transform) -> Texture {
+    pub fn new(transform: Transform) -> Texture {
         let shader_buffer = 0;
         let shader_texture_buffer = 0;
         Texture {shader_buffer, shader_texture_buffer, transform, color: None}
     }
 
-    pub fn colored(transform: transform::Transform, color: &color::Color) -> Texture {
+    pub fn colored(transform: Transform, color: &Color) -> Texture {
         let shader_buffer = 0;
         let shader_texture_buffer = 0;
-        Texture {shader_buffer, shader_texture_buffer, transform, color: Some(color::Color::copy(color))}
+        Texture {shader_buffer, shader_texture_buffer, transform, color: Some(Color::copy(color))}
     }
 
     // create the shader buffer, for that we need the image
@@ -37,8 +36,8 @@ impl Texture {
         self.shader_buffer = shader_buffer;
     } 
 
-    // draw the texture to the screen
-    pub fn draw(&self, program: &program::Program, camera: &camera::Camera) {
+    // draws the texture with a specific program
+    pub fn draw_texture(&self, draw: &Draw, program: &Program) {
         let pos = program.uniform_location("pos");
         let dim = program.uniform_location("dim");
         let cam = program.uniform_location("cam");
@@ -55,7 +54,7 @@ impl Texture {
 
         unsafe {
             // set values for the uniforms in the shader
-            gl::Uniform2f(cam, camera.width, camera.height);
+            gl::Uniform2f(cam, draw.camera.width, draw.camera.height);
             gl::Uniform2f(pos, self.transform.x, self.transform.y);
             gl::Uniform2f(dim, self.transform.width, self.transform.height);
 
@@ -70,6 +69,19 @@ impl Texture {
 
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
+    }
+
+    // draw the font to the screen
+    pub fn draw_font(&self, draw: &Draw) {
+        let program = draw.shaders.get("font").unwrap();
+        self.draw_texture(draw, &program);
+    }
+
+    // draw the texture to the screen, this is only for better 
+    // use of the method
+    pub fn draw(&self, draw: &Draw) {
+        let program = draw.shaders.get("texture").unwrap();
+        self.draw_texture(draw, &program);
     }
 
     // get the vertices passed to the program

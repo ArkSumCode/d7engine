@@ -5,6 +5,7 @@ pass it as uniform to the shaders,
 the shaders can then calc the right vertices
 zoom is how big units appear on the screen
 */
+#[derive(Clone)]
 pub struct Camera {
     pub width: f32,
     pub height: f32,

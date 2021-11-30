@@ -1,5 +1,4 @@
-use crate::core::{mouse::Mouse,color::Color};
-use crate::core::camera::Camera;
+use crate::prelude::*;
 
 /*
 used as argument in the main init function
@@ -44,7 +43,7 @@ pub trait Runtime {
     fn inputs(&mut self, event: Event);
 
     // draw is called every frame
-    fn draw(&mut self, delta: f32, camera: &mut Camera, mouse: &Mouse);
+    fn draw(&mut self, draw: &Draw);
 }
 
 /*
@@ -64,4 +63,15 @@ pub enum Event {
     MouseLeft,
     MouseRight,
     None,
+}
+
+/*
+holds important components for the draw functions,
+like the shaderprograms, camera etc.
+*/
+pub struct Draw<'a> {
+    pub shaders: &'a HashMap<String, Program>,
+    pub delta: f32,
+    pub camera: Camera,
+    pub mouse: Mouse,
 }
