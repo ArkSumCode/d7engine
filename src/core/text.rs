@@ -2,21 +2,21 @@ use crate::core::*;
 use crate::program;
 
 /*
-Label holds the text of the label
+Text holds the text of the Text
 its transform
 and the vector of all the chars textures
 */
-pub struct Label {
+pub struct Text {
     text: String,
     transform: transform::Transform,
     textures: Vec<texture::Texture>,
     font_spacing: f32,
 }
 
-impl Label {
-    // create a new label with the transform and the text of the label
-    pub fn new(transform: transform::Transform, text: &str) -> Label {
-        Label{textures: vec![], text: text.to_string(), transform, font_spacing: 0.0}
+impl Text {
+    // create a new Text with the transform and the text of the Text
+    pub fn new(transform: transform::Transform, text: &str) -> Text {
+        Text{textures: vec![], text: text.to_string(), transform, font_spacing: 0.0}
     }
 
     // create all the textures and all transforms of the textures, camera font and color therfore needed
@@ -48,14 +48,14 @@ impl Label {
         }
     }
 
-    // draw the label aka all the chars textures
+    // draw the text aka all the chars textures
     pub fn draw(&self, program: &program::Program, camera: &camera::Camera) {
         for img in &self.textures {
             img.draw(program, camera);
         }
     }
 
-    // set the position and all the labels textures position
+    // set the position and all the texts textures position
     pub fn set_pos(&mut self, x: f32, y: f32) {
         self.transform.set_pos(x, y);
 

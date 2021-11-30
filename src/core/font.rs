@@ -1,61 +1,58 @@
 use std::collections::HashMap;
-use crate::core::*;
+use freetype::{Face,Library,face::LoadFlag};
 
 /*
-Font holds the hashmap that connects a char to an image
+Font holds the hashmap that connects a char 
+to an image of a char
 */
 pub struct Font {
-    dimension: i32,
-    spacing: i32,
-    chars: HashMap<String, image::RgbImage>,
+    cache: HashMap<char, image::RgbImage>,
+    face: Option<Face>,
 }
 
 impl Font {
     // create a new font struct
-    pub fn new(dimension: i32, spacing: i32) -> Font {
+    pub fn new() -> Font {
         Font {
-            chars: HashMap::new(),
-            dimension,
-            spacing,
+            cache: HashMap::new(),
+            face: None,
         }
     }
 
-    /* 
-    specify the number of rows and cols in the font file
-    dimension is the width and height of one cell in px
+    /*
+    load a ttf file and convert it
+    to a hashmap with letter to bitmap
     */
-    pub fn load(&mut self, file: String, rows: u8, cols: u8) {
-        // the sequence of the chars from top left to bottom right
-        let mut chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!".chars();
-        let mut image = texture::image_data(&file).unwrap();
+    pub fn load_ttf(&mut self, path: &str) -> Result<(), freetype::Error> {
+        let lib = Library::init()?;
+        let face = lib.new_face(path, 0)?;
+        face.set_char_size(40 * 64, 0, 50, 0)?;
+        self.face = Some(face);
+        Ok(())
+    }
 
-        // run through all rows and columns
-        for j in 1..(rows + 1) {
-            for i in 0..cols {
-                // calculate the x and y value of the to cropp image
-                let x = i as i32 * self.dimension;
-                let y = (rows as i32 * self.dimension) - (j as i32 * self.dimension);
-                let cropped = texture::crop_image(&mut image, x, y, self.dimension, self.dimension);
-              
-                if let Some(c) = chars.next() {
-                    self.chars.insert(c.to_string(), cropped);
-                }
-            }
+    /*
+    get a character from the loaded truetype font
+    uses a cache system so we dont have to 
+    crop images out every time
+    */
+    pub fn char(&self, c: char) -> Result<image::RgbImage, String> {
+        if let Some(cached) = self.cache.get(&c) {
+            return Ok(*cached);
+        } 
+
+        match self.face {
+            Some(face) => {
+                if let Ok(loaded) = face.load_char(c as usize, LoadFlag::RENDER) {
+                    let glyph = face.glyph();
+                    let bmap = glyph.bitmap();
+                    self.cache.insert(c, bmap);
+                    return Ok(bmap);
+                } 
+            },
+            None => return Err("font has not bee loaded".to_string()),
         }
-    }
-
-    // get an image by a character
-    pub fn get(&self, character: &str) -> Option<&image::RgbImage> {
-        self.chars.get(character)
-    }
-
-    // returns the dimension of a character cell
-    pub fn dimension(&self) -> i32 {
-        self.dimension
-    }
-
-    //returns the spacing of the font
-    pub fn spacing(&self) -> i32 {
-        self.spacing
+       
+        Err(format!("could not get char '{}' from truetype font", c))
     }
 }

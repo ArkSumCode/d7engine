@@ -5,6 +5,6 @@ pub mod rect;
 pub mod color;
 pub mod camera;
 pub mod font;
-pub mod label;
+pub mod text;
 pub mod mouse;
 pub mod file;

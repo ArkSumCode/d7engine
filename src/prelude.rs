@@ -12,3 +12,4 @@ pub use crate::core::color::{Color};
 pub use crate::init;
 pub use crate::core::camera::Camera;
 pub use crate::core::mouse::Mouse;
+pub use crate::core::text::Text;

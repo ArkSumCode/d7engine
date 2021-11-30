@@ -9,6 +9,7 @@ use std::time::Instant;
 use sdl2::surface::Surface;
 
 
+
 /*
 entry function for every project
 supply the config and runtime structs
