@@ -12,13 +12,18 @@ uniform sampler2D tex_data;
 void main()
 {
     vec4 img = texture(tex_data, IN.TexCoord);
-    if(img.r == 1.0) {
-        img.a = 0.0;
-    } else {
+    if(img.a == 1.0) {
         img.r = IN.Color.r;
         img.g = IN.Color.g;
         img.b = IN.Color.b;
-        img.a = IN.Color.a;
+        img.a = 1.0;
+    } else if(img.a != 0.0) {
+        img.r = IN.Color.r;
+        img.g = IN.Color.g;
+        img.b = IN.Color.b;
+        img.a = 0.5;
+    } else {
+       img.a = 0.0;
     }
 
     Color = img;

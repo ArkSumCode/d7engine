@@ -45,16 +45,63 @@ impl Font {
         match &self.face {
             Some(face) => {
                 if let Ok(_) = face.load_char(c as usize, LoadFlag::RENDER) {
+                    // width and height of the new bitmap
+                    const WIDTH: usize = 32;
+                    const HEIGHT: usize = 24;
+                    // get the chars instances and make a new empty ImageBuffer
                     let glyph = face.glyph();
-                    let bmap = glyph.bitmap();
-                    let buffer = bmap.buffer();
-                   
-                    if let Some(img) = image::RgbaImage::from_raw(bmap.width() as u32, bmap.width() as u32, Vec::from(buffer)) {
-                        self.cache.insert(c, img.clone());
-                        return Ok(img);
-                    }
+                    let bitmap = glyph.bitmap();
+                    let mut image: image::RgbaImage = image::ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
+                    // p and q are needed to calculate the offset in the buffer
+                    let mut p = 0;
+                    let mut q = 0;
+                    // calculate values for the rectangle we need
+                    let x = glyph.bitmap_left() as usize;
+                    let y = HEIGHT - glyph.bitmap_top() as usize;
+                    let w = bitmap.width() as usize;
+                    let x_max = x + w;
+                    let y_max = y + bitmap.rows() as usize;
+                    // run through the cols 
+                    for i in x .. x_max {
+                        let mut j = y_max - 1;
+                        let mut row_empty = true;
+                        // run through the rows
+                        loop {
+                            if i < WIDTH && j < HEIGHT {
+                                // calculate byte in the buffer -> returns u8 single value color
+                                // 255 -> a pixel that is in the letter
+                                // 0 -> a pixel that is outside of the letter
+                                let result = bitmap.buffer()[q * w + p];
+                                // set the pixel in the new ImageBuffer
+                                if result == 0 {
+                                    *image.get_pixel_mut(i as u32, j as u32) = image::Rgba([0, 0, 0, 0]);
+                                } else if result < 69 {
+                                    *image.get_pixel_mut(i as u32, j as u32) = image::Rgba([255, 255, 255, 77]);
+                                    row_empty = false;
+                                } else {
+                                    *image.get_pixel_mut(i as u32, j as u32) = image::Rgba([255, 255, 255, 255]);
+                                    row_empty = false;
+                                }
+                               
+                                q += 1;
+                            }
+                            
+                            // exit condition for the run thorugh the cols
+                            if j - 1 == 0 || j - 1 < y {
+                                break;
+                            }
 
-                    return Err("font conversion bmap to rbgimage failed".to_string());
+                            j = j - 1;
+                        }
+                        if row_empty {
+                            println!("theres some empty row");
+                        }
+                        q = 0;
+                        p += 1;
+                    }
+                    image.save(format!("{}.png", c).as_str()).unwrap();
+                    self.cache.insert(c, image.clone());
+                    return Ok(image);
                 } 
             },
             None => return Err("font has not bee loaded".to_string()),
