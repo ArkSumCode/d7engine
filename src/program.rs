@@ -15,7 +15,7 @@ pub fn load() -> Result<HashMap<String, Program>, String> {
     let mut programs = HashMap::new();
     programs.insert("rect".to_string(), Program::rect()?);
     programs.insert("texture".to_string(), Program::texture()?);
-    programs.insert("font".to_string(), Program::font()?);
+    //programs.insert("font".to_string(), Program::font()?);
     Ok(programs)
 }
 

@@ -2,7 +2,6 @@
 
 in VS_OUTPUT {
     vec2 TexCoord;
-    vec4 Color;
 } IN;
 
 out vec4 Color;
@@ -13,10 +12,9 @@ void main()
 {
     vec4 img = texture(tex_data, IN.TexCoord);
     
-        img.r = IN.Color.r;
-        img.g = IN.Color.g;
-        img.b = IN.Color.b;
-    
+    img.r = IN.Color.r;
+    img.g = IN.Color.g;
+    img.b = IN.Color.b;
 
     Color = img;
 }

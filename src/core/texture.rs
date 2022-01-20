@@ -37,33 +37,10 @@ impl Texture {
     } 
 
     // draws the texture with a specific program
-    pub fn draw_texture(&self, draw: &Draw, program: &Program) {
-        let pos = program.uniform_location("pos");
-        let dim = program.uniform_location("dim");
-        let cam = program.uniform_location("cam");
-
-        // programs like font can use the uniform color
-        // use the colored constructor to get one
-        let col = if let Some(_) = &self.color {
-            Some(program.uniform_location("color"))
-        } else {
-            None
-        };
-       
+    pub fn draw_texture(&self, _draw: &Draw, program: &Program) {
         program.active();
 
         unsafe {
-            // set values for the uniforms in the shader
-            gl::Uniform2f(cam, draw.camera.width, draw.camera.height);
-            gl::Uniform2f(pos, self.transform.x, self.transform.y);
-            gl::Uniform2f(dim, self.transform.width, self.transform.height);
-
-            if let Some(color) = &self.color {
-                if let Some(c) = col {
-                    gl::Uniform4f(c, color.r as f32, color.g as f32, color.b as f32, color.a as f32);
-                }
-            }
-           
             gl::BindTexture(gl::TEXTURE_2D, self.shader_texture_buffer);
             gl::BindVertexArray(self.shader_buffer);
 
@@ -85,12 +62,13 @@ impl Texture {
     }
 
     // get the vertices passed to the program
+    // first 3 values position, second two are the texture coords
     fn vertices(&self) -> Vec<f32> {
         vec![
-            0.0, 1.0, // top left
-            1.0, 1.0, // top right
-            1.0, 0.0, // bot right
-            0.0, 0.0, // bot left
+            -0.5,  0.5, 0.0, 0.0, 1.0, // top left
+             0.5,  0.5, 0.0, 1.0, 1.0, // top right
+             0.5, -0.5, 0.0, 1.0, 0.0, // bot right
+            -0.5, -0.5, 0.0, 0.0, 0.0, // bot left
         ]
     }
 

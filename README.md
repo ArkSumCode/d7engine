@@ -19,7 +19,7 @@ impl Runtime for Runt {
         
     }
 
-    fn draw(&mut self, _delta: f32, _camera: &mut Camera, _mouse: &Mouse) {
+    fn draw(&mut self, _draw: &Draw) {
        
     }
 }

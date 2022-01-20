@@ -190,14 +190,17 @@ pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbaImage
             gl::STATIC_DRAW,
         );
 
-        let attr_texture_coord = 0;
+        let attr_position_coord = 0;
+        let size_vec3 = 3 * std::mem::size_of::<f32>();
+        let out_vec_3 = 3;
 
-        let _size_vec3 = 3 * std::mem::size_of::<f32>();
+        let attr_texture_coord = 1;
         let size_vec2 = 2 * std::mem::size_of::<f32>();
-        let _out_vec_3 = 3;
         let out_vec_2 = 2;
 
-        /*
+        let size_row = size_vec2 + size_vec3;
+
+         /*
         explaining each attribute to opengl
         vertexattribpointer (
             location in the vertex shader eg. 0,1,2,3 etc,
@@ -208,17 +211,27 @@ pub fn create_texture_shader_buffer(vertices: Vec<f32>, image: &image::RgbaImage
             offset data eg when position is at 0 color is 3 values further,
         )
         */
+
+        gl::VertexAttribPointer(
+            attr_position_coord, 
+            out_vec_3,
+            gl::FLOAT,
+            gl::FALSE,
+            size_row as gl::types::GLint,
+            0 as *const gl::types::GLvoid,
+        );
         
         gl::VertexAttribPointer(
             attr_texture_coord, 
             out_vec_2,
             gl::FLOAT,
             gl::FALSE,
-            size_vec2 as gl::types::GLint,
-            0 as *const gl::types::GLvoid,
-        );
+            size_row as gl::types::GLint,
+            size_vec3 as *const gl::types::GLvoid,
+        ); 
 
         // enable the attributes
+        gl::EnableVertexAttribArray(attr_position_coord);
         gl::EnableVertexAttribArray(attr_texture_coord);
 
         // clear bindings
