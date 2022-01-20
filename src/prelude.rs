@@ -22,3 +22,4 @@ pub use crate::core::font::Font;
 pub use crate::core::texture::Texture;
 pub use crate::core::texture::image_data;
 pub use crate::core::file;
+pub use crate::core::seed::{Seed,Roll};

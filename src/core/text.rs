@@ -6,69 +6,30 @@ its transform
 and the vector of all the chars textures
 */
 pub struct Text {
-    text: String,
-    transform: Transform,
-    textures: Vec<Texture>,
+    texture: Texture,
 }
 
 impl Text {
-    // create a new Text with the transform and the text of the Text
-    pub fn new(transform: Transform, text: &str) -> Text {
-        Text{textures: vec![], text: text.to_string(), transform}
+    // creates a new text, using the font a position(transform), the text, the font size and color
+    pub fn new(font: &Font, transform: Transform, text: &str, font_size: u32, color: &Color) -> Result<Text, String> {
+        let img = font.snapshot(text, font_size as f32)?;
+
+        // the textures transform
+        let transform = Transform{
+            x: transform.x,
+            y: transform.y,
+            width: img.width() as f32,
+            height: img.height() as f32,
+        };
+
+        let mut texture = Texture::colored(transform, color);
+        texture.create_shader_buffer(&img);
+
+        Ok(Text{texture})
     }
 
-    // create all the textures and all transforms of the textures, camera font and color therfore needed
-    pub fn load(&mut self, font: &mut Font, color: &Color) -> Result<(), String> {
-        let mut cursor = 0;
-
-        for d in self.text.chars() {
-            if d == ' ' {
-                cursor += 1;
-                continue;
-            }
-
-            let img = font.char(d)?;
-             
-            // the textures transform
-            let transform = Transform{
-                x: self.transform.x + cursor as f32 * self.transform.width,
-                y: self.transform.y,
-                width: self.transform.width,
-                height: self.transform.height,
-            };
-
-            let mut texture = Texture::colored(transform, color);
-            texture.create_shader_buffer(&img);
-            self.textures.push(texture);
-            cursor += 1;
-        }
-
-        Ok(())
-    }
-
-    // draw the text aka all the chars textures
+    // draw the text' rendered image
     pub fn draw(&self, draw: &Draw) {
-        for img in &self.textures {
-            img.draw(&draw);
-        }
-    }
-
-    // set the position and all the texts textures position
-    pub fn set_pos(&mut self, x: f32, y: f32) {
-        self.transform.set_pos(x, y);
-
-        let mut cursor = 0;
-        let mut i = 0;
-        for d in self.text.chars() {
-            if d == ' ' {
-                cursor += 1;
-                continue;
-            }
-
-            self.textures[i].set_pos(self.transform.x + cursor as f32, self.transform.y);
-
-            i += 1;
-            cursor += 1;
-        }
+        self.texture.draw_font(&draw);
     }
 }
