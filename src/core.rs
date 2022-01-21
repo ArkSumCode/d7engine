@@ -1,10 +1,7 @@
 pub mod seed;
-pub mod transform;
-pub mod texture;
-pub mod rect;
 pub mod color;
-pub mod camera;
-pub mod font;
-pub mod text;
+pub mod window;
+pub mod resource;
 pub mod mouse;
 pub mod file;
+pub mod math;

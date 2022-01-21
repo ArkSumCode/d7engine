@@ -9,6 +9,10 @@ then use snapshot to get a bitmap/rgba image of the rendered text
 this uses the external library rusttype:
 github: https://github.com/redox-os/rusttype/
 docs: https://docs.rs/rusttype/0.9.2/rusttype/index.html
+
+// its part of the resouces system
+// impartant is that we dont load the same image multiple time for 
+// performance reseasons
 */
 pub struct Font<'a> {
     font: rusttype::Font<'a>

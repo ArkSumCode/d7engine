@@ -3,6 +3,10 @@ use std::ffi::CString;
 use std::collections::HashMap;
 use crate::core::file;
 
+pub mod texture;
+pub mod rect;
+pub mod text;
+
 /*
 load all programs and return them
 as a map, fails if one or more programs could not be created
@@ -15,7 +19,7 @@ pub fn load() -> Result<HashMap<String, Program>, String> {
     let mut programs = HashMap::new();
     programs.insert("rect".to_string(), Program::rect()?);
     programs.insert("texture".to_string(), Program::texture()?);
-    //programs.insert("font".to_string(), Program::font()?);
+    programs.insert("text".to_string(), Program::font()?);
     Ok(programs)
 }
 
@@ -38,8 +42,8 @@ impl Program {
     every vertex has a position and color, they will not be modiefied in the shader
     */
     pub fn rect() -> Result<Program, String> {
-        if let Ok(fragment_source) = CString::new(include_str!("shaders/rect.frag")) {
-            if let Ok(vertex_source) = CString::new(include_str!("shaders/rect.vert")) {
+        if let Ok(fragment_source) = CString::new(include_str!("shader/rect.frag")) {
+            if let Ok(vertex_source) = CString::new(include_str!("shader/rect.vert")) {
                 // create the vertex shader
                 let vertex_shader = Shader::from_vertex(&vertex_source)?;
                 // create the fragment shader
@@ -59,8 +63,8 @@ impl Program {
     they will not be modified in the shader
     */
     pub fn texture() -> Result<Program, String> {
-        if let Ok(fragment_source) = CString::new(include_str!("shaders/texture.frag")) {
-            if let Ok(vertex_source) = CString::new(include_str!("shaders/texture.vert")) {
+        if let Ok(fragment_source) = CString::new(include_str!("shader/texture.frag")) {
+            if let Ok(vertex_source) = CString::new(include_str!("shader/texture.vert")) {
                 // create the vertex shader
                 let vertex_shader = Shader::from_vertex(&vertex_source)?;
                 // create the fragment shader
@@ -79,8 +83,8 @@ impl Program {
     shader font.frag and font.vert
     */
     pub fn font() -> Result<Program, String> {
-        if let Ok(fragment_source) = CString::new(include_str!("shaders/font.frag")) {
-            if let Ok(vertex_source) = CString::new(include_str!("shaders/font.vert")) {
+        if let Ok(fragment_source) = CString::new(include_str!("shader/text.frag")) {
+            if let Ok(vertex_source) = CString::new(include_str!("shader/text.vert")) {
                 // create the vertex shader
                 let vertex_shader = Shader::from_vertex(&vertex_source)?;
                 // create the fragment shader
