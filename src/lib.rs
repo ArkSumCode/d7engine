@@ -201,6 +201,11 @@ impl Performance {
         self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
         1.0 / self.fps
     }
+
+    // returns the current fps
+    pub fn fps(&self) -> f32 {
+        self.fps
+    }
 }
 
 /*
