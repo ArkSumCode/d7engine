@@ -75,11 +75,11 @@ impl Texture {
     }
 
     // returns the width of the rgba image
-    fn width(&self) -> u32 {
+    pub fn width(&self) -> u32 {
         self.width
     } 
     // returns the height of the rgba image
-    fn height(&self) -> u32 {
+    pub fn height(&self) -> u32 {
         self.height
     } 
 }
