@@ -9,6 +9,8 @@ pub struct Texture {
     shader_buffer: gl::types::GLuint,
     shader_texture_buffer: gl::types::GLuint,
     transform: Transform,
+    width: u32,
+    height: u32,
 }
 
 impl Texture {
@@ -24,7 +26,7 @@ impl Texture {
         // create the default transform 
         let transform = Transform::new();
 
-        Ok(Texture {shader_buffer, shader_texture_buffer, transform})
+        Ok(Texture {shader_buffer, shader_texture_buffer, transform, width: image.width(), height: image.height()})
     }
 
     // draws the texture to the screen
@@ -71,4 +73,13 @@ impl Texture {
             0.0,      0.0, 0.0, 0.0, 0.0, // bot left
         ]
     }
+
+    // returns the width of the rgba image
+    fn width(&self) -> u32 {
+        self.width
+    } 
+    // returns the height of the rgba image
+    fn height(&self) -> u32 {
+        self.height
+    } 
 }
