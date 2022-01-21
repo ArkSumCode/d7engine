@@ -23,3 +23,4 @@ pub use crate::core::seed::{Seed,Roll};
 pub use crate::core::math::model_view_projection;
 pub use crate::core::window::Window;
 pub use crate::core::math::transform::Transform;
+pub use crate::Performance;

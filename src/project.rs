@@ -71,7 +71,7 @@ like the shaderprograms, camera etc.
 */
 pub struct Draw<'a> {
     pub shaders: &'a HashMap<String, Program>,
-    pub delta: f32,
+    pub performance: crate::Performance,
     pub window: Window,
     pub mouse: Mouse,
 }

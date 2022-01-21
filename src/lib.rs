@@ -79,7 +79,6 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
 
     // create the performance object
     let mut performance = Performance::new();
-    let mut delta = 0.0;
 
     // create the mouse structure
     use crate::core::mouse;
@@ -150,7 +149,7 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
 
         let draw = project::Draw {
             shaders: &default_shaders,
-            delta,
+            performance,
             window: win,
             mouse: mouse.clone(),
         };
@@ -162,7 +161,7 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
         window.gl_swap_window();
 
         // performance tick
-        delta = performance.frame();
+        let _delta = performance.frame();
     }
 
 }
@@ -181,7 +180,8 @@ fn create_whitespace_cstring(len: usize) -> CString {
 structure for keeping track of performance
 it holds the timestamp of the last frame and the current fps
 */
-struct Performance {
+#[derive(Copy, Clone)]
+pub struct Performance {
     last_frame: Instant,
     fps: f32, 
 }
