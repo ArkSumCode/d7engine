@@ -5,9 +5,9 @@ generic rectangle struct
 it holds its shaderbuffer, its transform(position,dimensio) and its color
 */
 pub struct Rect {
+    pub transform: Transform,
     shader_buffer: gl::types::GLuint,
     color: Color,
-    transform: Transform,
     width: f32,
     height: f32,
 }
@@ -62,12 +62,6 @@ impl Rect {
     // returns the color of the rect
     pub fn color(&self) -> Color {
         self.color
-    }
-
-    // sets the x, y, z position 
-    // on the screen
-    pub fn set_pos(&mut self, x: f32, y: f32, z: f32) {
-        self.transform.set(x, y, z);
     }
 
     // sets the color of the text

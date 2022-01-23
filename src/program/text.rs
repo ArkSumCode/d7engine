@@ -6,9 +6,9 @@ its transform
 and the vector of all the chars textures
 */
 pub struct Text {
+    pub transform: Transform,
     shader_buffer: gl::types::GLuint,
     shader_texture_buffer: gl::types::GLuint,
-    transform: Transform,
     color: Color,
     width: u32,
     height: u32,
@@ -58,12 +58,6 @@ impl Text {
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
-    }
-
-    // sets the x, y, z position 
-    // on the screen
-    pub fn set_pos(&mut self, x: f32, y: f32, z: f32) {
-        self.transform.set(x, y, z);
     }
 
     // sets the color of the text

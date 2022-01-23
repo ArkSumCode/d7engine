@@ -6,9 +6,9 @@ it holds the shader buffer, a shader texture buffer
 and its transform in the world
 */
 pub struct Texture {
+    pub transform: Transform,
     shader_buffer: gl::types::GLuint,
     shader_texture_buffer: gl::types::GLuint,
-    transform: Transform,
     width: u32,
     height: u32,
 }
@@ -53,12 +53,6 @@ impl Texture {
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
-    }
-
-    // sets the x, y, z position 
-    // on the screen
-    pub fn set_pos(&mut self, x: f32, y: f32, z: f32) {
-        self.transform.set(x, y, z);
     }
 
    // get the vertices passed to the program
