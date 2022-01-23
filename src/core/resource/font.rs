@@ -49,9 +49,9 @@ impl<'a> Font<'a> {
         // work out the layout size
         let glyphs_height = (v_metrics.ascent - v_metrics.descent).ceil() as u32;
         if let Some(glyphs_width) = glyph_width(&glyphs) {
-            // create a new rgba image with some random value 40, which does nothing until you set it to low, than it chrashes
+            // create a new rgba image with some random value 10, which does nothing until you set it to low, than it chrashes
             // because out of bounds
-            let mut image = ImageBuffer::new(glyphs_width + 40, glyphs_height + 40);
+            let mut image = ImageBuffer::new(glyphs_width + 10, glyphs_height + 10);
 
             // loop through the glyphs in the text positioning each one on a line
             for glyph in glyphs {
