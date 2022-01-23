@@ -11,38 +11,40 @@ pub struct Installation {
     path: String
 }
 
-/*
-creates a folder for the game in appdata
-call this method first if the game needs some file storage on a user pc
-*/
-pub fn install(title: &str) -> Result<Installation, String> {
-    let path = appdata()?;
-    let mut path = PathBuf::from(&path);
-    
-    // create folders %appdata%\d7engine\<title>
-    update_folder(&mut path, "d7engine")?;
-    update_folder(&mut path, title)?;
+impl Installation {
+    /*
+    creates a folder for the game in appdata
+    call this method first if the game needs some file storage on a user pc
+    */
+    pub fn new(title: &str) -> Result<Installation, String> {
+        let path = appdata()?;
+        let mut path = PathBuf::from(&path);
+        
+        // create folders %appdata%\d7engine\<title>
+        update_folder(&mut path, "d7engine")?;
+        update_folder(&mut path, title)?;
 
-    let path = path_as_string(path.as_path())?;
-    Ok(Installation{path: path})
-}
+        let path = path_as_string(path.as_path())?;
+        Ok(Installation{path: path})
+    }
 
-// create or overwrite a file in %appdata%/d7engine/<title>
-pub fn overwrite(installation: &Installation, file: &str, text: &str) -> Result<(), String> {
-    // create pathbuffer and add the file that
-    let mut path = PathBuf::from(&installation.path);
-    path.push(file);
-    let path = path_as_string(path.as_path())?;
+    // create or overwrite a file in %appdata%/d7engine/<title>
+    pub fn overwrite(&self, file: &str, text: &str) -> Result<(), String> {
+        // create pathbuffer and add the file that
+        let mut path = PathBuf::from(&self.path);
+        path.push(file);
+        let path = path_as_string(path.as_path())?;
 
-    // create the filestream
-    if let Ok(mut open) = File::create(&path) {
-        // write to the filestream
-        if let Ok(_) = open.write_all(text.as_bytes()) {
-            return Ok(())
-        }
-    } 
+        // create the filestream
+        if let Ok(mut open) = File::create(&path) {
+            // write to the filestream
+            if let Ok(_) = open.write_all(text.as_bytes()) {
+                return Ok(())
+            }
+        } 
 
-    Err(format!("could not write file {}.", file))
+        Err(format!("could not write file {}.", file))
+    }
 }
 
 // read a file
