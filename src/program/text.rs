@@ -10,6 +10,8 @@ pub struct Text {
     shader_texture_buffer: gl::types::GLuint,
     transform: Transform,
     color: Color,
+    width: u32,
+    height: u32,
 }
 
 impl Text {
@@ -27,7 +29,7 @@ impl Text {
         // create the default transform
         let transform = Transform::new();
   
-        Ok(Text {shader_buffer, shader_texture_buffer, transform, color: *color})
+        Ok(Text {shader_buffer, shader_texture_buffer, transform, color: *color, width: image.width(), height: image.height()})
     }
 
     // draw the text' rendered image
@@ -81,4 +83,13 @@ impl Text {
             0.0,      0.0, 0.0, 0.0, 0.0, // bot left
         ]
     }
+    
+    // returns the width of the rgba image
+    pub fn width(&self) -> u32 {
+        self.width
+    } 
+    // returns the height of the rgba image
+    pub fn height(&self) -> u32 {
+        self.height
+    } 
 }
