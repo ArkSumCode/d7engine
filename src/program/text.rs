@@ -42,8 +42,8 @@ impl Text {
         let color_location = program.uniform_location("color");
 
         // create the mvp (model view projection) matrixes
-        let projection = model_view_projection::ortho(&draw.window);
-        let view = self.transform.view();
+        let projection = mvp::ortho(&draw.window);
+        let view = Transform::view();
         let model = self.transform.model();
 
         unsafe {

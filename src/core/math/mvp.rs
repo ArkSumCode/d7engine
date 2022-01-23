@@ -15,3 +15,8 @@ pub fn translate(src: &TMat4<f32>, x: f32, y: f32, z: f32) -> TMat4<f32> {
 pub fn identity() -> TMat4<f32> {
     nalgebra_glm::identity()
 }
+
+// scale a matrix
+pub fn scale(src: &TMat4<f32>, x: f32, y: f32, z: f32) -> TMat4<f32> {
+    nalgebra_glm::scale(src, &vec3(x, y, z))
+}

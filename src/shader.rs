@@ -126,6 +126,34 @@ pub fn create_default_shader_buffer(vertices: Vec<f32>) -> gl::types::GLuint {
             gl::STATIC_DRAW,
         );
 
+        let attr_position_coord = 0;
+        let size_vec3 = 3 * std::mem::size_of::<f32>();
+        let out_vec_3 = 3;
+
+        /*
+        explaining each attribute to opengl
+        vertexattribpointer (
+            location in the vertex shader eg. 0,1,2,3 etc,
+            specify the output vector (max is vec4 = 4),
+            type of one value in one vertex eg 0.0, 0.1, 0.4 etc..,
+            we have float so set to false (integers are true),
+            size of one vertex position plus color are 6 floats,
+            offset data eg when position is at 0 color is 3 values further,
+        )
+        */
+
+        gl::VertexAttribPointer(
+            attr_position_coord, 
+            out_vec_3,
+            gl::FLOAT,
+            gl::FALSE,
+            size_vec3 as gl::types::GLint,
+            0 as *const gl::types::GLvoid,
+        );
+
+         // enable the attributes
+         gl::EnableVertexAttribArray(attr_position_coord);
+
         // clear bindings
         gl::BindBuffer(gl::ARRAY_BUFFER, 0);
         gl::BindVertexArray(0);

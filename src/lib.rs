@@ -5,10 +5,7 @@ pub mod core;
 pub mod prelude;
 
 use std::ffi::CString;
-use std::time::Instant;
 use sdl2::surface::Surface;
-
-
 
 /*
 entry function for every project
@@ -78,7 +75,7 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
     runtime.load();
 
     // create the performance object
-    let mut performance = Performance::new();
+    let mut performance = crate::core::performance::Performance::new();
 
     // create the mouse structure
     use crate::core::mouse;
@@ -98,7 +95,7 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
             if let sdl2::event::Event::Window { win_event, .. } = event {
                 if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
                     // create the window struct with width and height
-                    win = core::window::Window::new(config.width as i32, config.height as i32);
+                    win = core::window::Window::new(width as i32, height as i32);
                     set_viewport(width, height);
                 }
             }
@@ -174,45 +171,6 @@ fn create_whitespace_cstring(len: usize) -> CString {
     let mut buffer: Vec<u8> = Vec::with_capacity(len + 1);
     buffer.extend([b' '].iter().cycle().take(len));
     unsafe { CString::from_vec_unchecked(buffer) }
-}
-
-/*
-structure for keeping track of performance
-it holds the timestamp of the last frame and the current fps
-*/
-#[derive(Copy, Clone)]
-pub struct Performance {
-    last_frame: Instant,
-    fps: f32, 
-    delta: f32,
-}
-
-impl Performance {
-    // create a new performance object, init timestamp and fps initialize
-    pub fn new() -> Performance {
-        let last_frame = Instant::now();
-        let fps = 0.0;
-        let delta = 0.0;
-        Performance { last_frame, fps, delta }
-    }
-
-    // calculates fps and returns the delta time
-    pub fn frame(&mut self) {
-        let elapsed = self.last_frame.elapsed();
-        self.last_frame =  Instant::now();
-        self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
-        self.delta = 1.0 / self.fps;
-    }
-
-    // returns the current fps
-    pub fn fps(&self) -> f32 {
-        self.fps
-    }
-
-    // returns the current delta
-    pub fn delta(&self) -> f32 {
-        self.delta
-    }
 }
 
 /*

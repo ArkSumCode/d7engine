@@ -7,47 +7,82 @@ it holds its shaderbuffer, its transform(position,dimensio) and its color
 pub struct Rect {
     shader_buffer: gl::types::GLuint,
     color: Color,
+    transform: Transform,
+    width: f32,
+    height: f32,
 }
 
 impl Rect {
     // create a new rectangle, setting the shader buffer to uninitalised for now
-    pub fn new(color: Color) -> Rect {
-        let shader_buffer = 0;
-        Rect {shader_buffer, color}
+    pub fn new(width: f32, height: f32, color: &Color) -> Rect {
+        // create the shaderbuffer and the default shader
+        let shader_buffer = crate::shader::create_default_shader_buffer(Rect::vertices(width, height));
+        // create the default transform
+        let transform = Transform::new();
+        Rect {shader_buffer, color: *color, width, height, transform}
     }
 
-    // create the shaderbuffer and the default shader
-    pub fn create_shader_buffer(&mut self) {
-        self.shader_buffer = crate::shader::create_default_shader_buffer(vec![
-            0.0,  0.0,  0.0, 0.0
-        ]);
-    } 
-
     // call this function every frame to display the rectangle
-    pub fn draw(&self, program: &program::Program) {
-        let col = program.uniform_location("color");
-       
+    pub fn draw(&self, draw: &Draw) {
+        let program = draw.shaders.get("rect").unwrap();
         program.active();
 
+        // get all location references of the uniforms
+        let projection_location = program.uniform_location("projection");
+        let view_location = program.uniform_location("view");
+        let model_location = program.uniform_location("model");
+        let color_location = program.uniform_location("color");
+
+        // create the mvp (model view projection) matrixes
+        let projection = mvp::ortho(&draw.window);
+        let view = Transform::view();
+        let model = self.transform.model();
+
         unsafe {
-            gl::Uniform4f(col, self.color.r as f32, self.color.g as f32, self.color.b as f32, self.color.a as f32);
+            gl::UniformMatrix4fv(projection_location, 1, gl::FALSE, projection.as_ptr());
+            gl::UniformMatrix4fv(view_location, 1, gl::FALSE, view.as_ptr());
+            gl::UniformMatrix4fv(model_location, 1, gl::FALSE, model.as_ptr());
+            gl::Uniform3f(color_location, self.color.r, self.color.g, self.color.b);
 
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
     }
 
-    // draw only the borders of the rectangle
-    pub fn draw_borders(&self, program: &program::Program) {
-        let col = program.uniform_location("color");
-       
-        program.active();
+    // returns the width of the rect
+    pub fn width(&self) -> f32 {
+        self.width
+    }
 
-        unsafe {
-            gl::Uniform4f(col, self.color.r as f32, self.color.g as f32, self.color.b as f32, self.color.a as f32);
+    // returns the height of the rect
+    pub fn height(&self) -> f32 {
+        self.height
+    }
 
-            gl::BindVertexArray(self.shader_buffer);
-            gl::DrawArrays(gl::LINE_STRIP, 0, 4);
-        }
+    // returns the color of the rect
+    pub fn color(&self) -> Color {
+        self.color
+    }
+
+    // sets the x, y, z position 
+    // on the screen
+    pub fn set_pos(&mut self, x: f32, y: f32, z: f32) {
+        self.transform.set_pos(x, y, z);
+    }
+
+    // sets the color of the text
+    pub fn set_color(&mut self, color: Color) {
+        self.color = color;
+    }
+
+    // get the vertices passed to the program
+    // first 3 values position
+    fn vertices(width: f32, height: f32) -> Vec<f32> {
+        vec![
+            0.0,   height, 0.0, // top left
+            width, height, 0.0, // top right
+            width,    0.0, 0.0, // bot right
+            0.0,      0.0, 0.0, // bot left
+        ]
     }
 }
