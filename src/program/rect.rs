@@ -67,7 +67,7 @@ impl Rect {
     // sets the x, y, z position 
     // on the screen
     pub fn set_pos(&mut self, x: f32, y: f32, z: f32) {
-        self.transform.set_pos(x, y, z);
+        self.transform.set(x, y, z);
     }
 
     // sets the color of the text
