@@ -30,7 +30,7 @@ impl Texture {
     }
 
     // draws the texture to the screen
-    pub fn draw(&self, draw: &Draw) {
+    pub fn draw(&self, draw: &Draw, camera: &Transform) {
         let program = draw.shaders.get("texture").unwrap();
         program.active();
 
@@ -41,8 +41,8 @@ impl Texture {
 
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
-        let view = Transform::view();
-        let model = self.transform.model();
+        let view = camera.matrix();
+        let model = self.transform.matrix();
 
         unsafe {
             gl::UniformMatrix4fv(projection_location, 1, gl::FALSE, projection.as_ptr());

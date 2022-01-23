@@ -33,7 +33,7 @@ impl Text {
     }
 
     // draw the text' rendered image
-    pub fn draw(&self, draw: &Draw) {
+    pub fn draw(&self, draw: &Draw, camera: &Transform) {
         let program = draw.shaders.get("text").unwrap();
         program.active();
 
@@ -45,8 +45,8 @@ impl Text {
 
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
-        let view = Transform::view();
-        let model = self.transform.model();
+        let view = camera.matrix();
+        let model = self.transform.matrix();
 
         unsafe {
             gl::UniformMatrix4fv(projection_location, 1, gl::FALSE, projection.as_ptr());
@@ -83,7 +83,7 @@ impl Text {
             0.0,      0.0, 0.0, 0.0, 0.0, // bot left
         ]
     }
-    
+
     // returns the width of the rgba image
     pub fn width(&self) -> u32 {
         self.width
