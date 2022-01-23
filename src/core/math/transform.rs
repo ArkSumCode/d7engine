@@ -14,9 +14,14 @@ impl Transform {
 
     // set the x, y and z position
     // on the screen
-    pub fn set_pos(&mut self, x: f32, y: f32, z: f32) {
+    pub fn set(&mut self, x: f32, y: f32, z: f32) {
         let id = mvp::identity();
         self.matrix = mvp::translate(&id, x, y, z);
+    }
+
+    // add x, y and z to the current position
+    pub fn add(&mut self, x: f32, y: f32, z: f32) {
+        self.matrix = mvp::translate(&self.matrix, x, y, z);
     }
 
     // returns the current model (object) matrix
