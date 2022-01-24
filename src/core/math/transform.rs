@@ -4,7 +4,6 @@ use nalgebra_glm::TMat4;
 // holds transform data in the form of a matrix
 // and the x, y and z values
 // used in shaders
-#[derive(Clone)]
 pub struct Transform {
     matrix: TMat4<f32>,
     x: f32, y: f32, z: f32
