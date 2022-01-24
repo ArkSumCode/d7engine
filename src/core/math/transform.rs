@@ -77,4 +77,13 @@ impl Transform {
     pub fn matrix(&self) -> TMat4<f32> {
         self.matrix
     }
+
+    // returns the position values of the matrix
+    pub fn pos(&self) -> (f32, f32, f32) {
+        (
+            self.matrix[(4, 1)], // x
+            self.matrix[(4, 2)], // y
+            self.matrix[(4, 3)], // z
+        )
+    }
 }
