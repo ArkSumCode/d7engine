@@ -5,6 +5,7 @@ struct that can draw a image/texture to the window
 it holds the shader buffer, a shader texture buffer
 and its transform in the world
 */
+#[derive(Clone)]
 pub struct Texture {
     pub transform: Transform,
     shader_buffer: gl::types::GLuint,
