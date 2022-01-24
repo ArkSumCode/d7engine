@@ -7,7 +7,7 @@ to import the most important stuff of this engine,
 so you wont have to import everything manualy 
 */
 
-pub use crate::project::{Config, Runtime, Event, Draw};
+pub use crate::core::project::{Config, Runtime, Draw};
 pub use crate::core::color::{Color};
 pub use crate::init;
 pub use crate::core::mouse::Mouse;
@@ -25,3 +25,4 @@ pub use crate::core::window::Window;
 pub use crate::core::math::transform::Transform;
 pub use crate::core::performance::Performance;
 pub use crate::core::file::Installation;
+pub use crate::core::event::Event;

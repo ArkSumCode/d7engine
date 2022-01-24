@@ -39,36 +39,15 @@ pub trait Runtime {
     // load is called before the actual gameloop
     fn load(&mut self);
 
-    // inputs is called every frame before draw, handle the inputs from sdl
-    fn inputs(&mut self, event: Event);
-
     // draw is called every frame
     fn draw(&mut self, draw: &Draw);
 }
 
-/*
-definition of all the user events that can happen
-this will get past into runtime inputs so the project 
-doesnt have to include sdl
-return here when unsure what events are available
-*/
 
-pub enum Event {
-    KeyLeft,
-    KeyDown,
-    KeyUp,
-    KeyRight,
-    WheelUp,
-    WheelDown,
-    MouseLeft,
-    MouseRight,
-    Escape,
-    None,
-}
 
 /*
 holds important components for the draw functions,
-like the shaderprograms, camera etc.
+like the shaderprograms, camera, events etc.
 */
 pub struct Draw<'a> {
     pub shaders: &'a HashMap<String, Program>,

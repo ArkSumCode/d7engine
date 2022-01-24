@@ -1,11 +1,11 @@
 pub mod shader;
 pub mod program;
-pub mod project;
 pub mod core;
 pub mod prelude;
 
 use std::ffi::CString;
 use sdl2::surface::Surface;
+use crate::core::event::Event;
 
 /*
 entry function for every project
@@ -13,7 +13,7 @@ supply the config and runtime structs
 
 init sdl and opengl and run the gameloop
 */
-pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
+pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core::project::Runtime) {
     // init sdl and the video subsystem
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
@@ -79,11 +79,12 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
 
     // create the mouse structure
     use crate::core::mouse;
-    let mut mouse = mouse::Mouse::new();
+   
   
     'main: loop {
-        let mouse_state = event_pump.mouse_state();
-
+        let mut special_inputs = vec![];
+        let mut mws = crate::core::mouse::MouseWheelState::None;
+      
         // handling of events
         for event in event_pump.poll_iter() {
             match event {
@@ -104,52 +105,50 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
             transform sdl event into our own format
             so we dont have to include sdl in the project
             */
-            use sdl2::event::Event;
             use sdl2::keyboard::Keycode;
-         
+           
+            // handle special keys
             let mut project_event = match event {
-                Event::KeyDown{keycode: Some(Keycode::W), repeat: false, ..} => project::Event::KeyUp,                  // w
-                Event::KeyDown{keycode: Some(Keycode::A), repeat: false, ..} => project::Event::KeyLeft,                // a
-                Event::KeyDown{keycode: Some(Keycode::D), repeat: false, ..} => project::Event::KeyRight,               // s
-                Event::KeyDown{keycode: Some(Keycode::S), repeat: false, ..} => project::Event::KeyDown,  
-                Event::KeyDown{keycode: Some(Keycode::Escape), repeat: false, ..} => project::Event::Escape,                // d
-                _ => project::Event::None,
+                sdl2::event::Event::KeyDown{keycode: Some(Keycode::W), repeat: false, ..} => Event::KeyUp,                  // w
+                sdl2::event::Event::KeyDown{keycode: Some(Keycode::A), repeat: false, ..} => Event::KeyLeft,                // a
+                sdl2::event::Event::KeyDown{keycode: Some(Keycode::D), repeat: false, ..} => Event::KeyRight,               // s
+                sdl2::event::Event::KeyDown{keycode: Some(Keycode::S), repeat: false, ..} => Event::KeyDown,                // d
+                sdl2::event::Event::KeyDown{keycode: Some(Keycode::Escape), repeat: false, ..} => Event::Escape,            // esc
+                _ => Event::None,
             };
 
             // handle the mouse wheel, check if y greater or less than 0 
-            if let Event::MouseWheel {y, ..} = event {
-                project_event = if y < 0 {
-                    project::Event::WheelDown
+            if let sdl2::event::Event::MouseWheel {y, ..} = event {
+                mws = if y < 0 {
+                    crate::core::mouse::MouseWheelState::Down
                 } else {
-                    project::Event::WheelUp
+                    crate::core::mouse::MouseWheelState::Up
                 };
             }
 
-            runtime.inputs(project_event);
+            special_inputs.push(project_event);
         }
 
-        // handle left mouse button click
-        if mouse_state.left() {
-            runtime.inputs(project::Event::MouseLeft);
-        }
-        // handle right mouse button click
-        if mouse_state.right() {
-            runtime.inputs(project::Event::MouseRight);
-        }
-
-        // update the mouse position
-        mouse.set_pos(mouse_state.x(), mouse_state.y());
+        // create a new mouse struct thats holds the data for our draw struct
+        let mouse_state = event_pump.mouse_state();
+        let mouse = mouse::Mouse::new(
+            mouse_state.x(), 
+            mouse_state.y(), 
+            mouse_state.left(), 
+            mouse_state.right(), 
+            mws
+        );
      
         unsafe {
             // clear the screen
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
 
-        let draw = project::Draw {
+        let draw = crate::core::project::Draw {
             shaders: &default_shaders,
             performance,
             window: win,
-            mouse: mouse.clone(),
+            mouse: mouse,
         };
 
         // call the projects draw method
