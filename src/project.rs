@@ -62,6 +62,7 @@ pub enum Event {
     WheelDown,
     MouseLeft,
     MouseRight,
+    Escape,
     None,
 }
 

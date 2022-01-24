@@ -111,7 +111,8 @@ pub fn init(config: project::Config, runtime: &mut impl project::Runtime) {
                 Event::KeyDown{keycode: Some(Keycode::W), repeat: false, ..} => project::Event::KeyUp,                  // w
                 Event::KeyDown{keycode: Some(Keycode::A), repeat: false, ..} => project::Event::KeyLeft,                // a
                 Event::KeyDown{keycode: Some(Keycode::D), repeat: false, ..} => project::Event::KeyRight,               // s
-                Event::KeyDown{keycode: Some(Keycode::S), repeat: false, ..} => project::Event::KeyDown,                // d
+                Event::KeyDown{keycode: Some(Keycode::S), repeat: false, ..} => project::Event::KeyDown,  
+                Event::KeyDown{keycode: Some(Keycode::Escape), repeat: false, ..} => project::Event::Escape,                // d
                 _ => project::Event::None,
             };
 
