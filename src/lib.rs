@@ -5,7 +5,8 @@ pub mod prelude;
 
 use std::ffi::CString;
 use sdl2::surface::Surface;
-use crate::core::event::Event;
+use sdl2::keyboard::Keycode;
+use std::collections::HashSet;
 
 /*
 entry function for every project
@@ -100,23 +101,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
                     set_viewport(width, height);
                 }
             }
-
-            /*
-            transform sdl event into our own format
-            so we dont have to include sdl in the project
-            */
-            use sdl2::keyboard::Keycode;
            
-            // handle special keys
-            let mut project_event = match event {
-                sdl2::event::Event::KeyDown{keycode: Some(Keycode::W), repeat: false, ..} => Event::KeyUp,                  // w
-                sdl2::event::Event::KeyDown{keycode: Some(Keycode::A), repeat: false, ..} => Event::KeyLeft,                // a
-                sdl2::event::Event::KeyDown{keycode: Some(Keycode::D), repeat: false, ..} => Event::KeyRight,               // s
-                sdl2::event::Event::KeyDown{keycode: Some(Keycode::S), repeat: false, ..} => Event::KeyDown,                // d
-                sdl2::event::Event::KeyDown{keycode: Some(Keycode::Escape), repeat: false, ..} => Event::Escape,            // esc
-                _ => Event::None,
-            };
-
             // handle the mouse wheel, check if y greater or less than 0 
             if let sdl2::event::Event::MouseWheel {y, ..} = event {
                 mws = if y < 0 {
@@ -125,8 +110,20 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
                     crate::core::mouse::MouseWheelState::Up
                 };
             }
+        }
 
-            special_inputs.push(project_event);
+        // Create a set of pressed Keys.
+        let hashset_keys: HashSet<Keycode> = event_pump
+            .keyboard_state()
+            .pressed_scancodes()
+            .filter_map(Keycode::from_scancode)
+            .collect();
+
+        // Create a vec of Strings to 
+        // pass to draw functions
+        let mut keys = vec![];
+        for key in hashset_keys {
+            keys.push(key.to_string());
         }
 
         // create a new mouse struct thats holds the data for our draw struct
@@ -138,18 +135,21 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
             mouse_state.right(), 
             mws
         );
-     
-        unsafe {
-            // clear the screen
-            gl::Clear(gl::COLOR_BUFFER_BIT);
-        }
 
+        // create the draw struct 
+        // that will be passed to draw functions
         let draw = crate::core::project::Draw {
             shaders: &default_shaders,
             performance,
             window: win,
             mouse: mouse,
+            keys: keys,
         };
+     
+        unsafe {
+            // clear the screen
+            gl::Clear(gl::COLOR_BUFFER_BIT);
+        }
 
         // call the projects draw method
         runtime.draw(&draw);

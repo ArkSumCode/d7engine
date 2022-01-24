@@ -54,4 +54,5 @@ pub struct Draw<'a> {
     pub performance: Performance,
     pub window: Window,
     pub mouse: Mouse,
+    pub keys: Vec<String>,
 }

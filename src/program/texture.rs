@@ -61,10 +61,10 @@ impl Texture {
         let height = image.height() as f32;
         let width = image.width() as f32;
         vec![
-            0.0,   height, 0.0, 0.0, 1.0, // top left
-            width, height, 0.0, 1.0, 1.0, // top right
-            width,    0.0, 0.0, 1.0, 0.0, // bot right
-            0.0,      0.0, 0.0, 0.0, 0.0, // bot left
+            0.0,   height, 0.0, 0.0, 0.0, // top left
+            width, height, 0.0, 1.0, 0.0, // top right
+            width,    0.0, 0.0, 1.0, 1.0, // bot right
+            0.0,      0.0, 0.0, 0.0, 1.0, // bot left
         ]
     }
 
