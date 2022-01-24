@@ -80,10 +80,8 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
 
     // create the mouse structure
     use crate::core::mouse;
-   
   
     'main: loop {
-        let mut special_inputs = vec![];
         let mut mws = crate::core::mouse::MouseWheelState::None;
       
         // handling of events
