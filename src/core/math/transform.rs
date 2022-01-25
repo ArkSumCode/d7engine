@@ -81,9 +81,9 @@ impl Transform {
     // returns the position values of the matrix
     pub fn pos(&self) -> (f32, f32, f32) {
         (
-            self.matrix[(4, 1)], // x
-            self.matrix[(4, 2)], // y
-            self.matrix[(4, 3)], // z
+            self.matrix[(0, 3)], // x
+            self.matrix[(1, 3)], // y
+            self.matrix[(2, 3)], // z
         )
     }
 }
