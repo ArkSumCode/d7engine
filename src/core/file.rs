@@ -38,7 +38,7 @@ impl Installation {
     }
 
     // create or overwrite a file in %appdata%/d7engine/<title>
-    pub fn overwrite(&mut self, file: &str, text: &str) -> Result<(), String> {
+    pub fn overwrite(&mut self, file: &str, extension: &str, text: &str) -> Result<(), String> {
         // if the folder is not created
         if let None = &self.path {
             // create it now
@@ -48,7 +48,8 @@ impl Installation {
         if let Some(path) = &self.path {
             // create pathbuffer and add the file that
             let mut path = PathBuf::from(&path);
-            path.push(file);
+            let file = format!("{}.{}", file, extension);
+            path.push(&file);
             let path = path_as_string(path.as_path())?;
 
             // create the filestream
