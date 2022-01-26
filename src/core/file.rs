@@ -16,8 +16,8 @@ impl Installation {
     // create a new empty Installation
     // we put the files in a subfolder of d7engine
     // with the name title
-    pub fn new(title: String) -> Installation {
-        Installation {title, path: None}
+    pub fn new(title: &str) -> Installation {
+        Installation {title: title.to_string(), path: None}
     }
 
     /*
