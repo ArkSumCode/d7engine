@@ -65,6 +65,31 @@ impl Installation {
 
         Err("could not create folder".to_string())
     }
+
+    // read a file in the installation folder
+    // and return the file as a vector of lines (Strings) 
+    pub fn read(&self, file: &str, extension: &str) -> Result<Vec<String>, String> {
+        if let Some(path) = &self.path {
+            // create the path + file
+            let mut path = PathBuf::from(&path);
+            let file = format!("{}.{}", file, extension);
+            path.push(&file);
+            let path = path_as_string(path.as_path())?;
+            // read the file
+            let text = read(path)?;
+            // convert the text in the file to a line (String) vector
+            let collection = text.lines().collect::<Vec<&str>>();
+            let mut lines = vec![];
+            // convert &str to String
+            for line in collection {
+                lines.push(line.to_string());
+            }
+            
+            return Ok(lines);
+        }
+
+        Err(format!("could not read file {}.{}", file, extension))
+    }
 }
 
 // read a file
