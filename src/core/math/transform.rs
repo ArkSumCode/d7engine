@@ -86,4 +86,10 @@ impl Transform {
             self.matrix[(2, 3)], // z
         )
     }
+
+    // rotate the transform
+    // where x y z are the axis
+    pub fn rotate(&mut self, angle: f32, x: f32, y: f32, z: f32) {
+        self.matrix = mvp::rotate(&self.matrix, angle, x, y, z);
+    }
 }
