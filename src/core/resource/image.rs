@@ -36,7 +36,7 @@ impl Image {
     }
 
     // crop an image out of another image
-    pub fn crop_image(image: &mut image::RgbImage, x: i32, y: i32, width: i32, height: i32) -> image::RgbImage {
+    pub fn crop(image: &mut image::RgbImage, x: i32, y: i32, width: i32, height: i32) -> image::RgbImage {
         let img = image::imageops::crop(image, x as u32, y as u32, width as u32, height as u32);
         img.to_image()
     }
