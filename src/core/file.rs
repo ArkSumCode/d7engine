@@ -92,8 +92,12 @@ impl Installation {
     }
 
     // returns the path of the installation
-    pub fn path(&self) -> Option<&String> {
-        self.path.as_ref()
+    pub fn path(&self) -> Result<String, String> {
+        if let Some(path) = &self.path {
+            return Ok(path.to_string());
+        }
+
+        Err("No installation path.".to_string())
     }
 }
 
