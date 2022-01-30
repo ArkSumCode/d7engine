@@ -139,7 +139,7 @@ fn appdata() -> Result<String, String> {
 }
 
 // turns Path struct into a string
-fn path_as_string(path: &Path) -> Result<String, String> {
+pub fn path_as_string(path: &Path) -> Result<String, String> {
     if let Some(formatted) = path.to_str() {
         return Ok(String::from(formatted))
     }
