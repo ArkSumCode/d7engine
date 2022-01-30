@@ -15,7 +15,7 @@ pub struct Texture {
 
 impl Texture {
     // creates a new texture object
-    pub fn new(image: &Image) -> Result<Texture, String> {
+    pub fn new(image: &Image) -> Texture {
         let image = image.to_rgba_image();
         // create the shader buffer, for that we need the image and the vertices
         let (shader_texture_buffer, shader_buffer) = crate::shader::create_texture_shader_buffer(
@@ -26,7 +26,10 @@ impl Texture {
         // create the default transform 
         let transform = Transform::new();
 
-        Ok(Texture {shader_buffer, shader_texture_buffer, transform, width: image.width(), height: image.height()})
+        Texture {
+            shader_buffer, shader_texture_buffer, 
+            transform, width: image.width(), height: image.height()
+        }
     }
 
     // draws the texture to the screen
