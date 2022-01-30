@@ -35,9 +35,10 @@ impl Image {
         Err(format!("could not open image '{}'", path))
     }
 
-    // crop an image out of another image
-    pub fn crop(image: &mut image::RgbImage, x: i32, y: i32, width: i32, height: i32) -> image::RgbImage {
-        let img = image::imageops::crop(image, x as u32, y as u32, width as u32, height as u32);
+    // crop an image out of this image
+    pub fn crop(&self, x: i32, y: i32, width: i32, height: i32) -> image::RgbaImage {
+        let mut data = self.to_rgba_image();
+        let img = image::imageops::crop(&mut data, x as u32, y as u32, width as u32, height as u32);
         img.to_image()
     }
 }
