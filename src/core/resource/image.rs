@@ -36,10 +36,10 @@ impl Image {
     }
 
     // crop an image out of this image
-    pub fn crop(&self, x: i32, y: i32, width: i32, height: i32) -> image::RgbaImage {
+    pub fn crop(&self, x: i32, y: i32, width: i32, height: i32) -> Image {
         let mut data = self.to_rgba_image();
         let img = image::imageops::crop(&mut data, x as u32, y as u32, width as u32, height as u32);
-        img.to_image()
+        Image {data: Box::new(img.to_image())}
     }
 }
 
