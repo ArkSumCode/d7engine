@@ -25,3 +25,4 @@ pub use crate::core::window::Window;
 pub use crate::core::math::transform::Transform;
 pub use crate::core::performance::Performance;
 pub use crate::core::file::Installation;
+pub use std::path::{PathBuf, Path};

@@ -92,9 +92,10 @@ impl Installation {
     }
 
     // returns the path of the installation
-    pub fn path(&self) -> Result<String, String> {
+    pub fn path(&self) -> Result<PathBuf, String> {
         if let Some(path) = &self.path {
-            return Ok(path.to_string());
+            let buffer = PathBuf::from(&path);
+            return Ok(buffer);
         }
 
         Err("No installation path.".to_string())
