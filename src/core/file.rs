@@ -90,6 +90,11 @@ impl Installation {
 
         Err(format!("could not read file {}.{}", file, extension))
     }
+
+    // returns the path of the installation
+    pub fn path(&self) -> Option<&String> {
+        self.path.as_ref()
+    }
 }
 
 // read a file
