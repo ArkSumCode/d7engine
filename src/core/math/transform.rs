@@ -103,15 +103,6 @@ impl Transform {
         self.rotation = mvp::rotate(&self.rotation, angle, x, y, z);
     }
 
-     // read the values of the rotation matrix
-     pub fn rotation(&self) -> (f32, f32, f32) {
-        (
-            self.rotation[(0, 3)], // x
-            self.rotation[(1, 3)], // y
-            self.rotation[(2, 3)], // z
-        )
-    }
-
     // set the scale of the transform
     pub fn set_scale(&mut self, x: f32, y: f32, z: f32) {
         let id = mvp::identity();
@@ -121,14 +112,5 @@ impl Transform {
     // add to the scale of the transform
     pub fn add_scale(&mut self, x: f32, y: f32, z: f32) {
         self.scale = mvp::scale(&self.scale, x, y, z);
-    }
-
-    // read the values of the scale matrix
-    pub fn scale(&self) -> (f32, f32, f32) {
-        (
-            self.scale[(0, 3)], // x
-            self.scale[(1, 3)], // y
-            self.scale[(2, 3)], // z
-        )
     }
 }
