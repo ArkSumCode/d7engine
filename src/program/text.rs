@@ -86,4 +86,11 @@ impl Text {
     pub fn height(&self) -> u32 {
         self.height
     } 
+
+    // returns if a point collides with the 
+    // text in a 2d space
+    pub fn collides(&self, x: f32, y: f32) -> bool {
+        let (x2, y2, _) = self.transform.pos();
+        collision::point_in_rect(x, y, x2, y2, self.width() as f32, self.height() as f32)
+    }
 }

@@ -58,7 +58,7 @@ impl Texture {
         }
     }
 
-   // get the vertices passed to the program
+    // get the vertices passed to the program
     // first 3 values position, second two are the texture coords
     fn vertices(image: &image::RgbaImage) -> Vec<f32> {
         let height = image.height() as f32;
@@ -75,8 +75,16 @@ impl Texture {
     pub fn width(&self) -> u32 {
         self.width
     } 
+
     // returns the height of the rgba image
     pub fn height(&self) -> u32 {
         self.height
-    } 
+    }
+    
+    // returns if a point collides with the 
+    // texture in a 2d space
+    pub fn collides(&self, x: f32, y: f32) -> bool {
+        let (x2, y2, _) = self.transform.pos();
+        collision::point_in_rect(x, y, x2, y2, self.width() as f32, self.height() as f32)
+    }
 }

@@ -19,7 +19,7 @@ pub use crate::program::rect::Rect;
 pub use crate::core::resource::{font::Font, image::Image};
 pub use crate::program::texture::Texture;
 pub use crate::core::seed::{Seed,Roll};
-pub use crate::core::math::mvp;
+pub use crate::core::math::{mvp, collision};
 pub use crate::core::window::Window;
 pub use crate::core::math::transform::Transform;
 pub use crate::core::performance::Performance;

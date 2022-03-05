@@ -79,4 +79,11 @@ impl Rect {
             0.0,      0.0, 0.0, // bot left
         ]
     }
+
+    // returns if a point collides with the 
+    // rect in a 2d space
+    pub fn collides(&self, x: f32, y: f32) -> bool {
+        let (x2, y2, _) = self.transform.pos();
+        collision::point_in_rect(x, y, x2, y2, self.width(), self.height())
+    }
 }
