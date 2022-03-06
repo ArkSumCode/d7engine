@@ -51,16 +51,7 @@ impl Installation {
             let file = format!("{}.{}", file, extension);
             path.push(&file);
             let path = path_as_string(path.as_path())?;
-
-            // create the filestream
-            if let Ok(mut open) = File::create(&path) {
-                // write to the filestream
-                if let Ok(_) = open.write_all(text.as_bytes()) {
-                    return Ok(())
-                }
-            } 
-
-            return Err(format!("could not write file {}.", file));
+            return write(&path, text);
         }
 
         Err("could not create folder".to_string())
@@ -114,7 +105,20 @@ pub fn read(file: &str) -> Result<String, String> {
         }
     }
 
-    Err(format!("could not read file {}.", file))
+    Err(format!("Could not read file {}.", file))
+}
+
+// write a file
+pub fn write(file: &str, data: &str) -> Result<(), String> {
+    // create the filestream
+    if let Ok(mut open) = File::create(file) {
+        // write to the filestream
+        if let Ok(_) = open.write_all(data.as_bytes()) {
+            return Ok(())
+        }
+    } 
+
+    Err(format!("Could not write file {}.", file))
 }
 
 // returns os string to appdata
