@@ -109,9 +109,8 @@ impl Program {
         let fragment = format!("{}.frag", path);
 
         // read the files
-        let vertex_file = file::read(vertex)?;
-        let fragment_file = file::read(fragment)?;
-
+        let vertex_file = file::read(&vertex)?;
+        let fragment_file = file::read(&fragment)?;
        
         if let Ok(vertex_source) = CString::new(vertex_file.as_str()) {
             if let Ok(fragment_source) = CString::new(fragment_file.as_str()) {

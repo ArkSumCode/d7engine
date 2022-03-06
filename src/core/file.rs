@@ -76,7 +76,7 @@ impl Installation {
             path.push(&file);
             let path = path_as_string(path.as_path())?;
             // read the file
-            let text = read(path)?;
+            let text = read(&path)?;
             // convert the text in the file to a line (String) vector
             let collection = text.lines().collect::<Vec<&str>>();
             let mut lines = vec![];
@@ -103,9 +103,9 @@ impl Installation {
 }
 
 // read a file
-pub fn read(file: String) -> Result<String, String> {
+pub fn read(file: &str) -> Result<String, String> {
     // open one file
-    if let Ok(mut file) = File::open(&file) {
+    if let Ok(mut file) = File::open(file) {
         let mut contents = String::new();
 
         // put the file into a string
