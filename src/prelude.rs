@@ -23,6 +23,6 @@ pub use crate::core::math::{mvp, collision};
 pub use crate::core::window::Window;
 pub use crate::core::math::transform::Transform;
 pub use crate::core::performance::Performance;
-pub use crate::core::{file, file::Installation};
+pub use crate::core::{file, file::installation::Installation};
 pub use std::path::{PathBuf, Path};
 pub use std::f32::consts::PI;
