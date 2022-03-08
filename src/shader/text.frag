@@ -16,6 +16,6 @@ void main()
     t.r = IN.Color.r;
     t.g = IN.Color.g;
     t.b = IN.Color.b;
-    t.a = IN.Opacity;
+    t.a = t.a * IN.Opacity;
     Color = t;
 }

@@ -12,6 +12,6 @@ uniform sampler2D tex_data;
 void main()
 {
     vec4 t = texture(tex_data, IN.TexCoord);
-    t.a = IN.Opacity;
+    t.a = t.a * IN.Opacity;
     Color = t;
 }
