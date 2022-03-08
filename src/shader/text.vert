@@ -7,10 +7,12 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 uniform vec3 color;
+uniform float opacity;
 
 out VS_OUTPUT {
     vec2 TexCoord;
     vec3 Color;
+    float Opacity;
 } OUT;
 
 void main()
@@ -18,4 +20,5 @@ void main()
     gl_Position = projection * view * model * vec4(Position, 1.0);
     OUT.TexCoord = TexCoord;
     OUT.Color = color;
+    OUT.Opacity = opacity;
 }

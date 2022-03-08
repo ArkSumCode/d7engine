@@ -10,6 +10,7 @@ pub struct Rect {
     color: Color,
     width: f32,
     height: f32,
+    opacity: f32,
 }
 
 impl Rect {
@@ -19,7 +20,7 @@ impl Rect {
         let shader_buffer = crate::shader::create_default_shader_buffer(Rect::vertices(width, height));
         // create the default transform
         let transform = Transform::new();
-        Rect {shader_buffer, color: *color, width, height, transform}
+        Rect {shader_buffer, color: *color, width, height, transform, opacity: 1.0}
     }
 
     // call this function every frame to display the rectangle
@@ -32,6 +33,7 @@ impl Rect {
         let view_location = program.uniform_location("view");
         let model_location = program.uniform_location("model");
         let color_location = program.uniform_location("color");
+        let opacity_location = program.uniform_location("opacity");
 
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
@@ -43,10 +45,16 @@ impl Rect {
             gl::UniformMatrix4fv(view_location, 1, gl::FALSE, view.as_ptr());
             gl::UniformMatrix4fv(model_location, 1, gl::FALSE, model.as_ptr());
             gl::Uniform3f(color_location, self.color.r, self.color.g, self.color.b);
+            gl::Uniform1f(opacity_location, self.opacity);
 
             gl::BindVertexArray(self.shader_buffer);
             gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
+    }
+
+    // set the opacity of the rect
+    pub fn set_opacity(&mut self, value: f32) {
+        self.opacity = value;
     }
 
     // returns the width of the rect

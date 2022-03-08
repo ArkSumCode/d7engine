@@ -12,6 +12,7 @@ pub struct Text {
     color: Color,
     width: u32,
     height: u32,
+    opacity: f32,
 }
 
 impl Text {
@@ -29,7 +30,7 @@ impl Text {
         // create the default transform
         let transform = Transform::new();
   
-        Ok(Text {shader_buffer, shader_texture_buffer, transform, color: *color, width: image.width(), height: image.height()})
+        Ok(Text {shader_buffer, shader_texture_buffer, transform, color: *color, width: image.width(), height: image.height(), opacity: 1.0})
     }
 
     // draw the text' rendered image
@@ -42,6 +43,7 @@ impl Text {
         let view_location = program.uniform_location("view");
         let model_location = program.uniform_location("model");
         let color_location = program.uniform_location("color");
+        let opacity_location = program.uniform_location("opacity");
 
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
@@ -53,6 +55,7 @@ impl Text {
             gl::UniformMatrix4fv(view_location, 1, gl::FALSE, view.as_ptr());
             gl::UniformMatrix4fv(model_location, 1, gl::FALSE, model.as_ptr());
             gl::Uniform3f(color_location, self.color.r, self.color.g, self.color.b);
+            gl::Uniform1f(opacity_location, self.opacity);
 
             gl::BindTexture(gl::TEXTURE_2D, self.shader_texture_buffer);
             gl::BindVertexArray(self.shader_buffer);
@@ -63,6 +66,11 @@ impl Text {
     // sets the color of the text
     pub fn set_color(&mut self, color: Color) {
         self.color = color;
+    }
+
+    // set the opacity of the text
+    pub fn set_opacity(&mut self, value: f32) {
+        self.opacity = value;
     }
 
     // get the vertices passed to the program

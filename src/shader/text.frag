@@ -3,6 +3,7 @@
 in VS_OUTPUT {
     vec2 TexCoord;
     vec3 Color;
+    float Opacity;
 } IN;
 
 out vec4 Color;
@@ -15,5 +16,6 @@ void main()
     t.r = IN.Color.r;
     t.g = IN.Color.g;
     t.b = IN.Color.b;
+    t.a = IN.Opacity;
     Color = t;
 }
