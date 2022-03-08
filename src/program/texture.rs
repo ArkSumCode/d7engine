@@ -11,6 +11,7 @@ pub struct Texture {
     shader_texture_buffer: gl::types::GLuint,
     width: u32,
     height: u32,
+    opacity: f32,
 }
 
 impl Texture {
@@ -28,7 +29,8 @@ impl Texture {
 
         Texture {
             shader_buffer, shader_texture_buffer, 
-            transform, width: image.width(), height: image.height()
+            transform, width: image.width(), height: image.height(),
+            opacity: 1.0,
         }
     }
 
@@ -41,6 +43,7 @@ impl Texture {
         let projection_location = program.uniform_location("projection");
         let view_location = program.uniform_location("view");
         let model_location = program.uniform_location("model");
+        let opacity_location = program.uniform_location("opacity");
 
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
@@ -51,6 +54,7 @@ impl Texture {
             gl::UniformMatrix4fv(projection_location, 1, gl::FALSE, projection.as_ptr());
             gl::UniformMatrix4fv(view_location, 1, gl::FALSE, view.as_ptr());
             gl::UniformMatrix4fv(model_location, 1, gl::FALSE, model.as_ptr());
+            gl::Uniform1f(opacity_location, self.opacity);
 
             gl::BindTexture(gl::TEXTURE_2D, self.shader_texture_buffer);
             gl::BindVertexArray(self.shader_buffer);
@@ -69,6 +73,11 @@ impl Texture {
             width,    0.0, 0.0, 1.0, 1.0, // bot right
             0.0,      0.0, 0.0, 0.0, 1.0, // bot left
         ]
+    }
+
+    // set the opacity of the texture
+    pub fn set_opacity(&mut self, value: f32) {
+        self.opacity = value;
     }
 
     // returns the width of the rgba image
