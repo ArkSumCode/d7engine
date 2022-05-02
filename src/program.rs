@@ -1,7 +1,4 @@
-use crate::shader::Shader;
-use std::ffi::CString;
-use std::collections::HashMap;
-use crate::core::file;
+use crate::prelude::*;
 
 pub mod texture;
 pub mod rect;

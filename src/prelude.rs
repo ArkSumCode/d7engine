@@ -27,3 +27,5 @@ pub use crate::core::{file, file::installation::Installation};
 pub use std::path::{PathBuf, Path};
 pub use std::f32::consts::PI;
 pub use gl;
+pub use std::ffi::CString;
+pub use crate::shader::Shader;
