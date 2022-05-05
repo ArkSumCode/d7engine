@@ -29,3 +29,4 @@ pub use std::f32::consts::PI;
 pub use gl;
 pub use std::ffi::CString;
 pub use crate::shader::Shader;
+pub use nalgebra_glm;
