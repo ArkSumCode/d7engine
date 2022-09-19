@@ -1,12 +1,11 @@
-pub mod shader;
-pub mod program;
 pub mod core;
 pub mod prelude;
 
-use std::ffi::CString;
 use sdl2::surface::Surface;
 use sdl2::keyboard::Keycode;
 use std::collections::HashSet;
+
+use crate::core::mouse;
 
 /*
 entry function for every project
@@ -23,7 +22,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
     let gl_attr = video_subsystem.gl_attr();
     gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
     // version
-    gl_attr.set_context_version(4, 5);
+    gl_attr.set_context_version(3, 3);
     // double buffering
     gl_attr.set_double_buffer(true);
 
@@ -45,7 +44,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
 
     // tell opengl where the video subsystem is on the memeory
     let _gl = gl::load_with(
-        |s| video_subsystem.gl_get_proc_address(s) as *const std::os::raw::c_void
+        |ptr| video_subsystem.gl_get_proc_address(ptr) as *const _
     );
 
     // set vsync
@@ -69,17 +68,11 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
     // create the window struct with width and height
     let mut win = core::window::Window::new(config.width as i32, config.height as i32);
 
-    // create the default shaders
-    let default_shaders = program::load().unwrap();
-
-    // call the projects load funtion
-    runtime.load();
-
     // create the performance object
     let mut performance = crate::core::performance::Performance::new();
 
-    // create the mouse structure
-    use crate::core::mouse;
+    // call the projects load funtion
+    runtime.load();
   
     'main: loop {
         let mut mws = crate::core::mouse::MouseWheelState::None;
@@ -110,6 +103,16 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
             }
         }
 
+        // create a new mouse struct thats holds the data for our draw struct
+        let mouse_state = event_pump.mouse_state();
+        let mouse = mouse::Mouse::new(
+            mouse_state.x(), 
+            mouse_state.y(), 
+            mouse_state.left(), 
+            mouse_state.right(), 
+            mws
+        );
+
         // Create a set of pressed Keys.
         let hashset_keys: HashSet<Keycode> = event_pump
             .keyboard_state()
@@ -124,20 +127,9 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
             keys.push(key.to_string());
         }
 
-        // create a new mouse struct thats holds the data for our draw struct
-        let mouse_state = event_pump.mouse_state();
-        let mouse = mouse::Mouse::new(
-            mouse_state.x(), 
-            mouse_state.y(), 
-            mouse_state.left(), 
-            mouse_state.right(), 
-            mws
-        );
-
         // create the draw struct 
         // that will be passed to draw functions
         let draw = crate::core::project::Draw {
-            shaders: &default_shaders,
             performance,
             window: win,
             mouse: mouse,
@@ -161,15 +153,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
 
 }
 
-/*
-create a c string of a certain length of whitespaces
-mainly used to get opengl errors
-*/
-fn create_whitespace_cstring(len: usize) -> CString {
-    let mut buffer: Vec<u8> = Vec::with_capacity(len + 1);
-    buffer.extend([b' '].iter().cycle().take(len));
-    unsafe { CString::from_vec_unchecked(buffer) }
-}
+
 
 /*
 always set the viewport to be a square so 

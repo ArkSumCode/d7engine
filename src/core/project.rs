@@ -15,9 +15,9 @@ pub struct Config {
     pub background_color: Color,
 }
 
-impl Config {
+impl Default for Config {
     // returns a default configuration
-    pub fn default() -> Config {
+    fn default() -> Config {
         Config {
             title: String::from("d7engine"),
             width: 1270,
@@ -40,17 +40,14 @@ pub trait Runtime {
     fn load(&mut self);
 
     // draw is called every frame
-    fn draw(&mut self, draw: &Draw);
+    fn draw(&self, draw: &Draw);
 }
-
-
 
 /*
 holds important components for the draw functions,
 like the shaderprograms, camera, events etc.
 */
-pub struct Draw<'a> {
-    pub shaders: &'a HashMap<String, Program>,
+pub struct Draw {
     pub performance: Performance,
     pub window: Window,
     pub mouse: Mouse,

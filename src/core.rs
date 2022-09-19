@@ -7,3 +7,5 @@ pub mod file;
 pub mod math;
 pub mod performance;
 pub mod project;
+pub mod shader;
+pub mod component;
