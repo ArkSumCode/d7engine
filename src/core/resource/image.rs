@@ -5,6 +5,7 @@ use image;
 // impartant is that we dont load the same image multiple time for 
 // performance reseasons
 
+#[derive(Clone)]
 pub struct Image {
     data: Box<image::RgbaImage>,
     width: u32,
@@ -20,6 +21,18 @@ impl Image {
             data: Box::new(data),
             width, height
         })
+    }
+
+    // create the image struct from a image::RgbaImage 
+    // this will consume the image
+    pub fn from(image: image::RgbaImage) -> Self {
+        let width = image.width();
+        let height = image.height();
+
+        Image {
+            data: Box::new(image),
+            width, height,
+        }
     }
 
     // convert the image to an image::RgbaImage which can be used 
@@ -62,4 +75,3 @@ impl Image {
         self.height
     }
 }
-

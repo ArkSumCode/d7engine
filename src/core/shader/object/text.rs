@@ -3,90 +3,100 @@ use crate::prelude::*;
 const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330
     layout (location = 0) in vec2 position;
-    layout (location = 1) in vec3 color;
+    layout (location = 1) in vec2 texcoord;
     layout (location = 2) in vec2 offset;
     layout (location = 3) in vec2 scale;
+    layout (location = 4) in vec3 color;
     
     uniform mat4 projection;
     uniform mat4 view;
     uniform mat4 model;
 
+    out vec2 oTexCoord;
     out vec3 oColor;
 
     void main() {
         vec2 scale_position = position * scale;
         vec2 offset_position = scale_position + offset;
         gl_Position = projection * view * model * vec4(offset_position, 0.0, 1.0);
+        oTexCoord = texcoord;
         oColor = color;
     }
 "#;
 
 const FRAGMENT_SHADER_SOURCE: &str = r#"
     #version 330
+
+    uniform sampler2D sampler;
+
+    in vec2 oTexCoord;
     in vec3 oColor;
 
     out vec4 color;
 
     void main() {
-        color = vec4(oColor, 1.0);
+        vec4 t = texture(sampler, oTexCoord);
+        t.r = oColor.r;
+        t.g = oColor.g;
+        t.b = oColor.b;
+        color = t;
     }
 "#;
 
-/*
-A rect is an instanced 
-implementation of a the shaders above
-it holds all the data that is used for drawing rectangles to 
-the screen
-
-when rect gets dropped the shader also gets 
-deletet from the graphics card
-*/
 type TransformData = [f32; 7];
 
-pub struct Rect {
+pub struct Text {
     pub transform: Transform,
     program: Program,
     vertex_array: VertexArray,
     model_buffer: Buffer, // the buffer needs to stay alive
+    texture_buffer: TextureBuffer, // the buffer needs to stay alive
     transform_buffer: Buffer, // the buffer needs to stay alive
-    transform_data: Vec<TransformData>
+    transform_data: Vec<TransformData>,
+    image_data: Image,
 }
 
-impl Rect {
-    // creates an empty Rect
-    pub fn instanced() -> Rect {
-        Self {
+impl Text {
+    pub fn instanced(text: &str, font: &Font, font_size: i32) -> Result<Self, String> {
+        // create the text as rgba image
+        let image = font.snapshot(text, font_size as f32)?;
+        let image = Image::from(image);
+
+        let text = Self {
             transform: Transform::new(),
             program: Program::default(),
             vertex_array: VertexArray::default(),
             model_buffer: Buffer::default(),
+            texture_buffer: TextureBuffer::default(),
             transform_buffer: Buffer::default(),
             transform_data: vec![],
-        }
+            image_data: image,
+        };
+
+        Ok(text)
     }
 
-    // add an new Rect to the transform data
-    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32, color: &Color) {
+    // add an new Text to the transform data
+    pub fn new(&mut self, x: f32, y: f32, color: &Color) {
         let transform_data: TransformData = [
-            color.r, color.g, color.b, x, y, width, height, 
+            x, y, self.image_data.width() as f32, self.image_data.height() as f32, color.r, color.g, color.b,
         ];
 
         self.transform_data.push(transform_data);
     }
 }
 
-impl Component for Rect {
-    // create shaders and buffers
+impl Component for Text {
     fn load(&mut self) -> Result<(), String> {
-        let model_data: [f32; 4*2] = [
-            1.0,  0.0,    // top right 0
-            0.0,  0.0,    // top left 1
-            0.0,  1.0, // bottom left 2 
-            1.0,  1.0, // bottom right 3
+        let model_data: [f32; 4*4] = [
+            1.0,  0.0, 1.0, 1.0,    // top right 0
+            0.0,  0.0, 0.0, 1.0,    // top left 1
+            0.0,  1.0, 0.0, 0.0,    // bottom left 2 
+            1.0,  1.0, 1.0, 0.0,    // bottom right 3
         ];
 
         let transform_data = self.transform_data.concat();
-
+        
         unsafe {
             // create the shaderprogram
             let vertex_shader = Shader::new(VERTEX_SHADER_SOURCE, gl::VERTEX_SHADER)?;
@@ -101,28 +111,33 @@ impl Component for Rect {
             self.model_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::STATIC_DRAW);
             self.model_buffer.set_data(&model_data.to_vec());
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(0, 2, gl::FLOAT, gl::FALSE, 8, 0 as *const _); // position
+            gl::VertexAttribPointer(0, 2, gl::FLOAT, gl::FALSE, 16, 0 as *const _); // position
+            gl::VertexAttribPointer(1, 2, gl::FLOAT, gl::FALSE, 16, 8 as *const _); // texcoord
             gl::EnableVertexAttribArray(0);
+            gl::EnableVertexAttribArray(1);
+
+            // create the texture buffer out of the image
+            self.texture_buffer = TextureBuffer::new();
+            self.texture_buffer.set_data(&self.image_data.to_rgba_image());
           
             // create a new buffer for our transform data
             self.transform_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::DYNAMIC_DRAW);
             self.transform_buffer.set_data(&transform_data);
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 28, 0 as *const _); // color
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 28, 12 as *const _); // offset
-            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 28, 20 as *const _); // scale
-            gl::VertexAttribDivisor(1, 1);
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 28, 0 as *const _); // offset
+            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 28, 8 as *const _); // scale
+            gl::VertexAttribPointer(4, 3, gl::FLOAT, gl::FALSE, 28, 16 as *const _); // color
             gl::VertexAttribDivisor(2, 1);
             gl::VertexAttribDivisor(3, 1);
-            gl::EnableVertexAttribArray(1);
+            gl::VertexAttribDivisor(4, 1);
             gl::EnableVertexAttribArray(2);
             gl::EnableVertexAttribArray(3);
+            gl::EnableVertexAttribArray(4);
         }
 
         Ok(())
     }
 
-    // draw the rectangle to the screen
     fn draw(&self, draw: &Draw, camera: &Transform) -> Result<(), String> {
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
@@ -132,9 +147,11 @@ impl Component for Rect {
         unsafe {
             // bind the programm and vertex array before sending
             // uniform and drawing
+            // we also need to bind the texture
             self.program.bind();
             self.vertex_array.bind();
-           
+            self.texture_buffer.bind();
+
             // set the model view matrices
             let projection_location = self.program.get_uniform_location("projection")?;
             let view_location = self.program.get_uniform_location("view")?;

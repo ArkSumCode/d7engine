@@ -1,6 +1,8 @@
 use gl::types::*;
 
 pub mod rect;
+pub mod texture;
+pub mod text;
 
 /*
 a buffer holds the information
@@ -118,6 +120,82 @@ impl Drop for VertexArray {
     fn drop(&mut self) {
         unsafe {
             gl::DeleteVertexArrays(1, [self.id].as_ptr());
+        }
+    }
+}
+
+
+// a Texture Buffer
+// holds information from textures
+// we need a seperate location on the grapics card
+pub struct TextureBuffer {
+    pub id: GLuint,
+}
+
+impl TextureBuffer {
+    // generate the id 
+    pub fn new() -> Self {
+        let mut id: GLuint = 0;
+        unsafe {
+            gl::GenTextures(1, &mut id);
+        }
+        Self { id }
+    }
+
+    // set the texture buffer to active 
+    // there can only one texture buffer be active at a time
+    pub fn bind(&self) {
+        unsafe {
+            gl::BindTexture(gl::TEXTURE_2D, self.id);
+        }
+    }
+
+    // give the buffer its data
+    // this data is an image
+    pub fn set_data(&self, image: &image::RgbaImage) {
+        self.bind();
+        let (width, height) = image.dimensions();
+
+        unsafe {
+            // pixelate the image when scaling down
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
+            // pixelate the image when scaling up
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
+
+            // structure of the texture, with width height and texture data
+            gl::TexImage2D(
+                gl::TEXTURE_2D,
+                0,
+                gl::RGBA as i32,
+                width as i32,
+                height as i32,
+                0,
+                gl::RGBA,
+                gl::UNSIGNED_BYTE,
+                image.as_ptr() as *const gl::types::GLvoid,
+            );
+
+            // generate the neccessasary mipmap textures, (needed when texture is very near or far away)
+            gl::GenerateMipmap(gl::TEXTURE_2D);
+        }
+    }
+}
+
+impl Default for TextureBuffer {
+    // an empty TextureBuffer
+    fn default() -> Self {
+        Self {
+            id: 0,
+        }
+    }
+}
+
+// delete the texture buffer on the graphics card 
+// when VertexArray gets dropped
+impl Drop for TextureBuffer {
+    fn drop(&mut self) {
+        unsafe {
+            gl::DeleteTextures(1, [self.id].as_ptr());
         }
     }
 }

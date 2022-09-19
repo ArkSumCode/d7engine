@@ -26,6 +26,6 @@ pub use std::ffi::CString;
 pub use nalgebra_glm;
 pub use crate::core::shader::Shader;
 pub use crate::core::shader::program::Program;
-pub use crate::core::shader::object::{VertexArray, Buffer};
-pub use crate::core::shader::object::rect::Rect;
+pub use crate::core::shader::object::{VertexArray, Buffer, TextureBuffer};
+pub use crate::core::shader::object::{rect::Rect, texture::Texture, text::Text};
 pub use crate::core::component::{Default, Component};
