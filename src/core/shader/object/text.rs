@@ -6,15 +6,15 @@ const VERTEX_SHADER_SOURCE: &str = r#"
     layout (location = 1) in vec2 texcoord;
     layout (location = 2) in vec2 offset;
     layout (location = 3) in vec2 scale;
-    layout (location = 4) in vec3 color;
+    layout (location = 4) in vec4 color;
     
     uniform mat4 projection;
     uniform mat4 view;
     uniform mat4 model;
 
     out vec2 oTexCoord;
-    out vec3 oColor;
-
+    out vec4 oColor;
+   
     void main() {
         vec2 scale_position = position * scale;
         vec2 offset_position = scale_position + offset;
@@ -30,7 +30,7 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
     uniform sampler2D sampler;
 
     in vec2 oTexCoord;
-    in vec3 oColor;
+    in vec4 oColor;
 
     out vec4 color;
 
@@ -39,11 +39,12 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
         t.r = oColor.r;
         t.g = oColor.g;
         t.b = oColor.b;
+        t.a = t.a * oColor.a;
         color = t;
     }
 "#;
 
-type TransformData = [f32; 7];
+type TransformData = [f32; 8];
 
 pub struct Text {
     pub transform: Transform,
@@ -77,9 +78,9 @@ impl Text {
     }
 
     // add an new Text to the transform data
-    pub fn new(&mut self, x: f32, y: f32, color: &Color) {
+    pub fn new(&mut self, x: f32, y: f32, color: &Color, opacity: f32) {
         let transform_data: TransformData = [
-            x, y, self.image_data.width() as f32, self.image_data.height() as f32, color.r, color.g, color.b,
+            x, y, self.image_data.width() as f32, self.image_data.height() as f32, color.r, color.g, color.b, opacity
         ];
 
         self.transform_data.push(transform_data);
@@ -124,9 +125,9 @@ impl Component for Text {
             self.transform_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::DYNAMIC_DRAW);
             self.transform_buffer.set_data(&transform_data);
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 28, 0 as *const _); // offset
-            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 28, 8 as *const _); // scale
-            gl::VertexAttribPointer(4, 3, gl::FLOAT, gl::FALSE, 28, 16 as *const _); // color
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 32, 0 as *const _); // offset
+            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 32, 8 as *const _); // scale
+            gl::VertexAttribPointer(4, 4, gl::FLOAT, gl::FALSE, 32, 16 as *const _); // color
             gl::VertexAttribDivisor(2, 1);
             gl::VertexAttribDivisor(3, 1);
             gl::VertexAttribDivisor(4, 1);

@@ -6,18 +6,21 @@ const VERTEX_SHADER_SOURCE: &str = r#"
     layout (location = 1) in vec2 texcoord;
     layout (location = 2) in vec2 offset;
     layout (location = 3) in vec2 scale;
+    layout (location = 4) in float opacity;
     
     uniform mat4 projection;
     uniform mat4 view;
     uniform mat4 model;
 
     out vec2 oTexCoord;
+    out float oOpacity;
 
     void main() {
         vec2 scale_position = position * scale;
         vec2 offset_position = scale_position + offset;
         gl_Position = projection * view * model * vec4(offset_position, 0.0, 1.0);
         oTexCoord = texcoord;
+        oOpacity = opacity;
     }
 "#;
 
@@ -27,15 +30,18 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
     uniform sampler2D sampler;
 
     in vec2 oTexCoord;
+    in float oOpacity;
 
     out vec4 color;
 
     void main() {
-        color = texture(sampler, oTexCoord);
+        vec4 t = texture(sampler, oTexCoord);
+        t.a = oOpacity;
+        color = t;
     }
 "#;
 
-type TransformData = [f32; 4];
+type TransformData = [f32; 5];
 
 pub struct Texture {
     pub transform: Transform,
@@ -63,9 +69,9 @@ impl Texture {
     }
 
     // add an new Texture to the transform data
-    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32) {
+    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32, opacity: f32) {
         let transform_data: TransformData = [
-            x, y, width, height, 
+            x, y, width, height, opacity
         ];
 
         self.transform_data.push(transform_data);
@@ -110,12 +116,15 @@ impl Component for Texture {
             self.transform_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::DYNAMIC_DRAW);
             self.transform_buffer.set_data(&transform_data);
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 16, 0 as *const _); // offset
-            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 16, 8 as *const _); // scale
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 20, 0 as *const _); // offset
+            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 20, 8 as *const _); // scale
+            gl::VertexAttribPointer(4, 1, gl::FLOAT, gl::FALSE, 20, 16 as *const _); // opacity
             gl::VertexAttribDivisor(2, 1);
             gl::VertexAttribDivisor(3, 1);
+            gl::VertexAttribDivisor(4, 1);
             gl::EnableVertexAttribArray(2);
             gl::EnableVertexAttribArray(3);
+            gl::EnableVertexAttribArray(4);
         }
 
         Ok(())

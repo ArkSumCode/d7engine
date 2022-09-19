@@ -3,7 +3,7 @@ use crate::prelude::*;
 const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330
     layout (location = 0) in vec2 position;
-    layout (location = 1) in vec3 color;
+    layout (location = 1) in vec4 color;
     layout (location = 2) in vec2 offset;
     layout (location = 3) in vec2 scale;
     
@@ -11,7 +11,7 @@ const VERTEX_SHADER_SOURCE: &str = r#"
     uniform mat4 view;
     uniform mat4 model;
 
-    out vec3 oColor;
+    out vec4 oColor;
 
     void main() {
         vec2 scale_position = position * scale;
@@ -23,12 +23,12 @@ const VERTEX_SHADER_SOURCE: &str = r#"
 
 const FRAGMENT_SHADER_SOURCE: &str = r#"
     #version 330
-    in vec3 oColor;
+    in vec4 oColor;
 
     out vec4 color;
 
     void main() {
-        color = vec4(oColor, 1.0);
+        color = vec4(oColor);
     }
 "#;
 
@@ -41,7 +41,7 @@ the screen
 when rect gets dropped the shader also gets 
 deletet from the graphics card
 */
-type TransformData = [f32; 7];
+type TransformData = [f32; 8];
 
 pub struct Rect {
     pub transform: Transform,
@@ -66,9 +66,9 @@ impl Rect {
     }
 
     // add an new Rect to the transform data
-    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32, color: &Color) {
+    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32, color: &Color, opacity: f32) {
         let transform_data: TransformData = [
-            color.r, color.g, color.b, x, y, width, height, 
+            color.r, color.g, color.b, opacity, x, y, width, height, 
         ];
 
         self.transform_data.push(transform_data);
@@ -108,9 +108,9 @@ impl Component for Rect {
             self.transform_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::DYNAMIC_DRAW);
             self.transform_buffer.set_data(&transform_data);
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 28, 0 as *const _); // color
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 28, 12 as *const _); // offset
-            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 28, 20 as *const _); // scale
+            gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 32, 0 as *const _); // color
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 32, 16 as *const _); // offset
+            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 32, 24 as *const _); // scale
             gl::VertexAttribDivisor(1, 1);
             gl::VertexAttribDivisor(2, 1);
             gl::VertexAttribDivisor(3, 1);
