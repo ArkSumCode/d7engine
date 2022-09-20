@@ -44,41 +44,55 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
 type TransformData = [f32; 5];
 
 pub struct Texture {
-    pub transform: Transform,
     program: Program,
     vertex_array: VertexArray,
     model_buffer: Buffer, // the buffer needs to stay alive
     texture_buffer: TextureBuffer, // the buffer needs to stay alive
     transform_buffer: Buffer, // the buffer needs to stay alive
     transform_data: Vec<TransformData>,
-    image_data: Image,
+    image: Image,
+    state: ObjectState,
 }
 
 impl Texture {
-    pub fn instanced(image: &Image) -> Self {
+    // creates an empty Texture
+    pub fn new(image: &Image) -> Self {
         Self {
-            transform: Transform::new(),
             program: Program::default(),
             vertex_array: VertexArray::default(),
             model_buffer: Buffer::default(),
             texture_buffer: TextureBuffer::default(),
             transform_buffer: Buffer::default(),
             transform_data: vec![],
-            image_data: image.clone(),
+            image: image.clone(),
+            state: ObjectState::OK,
         }
     }
+}
 
+impl Object for Texture {
     // add an new Texture to the transform data
-    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32, opacity: f32) {
+    fn add(&mut self, component_data: &ComponentData) {
+        let (x_offset, y_offset) = component_data.offset;
+        let width = component_data.width;
+        let height = component_data.height;
+        let opacity = component_data.opacity;
+
         let transform_data: TransformData = [
-            x, y, width, height, opacity
+            x_offset, y_offset, width, height, opacity
         ];
 
         self.transform_data.push(transform_data);
     }
-}
 
-impl Component for Texture {
+    // removes a text from 
+    // the transform data
+    fn remove(&mut self, i: i32) {
+        self.transform_data.remove(i as usize);
+    }
+
+    // load the shaders 
+    // and create all data for the program
     fn load(&mut self) -> Result<(), String> {
         let model_data: [f32; 4*4] = [
             1.0,  0.0, 1.0, 1.0,    // top right 0
@@ -110,7 +124,7 @@ impl Component for Texture {
 
             // create the texture buffer out of the image
             self.texture_buffer = TextureBuffer::new();
-            self.texture_buffer.set_data(&self.image_data.to_rgba_image());
+            self.texture_buffer.set_data(&self.image.to_rgba_image());
           
             // create a new buffer for our transform data
             self.transform_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::DYNAMIC_DRAW);
@@ -130,11 +144,24 @@ impl Component for Texture {
         Ok(())
     }
 
-    fn draw(&self, draw: &Draw, camera: &Transform) -> Result<(), String> {
+    // resets the transformation data
+    fn reload(&mut self) {
+        let transform_data = self.transform_data.concat();
+        self.transform_buffer.set_data(&transform_data);
+        self.state = ObjectState::OK;
+    }
+
+    fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String> {
+        // reset the transformation data if needed
+        match self.state {
+            ObjectState::RELOAD => self.reload(),
+            ObjectState::OK => (),
+        }
+
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
         let view = camera.matrix();
-        let model = self.transform.matrix();
+        let model = model_transform.matrix();
 
         unsafe {
             // bind the programm and vertex array before sending
@@ -155,5 +182,9 @@ impl Component for Texture {
         }
 
         Ok(())
+    }
+
+    fn set_state(&mut self, object_state: ObjectState) {
+        self.state = object_state;
     }
 }

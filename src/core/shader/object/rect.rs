@@ -44,45 +44,57 @@ deletet from the graphics card
 type TransformData = [f32; 8];
 
 pub struct Rect {
-    pub transform: Transform,
     program: Program,
     vertex_array: VertexArray,
     model_buffer: Buffer, // the buffer needs to stay alive
     transform_buffer: Buffer, // the buffer needs to stay alive
-    transform_data: Vec<TransformData>
+    transform_data: Vec<TransformData>,
+    state: ObjectState,
 }
 
 impl Rect {
     // creates an empty Rect
-    pub fn instanced() -> Rect {
+    pub fn new() -> Self {
         Self {
-            transform: Transform::new(),
             program: Program::default(),
             vertex_array: VertexArray::default(),
             model_buffer: Buffer::default(),
             transform_buffer: Buffer::default(),
             transform_data: vec![],
+            state: ObjectState::OK,
         }
     }
+}
 
+impl Object for Rect {
     // add an new Rect to the transform data
-    pub fn new(&mut self, x: f32, y: f32, width: f32, height: f32, color: &Color, opacity: f32) {
+    fn add(&mut self, component_data: &ComponentData) {
+        let color = component_data.color;
+        let opacity = component_data.opacity;
+        let (offset_x, offset_y) = component_data.offset;
+        let width = component_data.width;
+        let height = component_data.height;
+
         let transform_data: TransformData = [
-            color.r, color.g, color.b, opacity, x, y, width, height, 
+            color.r, color.g, color.b, opacity, offset_x, offset_y, width, height, 
         ];
 
         self.transform_data.push(transform_data);
     }
-}
 
-impl Component for Rect {
+    // removes a rect from 
+    // the transform data
+    fn remove(&mut self, i: i32) {
+        self.transform_data.remove(i as usize);
+    }
+
     // create shaders and buffers
     fn load(&mut self) -> Result<(), String> {
         let model_data: [f32; 4*2] = [
-            1.0,  0.0,    // top right 0
-            0.0,  0.0,    // top left 1
-            0.0,  1.0, // bottom left 2 
-            1.0,  1.0, // bottom right 3
+            1.0,  0.0,      // top right 0
+            0.0,  0.0,      // top left 1
+            0.0,  1.0,      // bottom left 2 
+            1.0,  1.0,      // bottom right 3
         ];
 
         let transform_data = self.transform_data.concat();
@@ -122,12 +134,25 @@ impl Component for Rect {
         Ok(())
     }
 
+    // resets the transformation data
+    fn reload(&mut self) {
+        let transform_data = self.transform_data.concat();
+        self.transform_buffer.set_data(&transform_data);
+        self.state = ObjectState::OK;
+    }
+
     // draw the rectangle to the screen
-    fn draw(&self, draw: &Draw, camera: &Transform) -> Result<(), String> {
+    fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String> {
+        // reset the transformation data if needed
+        match self.state {
+            ObjectState::RELOAD => self.reload(),
+            ObjectState::OK => (),
+        }
+
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
         let view = camera.matrix();
-        let model = self.transform.matrix();
+        let model = model_transform.matrix();
 
         unsafe {
             // bind the programm and vertex array before sending
@@ -146,5 +171,9 @@ impl Component for Rect {
         }
 
         Ok(())
+    }
+
+    fn set_state(&mut self, object_state: ObjectState) {
+        self.state = object_state;
     }
 }

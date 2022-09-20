@@ -40,7 +40,7 @@ pub trait Runtime {
     fn load(&mut self);
 
     // draw is called every frame
-    fn draw(&self, draw: &Draw);
+    fn draw(&mut self, draw: &Draw);
 }
 
 /*

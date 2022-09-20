@@ -47,7 +47,6 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
 type TransformData = [f32; 8];
 
 pub struct Text {
-    pub transform: Transform,
     program: Program,
     vertex_array: VertexArray,
     model_buffer: Buffer, // the buffer needs to stay alive
@@ -55,39 +54,50 @@ pub struct Text {
     transform_buffer: Buffer, // the buffer needs to stay alive
     transform_data: Vec<TransformData>,
     image_data: Image,
+    state: ObjectState,
 }
 
 impl Text {
-    pub fn instanced(text: &str, font: &Font, font_size: i32) -> Result<Self, String> {
-        // create the text as rgba image
-        let image = font.snapshot(text, font_size as f32)?;
-        let image = Image::from(image);
-
+    pub fn new(image: &Image) -> Result<Self, String> {
         let text = Self {
-            transform: Transform::new(),
             program: Program::default(),
             vertex_array: VertexArray::default(),
             model_buffer: Buffer::default(),
             texture_buffer: TextureBuffer::default(),
             transform_buffer: Buffer::default(),
             transform_data: vec![],
-            image_data: image,
+            image_data: image.clone(),
+            state: ObjectState::OK,
         };
 
         Ok(text)
     }
+}
 
+impl Object for Text {
     // add an new Text to the transform data
-    pub fn new(&mut self, x: f32, y: f32, color: &Color, opacity: f32) {
+    fn add(&mut self, component_data: &ComponentData) {
+        let (x_offset, y_offset) = component_data.offset;
+        let width = component_data.width;
+        let height = component_data.height;
+        let color = component_data.color; 
+        let opacity = component_data.opacity;
+
         let transform_data: TransformData = [
-            x, y, self.image_data.width() as f32, self.image_data.height() as f32, color.r, color.g, color.b, opacity
+            x_offset, y_offset, width, height, color.r, color.g, color.b, opacity
         ];
 
         self.transform_data.push(transform_data);
     }
-}
 
-impl Component for Text {
+    // removes a text from 
+    // the transform data
+    fn remove(&mut self, i: i32) {
+        self.transform_data.remove(i as usize);
+    }
+
+    // load the shaders 
+    // and create all data for the program
     fn load(&mut self) -> Result<(), String> {
         let model_data: [f32; 4*4] = [
             1.0,  0.0, 1.0, 1.0,    // top right 0
@@ -139,11 +149,24 @@ impl Component for Text {
         Ok(())
     }
 
-    fn draw(&self, draw: &Draw, camera: &Transform) -> Result<(), String> {
+    // resets the transformation data
+    fn reload(&mut self) {
+        let transform_data = self.transform_data.concat();
+        self.transform_buffer.set_data(&transform_data);
+        self.state = ObjectState::OK;
+    }
+
+    fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String> {
+        // reset the transformation data if needed
+        match self.state {
+            ObjectState::RELOAD => self.reload(),
+            ObjectState::OK => (),
+        }
+
         // create the mvp (model view projection) matrixes
         let projection = mvp::ortho(&draw.window);
         let view = camera.matrix();
-        let model = self.transform.matrix();
+        let model = model_transform.matrix();
 
         unsafe {
             // bind the programm and vertex array before sending
@@ -164,5 +187,9 @@ impl Component for Text {
         }
 
         Ok(())
+    }
+
+    fn set_state(&mut self, object_state: ObjectState) {
+        self.state = object_state;
     }
 }

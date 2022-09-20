@@ -115,3 +115,10 @@ impl Transform {
         self.scale = mvp::scale(&self.scale, x, y, z);
     }
 }
+
+impl Default for Transform {
+    // returns an empty transform
+    fn default() -> Self {
+        Transform::new()
+    }
+}

@@ -3,7 +3,7 @@ use nalgebra_glm::{vec3, Mat4};
 
 // returns an othogonal projection matrix
 pub fn ortho(window: &Window) -> Mat4 {
-    nalgebra_glm::ortho(0.0, window.width() as f32, window.height() as f32,  0.0, -1.0, 1.0)
+    nalgebra_glm::ortho(0.0, window.width as f32, window.height as f32,  0.0, -1.0, 1.0)
 }
 
 // translates a matrix 

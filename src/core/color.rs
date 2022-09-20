@@ -24,3 +24,15 @@ impl Color {
         Color {r: v, g: v, b: v, a: 1.0}
     } 
 }
+
+impl Default for Color {
+    // returns an empty Color struct
+    fn default() -> Self {
+        Color {
+            r: 0.0,
+            g: 0.0,
+            b: 0.0,
+            a: 0.0,
+        }
+    }
+}

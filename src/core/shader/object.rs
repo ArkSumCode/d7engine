@@ -1,4 +1,5 @@
 use gl::types::*;
+use crate::prelude::*;
 
 pub mod rect;
 pub mod texture;
@@ -198,4 +199,22 @@ impl Drop for TextureBuffer {
             gl::DeleteTextures(1, [self.id].as_ptr());
         }
     }
+}
+
+// Implement this Trait on shader objects
+// so we can use them in the component system
+pub trait Object {
+    fn add(&mut self, component_data: &ComponentData);
+    fn load(&mut self) -> Result<(), String>;
+    fn reload(&mut self);
+    fn remove(&mut self, i: i32);
+    fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String>;
+    fn set_state(&mut self, object_state: ObjectState);
+}
+
+// describes the object state
+// used so that we dont reload unnecessarily
+pub enum ObjectState {
+    OK,
+    RELOAD
 }
