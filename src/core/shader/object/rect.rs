@@ -61,7 +61,7 @@ impl Rect {
             model_buffer: Buffer::default(),
             transform_buffer: Buffer::default(),
             transform_data: vec![],
-            state: ObjectState::OK,
+            state: ObjectState::Ok,
         }
     }
 }
@@ -72,8 +72,7 @@ impl Object for Rect {
         let color = component_data.color;
         let opacity = component_data.opacity;
         let (offset_x, offset_y) = component_data.offset;
-        let width = component_data.width;
-        let height = component_data.height;
+        let (width, height) = component_data.dim;
 
         let transform_data: TransformData = [
             color.r, color.g, color.b, opacity, offset_x, offset_y, width, height, 
@@ -84,8 +83,8 @@ impl Object for Rect {
 
     // removes a rect from 
     // the transform data
-    fn remove(&mut self, i: i32) {
-        self.transform_data.remove(i as usize);
+    fn remove(&mut self, i: usize) {
+        self.transform_data.remove(i);
     }
 
     // create shaders and buffers
@@ -131,6 +130,7 @@ impl Object for Rect {
             gl::EnableVertexAttribArray(3);
         }
 
+        self.state = ObjectState::Ok;
         Ok(())
     }
 
@@ -138,15 +138,15 @@ impl Object for Rect {
     fn reload(&mut self) {
         let transform_data = self.transform_data.concat();
         self.transform_buffer.set_data(&transform_data);
-        self.state = ObjectState::OK;
+        self.state = ObjectState::Ok;
     }
 
     // draw the rectangle to the screen
     fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String> {
         // reset the transformation data if needed
         match self.state {
-            ObjectState::RELOAD => self.reload(),
-            ObjectState::OK => (),
+            ObjectState::Reload => self.reload(),
+            ObjectState::Ok => (),
         }
 
         // create the mvp (model view projection) matrixes

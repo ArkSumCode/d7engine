@@ -27,5 +27,5 @@ pub use crate::core::{file, file::installation::Installation};
 pub use std::path::{PathBuf, Path};
 pub use crate::core::shader::program::Program;
 pub use crate::core::shader::object;
-pub use crate::core::shader::object::{VertexArray, Buffer, TextureBuffer, Object, ObjectState};
-pub use crate::core::component::{Default, Component, ComponentData};
+pub use crate::core::shader::object::{VertexArray, Buffer, TextureBuffer, Object, ObjectState, TextureCoordinate};
+pub use crate::core::component::{Default, Component, ComponentData, InstancedComponent};

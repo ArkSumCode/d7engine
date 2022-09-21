@@ -3,10 +3,11 @@ use crate::prelude::*;
 const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330
     layout (location = 0) in vec2 position;
-    layout (location = 1) in vec2 texcoord;
-    layout (location = 2) in vec2 offset;
-    layout (location = 3) in vec2 scale;
-    layout (location = 4) in float opacity;
+    layout (location = 1) in vec2 offset;
+    layout (location = 2) in vec2 scale;
+    layout (location = 3) in float opacity;
+    layout (location = 4) in vec4 texcoord_1;
+    layout (location = 5) in vec4 texcoord_2;
     
     uniform mat4 projection;
     uniform mat4 view;
@@ -19,8 +20,17 @@ const VERTEX_SHADER_SOURCE: &str = r#"
         vec2 scale_position = position * scale;
         vec2 offset_position = scale_position + offset;
         gl_Position = projection * view * model * vec4(offset_position, 0.0, 1.0);
-        oTexCoord = texcoord;
         oOpacity = opacity;
+
+        if(gl_VertexID == 0) {
+            oTexCoord = vec2(texcoord_2.x, texcoord_2.y);
+        } else if(gl_VertexID == 1) {
+            oTexCoord = vec2(texcoord_1.z, texcoord_1.w);
+        } else if(gl_VertexID == 2) {
+            oTexCoord = vec2(texcoord_1.x, texcoord_1.y);
+        } else {
+            oTexCoord = vec2(texcoord_2.z, texcoord_2.w);
+        }
     }
 "#;
 
@@ -41,7 +51,7 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
     }
 "#;
 
-type TransformData = [f32; 5];
+type TransformData = [f32; 13];
 
 pub struct Texture {
     program: Program,
@@ -65,7 +75,7 @@ impl Texture {
             transform_buffer: Buffer::default(),
             transform_data: vec![],
             image: image.clone(),
-            state: ObjectState::OK,
+            state: ObjectState::Ok,
         }
     }
 }
@@ -73,13 +83,15 @@ impl Texture {
 impl Object for Texture {
     // add an new Texture to the transform data
     fn add(&mut self, component_data: &ComponentData) {
+        let texcoord = component_data.texcoord;
         let (x_offset, y_offset) = component_data.offset;
-        let width = component_data.width;
-        let height = component_data.height;
+        let (width, height) = component_data.dim;
         let opacity = component_data.opacity;
 
         let transform_data: TransformData = [
-            x_offset, y_offset, width, height, opacity
+            x_offset, y_offset, width, height, opacity, 
+            texcoord[0], texcoord[1], texcoord[2], texcoord[3],
+            texcoord[4], texcoord[5], texcoord[6], texcoord[7], 
         ];
 
         self.transform_data.push(transform_data);
@@ -87,18 +99,18 @@ impl Object for Texture {
 
     // removes a text from 
     // the transform data
-    fn remove(&mut self, i: i32) {
-        self.transform_data.remove(i as usize);
+    fn remove(&mut self, i: usize) {
+        self.transform_data.remove(i);
     }
 
     // load the shaders 
     // and create all data for the program
     fn load(&mut self) -> Result<(), String> {
-        let model_data: [f32; 4*4] = [
-            1.0,  0.0, 1.0, 1.0,    // top right 0
-            0.0,  0.0, 0.0, 1.0,    // top left 1
-            0.0,  1.0, 0.0, 0.0,    // bottom left 2 
-            1.0,  1.0, 1.0, 0.0,    // bottom right 3
+        let model_data: [f32; 4*2] = [
+            1.0,  0.0,      // top right tex 1.0, 1.0,  
+            0.0,  0.0,      // top left tex 0.0, 1.0,
+            0.0,  1.0,      // bottom left tex 0.0, 0.0,
+            1.0,  1.0,      // bottom right tex 1.0, 0.0, 
         ];
 
         let transform_data = self.transform_data.concat();
@@ -117,10 +129,8 @@ impl Object for Texture {
             self.model_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::STATIC_DRAW);
             self.model_buffer.set_data(&model_data.to_vec());
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(0, 2, gl::FLOAT, gl::FALSE, 16, 0 as *const _); // position
-            gl::VertexAttribPointer(1, 2, gl::FLOAT, gl::FALSE, 16, 8 as *const _); // texcoord
+            gl::VertexAttribPointer(0, 2, gl::FLOAT, gl::FALSE, 8, 0 as *const _); // position
             gl::EnableVertexAttribArray(0);
-            gl::EnableVertexAttribArray(1);
 
             // create the texture buffer out of the image
             self.texture_buffer = TextureBuffer::new();
@@ -130,17 +140,24 @@ impl Object for Texture {
             self.transform_buffer = Buffer::new(gl::ARRAY_BUFFER, gl::DYNAMIC_DRAW);
             self.transform_buffer.set_data(&transform_data);
             // and create the attributes in the vertex shader
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 20, 0 as *const _); // offset
-            gl::VertexAttribPointer(3, 2, gl::FLOAT, gl::FALSE, 20, 8 as *const _); // scale
-            gl::VertexAttribPointer(4, 1, gl::FLOAT, gl::FALSE, 20, 16 as *const _); // opacity
+            gl::VertexAttribPointer(1, 2, gl::FLOAT, gl::FALSE, 52, 0 as *const _); // offset
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 52, 8 as *const _); // scale
+            gl::VertexAttribPointer(3, 1, gl::FLOAT, gl::FALSE, 52, 16 as *const _); // opacity
+            gl::VertexAttribPointer(4, 4, gl::FLOAT, gl::FALSE, 52, 20 as *const _); // texcoord_1
+            gl::VertexAttribPointer(5, 4, gl::FLOAT, gl::FALSE, 52, 36 as *const _); // texcoord_2
+            gl::VertexAttribDivisor(1, 1);
             gl::VertexAttribDivisor(2, 1);
             gl::VertexAttribDivisor(3, 1);
             gl::VertexAttribDivisor(4, 1);
+            gl::VertexAttribDivisor(5, 1);
+            gl::EnableVertexAttribArray(1);
             gl::EnableVertexAttribArray(2);
             gl::EnableVertexAttribArray(3);
             gl::EnableVertexAttribArray(4);
+            gl::EnableVertexAttribArray(5);
         }
 
+        self.state = ObjectState::Ok;
         Ok(())
     }
 
@@ -148,14 +165,14 @@ impl Object for Texture {
     fn reload(&mut self) {
         let transform_data = self.transform_data.concat();
         self.transform_buffer.set_data(&transform_data);
-        self.state = ObjectState::OK;
+        self.state = ObjectState::Ok;
     }
 
     fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String> {
         // reset the transformation data if needed
         match self.state {
-            ObjectState::RELOAD => self.reload(),
-            ObjectState::OK => (),
+            ObjectState::Reload => self.reload(),
+            ObjectState::Ok => (),
         }
 
         // create the mvp (model view projection) matrixes

@@ -207,7 +207,7 @@ pub trait Object {
     fn add(&mut self, component_data: &ComponentData);
     fn load(&mut self) -> Result<(), String>;
     fn reload(&mut self);
-    fn remove(&mut self, i: i32);
+    fn remove(&mut self, i: usize);
     fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String>;
     fn set_state(&mut self, object_state: ObjectState);
 }
@@ -215,6 +215,12 @@ pub trait Object {
 // describes the object state
 // used so that we dont reload unnecessarily
 pub enum ObjectState {
-    OK,
-    RELOAD
+    Ok,
+    Reload
 }
+
+
+// a type that describes the array of
+// 8 floats which is 4 times 2 floats uv data
+// 2 for every corner of the rectangle
+pub type TextureCoordinate = [f32; 8];

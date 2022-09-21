@@ -67,7 +67,7 @@ impl Text {
             transform_buffer: Buffer::default(),
             transform_data: vec![],
             image_data: image.clone(),
-            state: ObjectState::OK,
+            state: ObjectState::Ok,
         };
 
         Ok(text)
@@ -78,8 +78,7 @@ impl Object for Text {
     // add an new Text to the transform data
     fn add(&mut self, component_data: &ComponentData) {
         let (x_offset, y_offset) = component_data.offset;
-        let width = component_data.width;
-        let height = component_data.height;
+        let (width, height) = component_data.dim;
         let color = component_data.color; 
         let opacity = component_data.opacity;
 
@@ -92,8 +91,8 @@ impl Object for Text {
 
     // removes a text from 
     // the transform data
-    fn remove(&mut self, i: i32) {
-        self.transform_data.remove(i as usize);
+    fn remove(&mut self, i: usize) {
+        self.transform_data.remove(i);
     }
 
     // load the shaders 
@@ -146,6 +145,7 @@ impl Object for Text {
             gl::EnableVertexAttribArray(4);
         }
 
+        self.state = ObjectState::Ok;
         Ok(())
     }
 
@@ -153,14 +153,14 @@ impl Object for Text {
     fn reload(&mut self) {
         let transform_data = self.transform_data.concat();
         self.transform_buffer.set_data(&transform_data);
-        self.state = ObjectState::OK;
+        self.state = ObjectState::Ok;
     }
 
     fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String> {
         // reset the transformation data if needed
         match self.state {
-            ObjectState::RELOAD => self.reload(),
-            ObjectState::OK => (),
+            ObjectState::Reload => self.reload(),
+            ObjectState::Ok => (),
         }
 
         // create the mvp (model view projection) matrixes
