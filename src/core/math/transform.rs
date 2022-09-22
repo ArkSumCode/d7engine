@@ -4,7 +4,7 @@ use nalgebra_glm::Mat4;
 // holds transform data in the form of a matrix
 // and the x, y and z values
 // used in shaders
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Transform {
     object: Mat4,
     rotation: Mat4,
