@@ -71,6 +71,8 @@ impl TileData {
 
 pub struct TileMap {
     tiles: Vec<TileData>,
+    image: Image,
+    pub dim: usize,
 }
 
 impl TileMap {
@@ -82,7 +84,7 @@ impl TileMap {
     out data is constructed from the top left
     but texture coordinates are from bottom left
     */
-    pub fn new(path: &str, image: &Image, dim: usize) -> Result<Self, String> {
+    pub fn new(path: &str, image: Image, dim: usize) -> Result<Self, String> {
         let file = file::read(path)?;
         let image_dim = (image.width() as f32, image.height() as f32);
 
@@ -113,9 +115,13 @@ impl TileMap {
             }
         }
 
-        let tilemap = TileMap{tiles};
-
+        let tilemap = TileMap{tiles, image, dim};
         Ok(tilemap)
+    }
+
+    // get a copy of the image
+    pub fn image(&self) -> Image {
+        self.image.clone()
     }
 
     // get all the tiledata as a vector

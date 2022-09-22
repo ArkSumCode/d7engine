@@ -53,7 +53,7 @@ impl Component {
     }
 
     // create a new text component
-    pub fn text(text: &str, font: &Font, font_size: i32, color: &Color) -> Result<Self, String> {
+    pub fn text(text: &str, font: &Font, font_size: usize, color: &Color) -> Result<Self, String> {
         // create the text as rgba image
         let image = font.snapshot(text, font_size as f32)?;
         let image = Image::from(image);
@@ -436,6 +436,28 @@ impl InstancedComponent {
         Ok(self.component_data[i].texcoord)
     }
 
+    // collision for an instance
+    pub fn instance_collides(&self, i: usize, x: f32, y: f32) -> Result<bool, String> {
+        let (tx, ty, _) = self.transform.pos();
+        let (x_offset, y_offset) = self.offset(i)?;
+        let (width, height) = self.dim(i)?;
+        let collides = collision::point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height);
+        Ok(collides)
+    }
+
+    // get the instance that collides,
+    // if one collides
+    pub fn collides(&self, x: f32, y: f32) -> Result<Option<usize>, String> {
+        for i in 0..self.component_data.len() {
+            let collides = self.instance_collides(i, x, y)?;
+            if collides {
+                return Ok(Some(i));
+            }
+        }
+
+        Ok(None)
+    }
+
     // checks if a item is in the 
     // component data vector
     fn index_oob(&self, i: usize) -> Result<(), String> {
@@ -453,4 +475,19 @@ impl InstancedComponent {
 enum InstancedComponentState {
     NotLoaded,
     Ok,
+}
+
+// helps to store components in your struct
+pub type ComponentContainer = HashMap<String, Component>;
+pub type InstancedComponentContainer = HashMap<String, InstancedComponent>;
+
+// implement collision on 
+// both component types
+impl Collision for Component {
+    fn collides(&self, x: f32, y: f32) -> bool {
+        let (tx, ty, _) = self.transform.pos();
+        let (x_offset, y_offset) = self.offset();
+        let (width, height) = self.dim();
+        collision::point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height)
+    }
 }

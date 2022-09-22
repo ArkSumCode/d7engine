@@ -8,3 +8,7 @@ pub fn point_in_rect(point_x: f32, point_y: f32, rect_x: f32, rect_y: f32, rect_
     let in_y_range = rect_y <= point_y && point_y <= rect_y + rect_height;
     in_x_range && in_y_range
 }
+
+pub trait Collision {
+    fn collides(&self, x: f32, y: f32) -> bool;
+}
