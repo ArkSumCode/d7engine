@@ -46,7 +46,7 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
 
     void main() {
         vec4 t = texture(sampler, oTexCoord);
-        t.a = oOpacity;
+        t.a = t.a * oOpacity;
         color = t;
     }
 "#;
@@ -201,6 +201,7 @@ impl Object for Texture {
         Ok(())
     }
 
+    // set the state of the Object
     fn set_state(&mut self, object_state: ObjectState) {
         self.state = object_state;
     }

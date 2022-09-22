@@ -14,7 +14,7 @@ pub struct Image {
 
 impl Image {
     pub fn new(path: &str) -> Result<Image, String> {
-        let data = Image::data(path)?; 
+        let data = Self::data(path)?; 
         let width = data.width();
         let height = data.height();
         Ok(Image{

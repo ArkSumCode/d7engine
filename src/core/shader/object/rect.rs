@@ -173,6 +173,7 @@ impl Object for Rect {
         Ok(())
     }
 
+    // set the state of the Object
     fn set_state(&mut self, object_state: ObjectState) {
         self.state = object_state;
     }

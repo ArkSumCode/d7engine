@@ -17,7 +17,7 @@ pub use crate::core::project::{Config, Runtime, Draw};
 pub use crate::core::color::{Color};
 pub use crate::core::mouse::{MouseWheelState, Mouse};
 pub use std::collections::HashMap;
-pub use crate::core::resource::{font::Font, image::Image};
+pub use crate::core::resource::{font::Font, image::Image, tilemap::TileMap, tilemap::TileDataRotation};
 pub use crate::core::seed::{Seed,Roll};
 pub use crate::core::math::{mvp, collision};
 pub use crate::core::window::Window;
