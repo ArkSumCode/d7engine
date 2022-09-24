@@ -163,6 +163,10 @@ impl TextureBuffer {
             // pixelate the image when scaling up
             gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
 
+            // fill in empty space around the texture
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
+
             // structure of the texture, with width height and texture data
             gl::TexImage2D(
                 gl::TEXTURE_2D,

@@ -22,14 +22,16 @@ const VERTEX_SHADER_SOURCE: &str = r#"
         gl_Position = projection * view * model * vec4(offset_position, 0.0, 1.0);
         oOpacity = opacity;
 
+        float tex_correction = 0.000001;
+
         if(gl_VertexID == 0) {
-            oTexCoord = vec2(texcoord_2.x, texcoord_2.y);
+            oTexCoord = vec2(texcoord_2.x - tex_correction, texcoord_2.y - tex_correction);
         } else if(gl_VertexID == 1) {
-            oTexCoord = vec2(texcoord_1.z, texcoord_1.w);
+            oTexCoord = vec2(texcoord_1.z + tex_correction, texcoord_1.w - tex_correction);
         } else if(gl_VertexID == 2) {
-            oTexCoord = vec2(texcoord_1.x, texcoord_1.y);
+            oTexCoord = vec2(texcoord_1.x + tex_correction, texcoord_1.y + tex_correction);
         } else {
-            oTexCoord = vec2(texcoord_2.z, texcoord_2.w);
+            oTexCoord = vec2(texcoord_2.z - tex_correction, texcoord_2.w + tex_correction);
         }
     }
 "#;

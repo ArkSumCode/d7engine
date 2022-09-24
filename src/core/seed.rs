@@ -98,6 +98,18 @@ impl Seed {
         }
     }
 
+    /*
+    get a random index from an array
+    this will only work with an array length
+    up to 255
+    */
+    pub fn roll_index<ElementType>(&mut self, elements: &Vec<ElementType>) -> usize {
+        let delimiter = 256.0 / elements.len() as f32;
+        let roll = self.next_u8();
+        let index = roll as f32 / delimiter;
+        index.floor() as usize
+    }
+
     // hash a string and return it as a vector of u8
     fn hash(seed: &str) -> Vec<u8> {
         let mut hasher = Sha512::new();
