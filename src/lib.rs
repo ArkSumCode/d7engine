@@ -1,11 +1,32 @@
 pub mod core;
-pub mod prelude;
 
 use sdl2::surface::Surface;
 use sdl2::keyboard::Keycode;
 use std::collections::HashSet;
 
 use crate::core::mouse;
+
+pub use gl;
+pub use nalgebra_glm;
+pub use std::ffi::CString;
+pub use std::f32::consts::PI;
+pub use crate::core::shader::Shader;
+pub use crate::core::project::{Config, Runtime, Draw};
+pub use crate::core::color::{Color};
+pub use crate::core::mouse::{MouseWheelState, Mouse};
+pub use std::collections::HashMap;
+pub use crate::core::resource::{font::Font, tilemap, image::Image, tilemap::TileMap};
+pub use crate::core::{seed, seed::Seed};
+pub use crate::core::math::{mvp, collision, collision::Collision};
+pub use crate::core::window::Window;
+pub use crate::core::math::transform::Transform;
+pub use crate::core::performance::Performance;
+pub use crate::core::{file, file::installation::Installation};
+pub use std::path::{PathBuf, Path};
+pub use crate::core::shader::program::Program;
+pub use crate::core::shader::object;
+pub use crate::core::component::{Default, Component, ComponentData, InstancedComponent};
+pub use crate::core::component::{ComponentContainer, InstancedComponentContainer};
 
 /*
 entry function for every project
@@ -152,8 +173,6 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
     }
 
 }
-
-
 
 /*
 always set the viewport to be a square so 

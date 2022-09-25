@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::*;
 use gl::types::*;
 
 // the ShaderProgram will be the 

@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::*;
 use nalgebra_glm::{vec3, Mat4};
 
 // returns an othogonal projection matrix

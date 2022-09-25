@@ -1,5 +1,5 @@
 use gl::types::*;
-use crate::prelude::*;
+use crate::*;
 
 pub mod rect;
 pub mod texture;

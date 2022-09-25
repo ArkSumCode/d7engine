@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::*;
 use object::{VertexArray, Buffer, TextureBuffer, ObjectState, Object};
 
 const VERTEX_SHADER_SOURCE: &str = r#"
