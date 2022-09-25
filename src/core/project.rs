@@ -19,7 +19,7 @@ impl Default for Config {
     // returns a default configuration
     fn default() -> Config {
         Config {
-            title: String::from("d7engine"),
+            title: format!("d7engine v{}", env!("CARGO_PKG_VERSION")),
             width: 1270,
             height: 700,
             background_color: Color::grey(44),
