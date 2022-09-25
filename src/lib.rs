@@ -1,3 +1,5 @@
+//! d7engine dokumentation
+
 pub mod core;
 
 use sdl2::surface::Surface;
