@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use object::Object;
 
 /*
 A d7engine component 
@@ -9,7 +10,7 @@ Vec<Component>
 pub struct Component {
     pub transform: Transform,
     component_data: ComponentData,
-    object: Box<dyn Object>,
+    object: Box<dyn object::Object>,
 }
 
 impl Component {
@@ -90,7 +91,7 @@ impl Component {
         self.component_data.dim.1 = height;
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the width and the height of the component
@@ -103,7 +104,7 @@ impl Component {
         self.component_data.dim.0 = width;
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the width of the component
@@ -116,7 +117,7 @@ impl Component {
         self.component_data.dim.1 = height;
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the height of the component
@@ -129,7 +130,7 @@ impl Component {
         self.component_data.color = color.clone();
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the color of the component
@@ -142,7 +143,7 @@ impl Component {
         self.component_data.opacity = opacity;
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the opacity of the component
@@ -158,7 +159,7 @@ impl Component {
         self.component_data.offset = (x_offset, y_offset);
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the offset data of the component
@@ -167,15 +168,15 @@ impl Component {
     }
 
     // set the texture coordinate data of the component
-    pub fn set_texcoord(&mut self, texcoord: TextureCoordinate) {
+    pub fn set_texcoord(&mut self, texcoord: object::TextureCoordinate) {
         self.component_data.texcoord = texcoord;
         self.object.remove(0);
         self.object.add(&self.component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the texture coordinate data of the component
-    pub fn texcoord(&self) -> TextureCoordinate {
+    pub fn texcoord(&self) -> object::TextureCoordinate {
         self.component_data.texcoord
     }
 }
@@ -199,7 +200,7 @@ pub struct ComponentData {
     pub dim: (f32, f32),
     pub opacity: f32,
     pub offset: (f32, f32),
-    pub texcoord: TextureCoordinate,
+    pub texcoord: object::TextureCoordinate,
 }
 
 impl Default for ComponentData {
@@ -230,7 +231,7 @@ with different transformations
 pub struct InstancedComponent {
     pub transform: Transform,
     component_data: Vec<ComponentData>,
-    object: Box<dyn Object>,
+    object: Box<dyn object::Object>,
     state: InstancedComponentState,
 } 
 
@@ -287,7 +288,7 @@ impl InstancedComponent {
     pub fn add(&mut self, component_data: &ComponentData) {
         self.component_data.push(component_data.clone());
         self.object.add(component_data);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
     }
 
     // remove a Component Data
@@ -297,7 +298,7 @@ impl InstancedComponent {
         self.index_oob(i)?;
         self.component_data.remove(i);
         self.object.remove(i);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -327,7 +328,7 @@ impl InstancedComponent {
         self.component_data[i].dim.1 = height;
         self.object.remove(i);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -343,7 +344,7 @@ impl InstancedComponent {
         self.component_data[i].dim.0 = width;
         self.object.remove(i);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -359,7 +360,7 @@ impl InstancedComponent {
         self.component_data[i].dim.1 = height;
         self.object.remove(i);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -375,7 +376,7 @@ impl InstancedComponent {
         self.component_data[i].color = color.clone();
         self.object.remove(i);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -391,7 +392,7 @@ impl InstancedComponent {
         self.component_data[i].opacity = opacity;
         self.object.remove(i);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -410,7 +411,7 @@ impl InstancedComponent {
         self.component_data[i].offset = (x_offset, y_offset);
         self.object.remove(0);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
@@ -421,17 +422,17 @@ impl InstancedComponent {
     }
 
       // set the texture coordinate of transform data i of the component
-      pub fn set_texcoord(&mut self, i: usize, texcoord: TextureCoordinate) -> Result<(), String> {
+      pub fn set_texcoord(&mut self, i: usize, texcoord: object::TextureCoordinate) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].texcoord = texcoord;
         self.object.remove(0);
         self.object.add(&self.component_data[i]);
-        self.object.set_state(ObjectState::Reload);
+        self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
     // get the texture coordinate of transform data i of the component
-    pub fn texcoord(&self, i: usize) -> Result<TextureCoordinate, String> {
+    pub fn texcoord(&self, i: usize) -> Result<object::TextureCoordinate, String> {
         self.index_oob(i)?;
         Ok(self.component_data[i].texcoord)
     }
