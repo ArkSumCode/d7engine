@@ -31,7 +31,7 @@ impl TileData {
     from the data in the tiles
     Standard TileDataRotation is bottom (no rotation)
     */
-    pub fn texcoord(&self, tile_data_rotation: TileDataRotation) -> TextureCoordinate {
+    pub fn texcoord(&self, tile_data_rotation: &TileDataRotation) -> TextureCoordinate {
         match tile_data_rotation {
             TileDataRotation::Bottom => {
                 [
