@@ -3,11 +3,11 @@
 
 [package]
 name = "d7engine"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Markus Dick"]
 edition = "2018"
 description = "A homemade game engine."
-licence = "MIT"
+license = "MIT"
 
 [dependencies]
 gl = "0.14.0"
