@@ -18,6 +18,7 @@ pub struct TileData {
 
 // helps with code readability 
 // of the TileData texcorrd method
+#[derive(Clone)]
 pub enum TileDataRotation {
     Bottom,
     Left,
