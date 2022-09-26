@@ -409,7 +409,7 @@ impl InstancedComponent {
     pub fn set_offset(&mut self, i: usize, x_offset: f32, y_offset: f32) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].offset = (x_offset, y_offset);
-        self.object.remove(0);
+        self.object.remove(i);
         self.object.add(&self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
@@ -425,7 +425,7 @@ impl InstancedComponent {
       pub fn set_texcoord(&mut self, i: usize, texcoord: object::TextureCoordinate) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].texcoord = texcoord;
-        self.object.remove(0);
+        self.object.remove(i);
         self.object.add(&self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
