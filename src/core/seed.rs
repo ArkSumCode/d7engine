@@ -19,8 +19,8 @@ enum used as a return to the Seed::roll method
 holds the result of the roll and the number that was used
 */
 pub enum Roll {
-    HIT(u8),
-    MISS(u8),
+    Hit(u8),
+    Miss(u8),
 }
 
 impl Seed {
@@ -92,9 +92,9 @@ impl Seed {
     pub fn roll(&mut self, max: u8) -> Roll {
         let roll = self.next_u8();
         if roll < max {
-            Roll::HIT(roll)
+            Roll::Hit(roll)
         } else {
-            Roll::MISS(roll)
+            Roll::Miss(roll)
         }
     }
 
