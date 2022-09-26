@@ -3,7 +3,7 @@
 
 [package]
 name = "d7engine"
-version = "1.0.4"
+version = "1.0.5"
 authors = ["Markus Dick"]
 edition = "2018"
 description = "A homemade game engine."
