@@ -90,7 +90,7 @@ impl Object for Text {
         self.transform_data.push(transform_data);
     }
 
-        /// set the transform data
+    /// set the component data
     /// for a specific element 'i' of the transform data vector
     fn set(&mut self, i: usize, component_data: &ComponentData) {
         let (x_offset, y_offset) = component_data.offset;

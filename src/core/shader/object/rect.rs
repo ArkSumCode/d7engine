@@ -82,7 +82,7 @@ impl Object for Rect {
         self.transform_data.push(transform_data);
     }
 
-    /// set the transform data
+    /// set the component data
     /// for a specific element 'i' of the transform data vector
     fn set(&mut self, i: usize, component_data: &ComponentData) {
         let color = component_data.color;
