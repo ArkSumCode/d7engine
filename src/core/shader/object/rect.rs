@@ -82,6 +82,21 @@ impl Object for Rect {
         self.transform_data.push(transform_data);
     }
 
+    /// set the transform data
+    /// for a specific element 'i' of the transform data vector
+    fn set(&mut self, i: usize, component_data: &ComponentData) {
+        let color = component_data.color;
+        let opacity = component_data.opacity;
+        let (offset_x, offset_y) = component_data.offset;
+        let (width, height) = component_data.dim;
+
+        let transform_data: TransformData = [
+            color.r, color.g, color.b, opacity, offset_x, offset_y, width, height, 
+        ];
+
+        self.transform_data[i] = transform_data;
+    }
+
     // removes a rect from 
     // the transform data
     fn remove(&mut self, i: usize) {

@@ -209,6 +209,7 @@ impl Drop for TextureBuffer {
 // so we can use them in the component system
 pub trait Object {
     fn add(&mut self, component_data: &ComponentData);
+    fn set(&mut self, i: usize, component_data: &ComponentData);
     fn load(&mut self) -> Result<(), String>;
     fn reload(&mut self);
     fn remove(&mut self, i: usize);

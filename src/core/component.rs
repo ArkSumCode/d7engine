@@ -89,8 +89,7 @@ impl Component {
     pub fn set_dim(&mut self, width: f32, height: f32) {
         self.component_data.dim.0 = width;
         self.component_data.dim.1 = height;
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -102,8 +101,7 @@ impl Component {
     // set the width of the component
     pub fn set_width(&mut self, width: f32) {
         self.component_data.dim.0 = width;
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -115,8 +113,7 @@ impl Component {
     // set the height of the component
     pub fn set_height(&mut self, height: f32) {
         self.component_data.dim.1 = height;
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -128,8 +125,7 @@ impl Component {
     // set the color of the component
     pub fn set_color(&mut self, color: &Color) {
         self.component_data.color = color.clone();
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -141,8 +137,7 @@ impl Component {
     // set the opacity of the component
     pub fn set_opacity(&mut self, opacity: f32) {
         self.component_data.opacity = opacity;
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -157,8 +152,7 @@ impl Component {
     // or when using instanced drawing
     pub fn set_offset(&mut self, x_offset: f32, y_offset: f32) {
         self.component_data.offset = (x_offset, y_offset);
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -170,8 +164,7 @@ impl Component {
     // set the texture coordinate data of the component
     pub fn set_texcoord(&mut self, texcoord: object::TextureCoordinate) {
         self.component_data.texcoord = texcoord;
-        self.object.remove(0);
-        self.object.add(&self.component_data);
+        self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
@@ -326,8 +319,7 @@ impl InstancedComponent {
         self.index_oob(i)?;
         self.component_data[i].dim.0 = width;
         self.component_data[i].dim.1 = height;
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
@@ -342,8 +334,7 @@ impl InstancedComponent {
     pub fn set_width(&mut self, i: usize, width: f32) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].dim.0 = width;
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
@@ -358,8 +349,7 @@ impl InstancedComponent {
     pub fn set_height(&mut self, i: usize, height: f32) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].dim.1 = height;
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
@@ -374,8 +364,7 @@ impl InstancedComponent {
     pub fn set_color(&mut self, i: usize, color: &Color) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].color = color.clone();
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
@@ -390,8 +379,7 @@ impl InstancedComponent {
     pub fn set_opacity(&mut self, i: usize, opacity: f32) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].opacity = opacity;
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
@@ -409,8 +397,7 @@ impl InstancedComponent {
     pub fn set_offset(&mut self, i: usize, x_offset: f32, y_offset: f32) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].offset = (x_offset, y_offset);
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
@@ -425,8 +412,7 @@ impl InstancedComponent {
       pub fn set_texcoord(&mut self, i: usize, texcoord: object::TextureCoordinate) -> Result<(), String> {
         self.index_oob(i)?;
         self.component_data[i].texcoord = texcoord;
-        self.object.remove(i);
-        self.object.add(&self.component_data[i]);
+        self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }

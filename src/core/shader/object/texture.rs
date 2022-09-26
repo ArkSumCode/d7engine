@@ -100,6 +100,23 @@ impl Object for Texture {
         self.transform_data.push(transform_data);
     }
 
+    /// set the transform data
+    /// for a specific element 'i' of the transform data vector
+    fn set(&mut self, i: usize, component_data: &ComponentData) {
+        let texcoord = component_data.texcoord;
+        let (x_offset, y_offset) = component_data.offset;
+        let (width, height) = component_data.dim;
+        let opacity = component_data.opacity;
+
+        let transform_data: TransformData = [
+            x_offset, y_offset, width, height, opacity, 
+            texcoord[0], texcoord[1], texcoord[2], texcoord[3],
+            texcoord[4], texcoord[5], texcoord[6], texcoord[7], 
+        ];
+
+        self.transform_data[i] = transform_data;
+    }
+
     // removes a text from 
     // the transform data
     fn remove(&mut self, i: usize) {
