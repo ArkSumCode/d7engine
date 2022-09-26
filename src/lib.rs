@@ -91,7 +91,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
     let mut win = core::window::Window::new(config.width as i32, config.height as i32);
 
     // create the performance object
-    let mut performance = crate::core::performance::Performance::new();
+    let mut performance = Performance::new();
 
     // call the projects load funtion
     runtime.load();
