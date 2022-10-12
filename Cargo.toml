@@ -9,6 +9,7 @@ edition = "2018"
 description = "A game engine in rust with SDL2 and opengl."
 license = "MIT"
 documentation = "https://docs.rs/d7engine"
+repository = "https://github.com/debugseven/d7engine"
 
 [dependencies]
 gl = "0.14.0"
