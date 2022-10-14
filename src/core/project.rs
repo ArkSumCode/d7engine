@@ -61,7 +61,7 @@ pub struct Draw {
 structure for keeping track of performance
 it holds the timestamp of the last frame and the current fps
 */
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct Performance {
     last_frame: Instant,
     fps: f32, 
@@ -80,8 +80,8 @@ impl Performance {
     // calculates fps and returns the delta time
     pub fn frame(&mut self) {
         let elapsed = self.last_frame.elapsed();
-        self.last_frame =  Instant::now();
-        self.fps = (1_000_000_000 / elapsed.as_nanos()) as f32;
+        self.last_frame = Instant::now();
+        self.fps = 1_000_000_000.0 / elapsed.as_nanos() as f32;
         self.delta = 1.0 / self.fps;
     }
 

@@ -152,7 +152,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
         // create the draw struct 
         // that will be passed to draw functions
         let draw = crate::core::project::Draw {
-            performance,
+            performance: performance.clone(),
             window: win,
             mouse: mouse,
             keys: keys,
