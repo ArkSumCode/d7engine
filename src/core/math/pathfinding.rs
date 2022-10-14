@@ -3,8 +3,11 @@ Implement Maze for an Object,
 so you can use the A star pathfinding algorithm.
 */
 pub trait Maze {
+    /// the number of tiles in x direction
     fn width(&self) -> usize;
+    /// the number of tiles in y direction
     fn height(&self) -> usize;
+    /// is the tile x,y a walkable option for the pathfinding algorithm
     fn solid(&self, x: usize, y: usize) -> bool;
 }
 
@@ -48,7 +51,6 @@ pub fn astar(maze: &dyn Maze, start: (usize, usize), end: (usize, usize)) -> Opt
 
         // add the node to the closed_list
         closed_list.push(current_node.clone());
-
 
         if current_node == end {
             // the end is found
