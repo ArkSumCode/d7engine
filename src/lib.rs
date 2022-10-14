@@ -19,7 +19,7 @@ pub use crate::core::mouse::{MouseWheelState, Mouse};
 pub use std::collections::HashMap;
 pub use crate::core::resource::{font::Font, tilemap, image::Image, tilemap::TileMap};
 pub use crate::core::{seed, seed::Seed};
-pub use crate::core::math::{mvp, collision, collision::Collision, pathfinding};
+pub use crate::core::math::{mvp, collision, collision::Collision, pathfinding, interpolation::lerp};
 pub use crate::core::window::Window;
 pub use crate::core::math::transform::Transform;
 pub use crate::core::{file, file::installation::Installation};
