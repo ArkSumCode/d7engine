@@ -156,3 +156,59 @@ impl PartialEq for Node {
         x && y
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+    struct Solvable {}
+
+    impl pathfinding::Maze for Solvable {
+        fn height(&self) -> usize {
+            10
+        }
+
+        fn width(&self) -> usize {
+            10
+        }
+
+        fn solid(&self, x: usize, y: usize) -> bool {
+            if x == 1 && y == 0 {
+                return true;
+            } else if x == 1 && y == 1 {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    struct Unsolvable {}
+
+    impl pathfinding::Maze for Unsolvable {
+        fn height(&self) -> usize {
+            10
+        }
+
+        fn width(&self) -> usize {
+            10
+        }
+
+        fn solid(&self, x: usize, _: usize) -> bool {
+            if x == 2 {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    #[test]
+    fn test_astar() {
+        let result = pathfinding::astar(&Solvable {}, (0, 0), (9, 0));
+        let solution = vec![(0, 0), (0, 1), (1, 2), (2, 1), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0)];
+        assert_eq!(Some(solution), result);
+
+        let result = pathfinding::astar(&Unsolvable {}, (0, 0), (9, 9));
+        assert_eq!(None, result);
+    }
+}

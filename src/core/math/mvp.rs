@@ -30,23 +30,52 @@ pub fn rotate(src: &Mat4, angle: f32, x: f32, y: f32, z: f32) -> Mat4 {
 }
 
 // get a column from a matrix
-pub fn column(src: &Mat4, i: usize) -> Vec<f32> {
+pub fn column(src: &Mat4, i: usize) -> Option<Vec<f32>> {
+    if i > 3 {
+        return None;
+    }
+
     let mut column: Vec<f32> = vec![];
     
     for num in src.column(i).iter() {
         column.push(*num);
     }
 
-    column
+    Some(column)
 }
 
 // get a row from a matrix
-pub fn row(src: &Mat4, i: usize) -> Vec<f32> {
+pub fn row(src: &Mat4, i: usize) -> Option<Vec<f32>> {
+    if i > 3 {
+        return None;
+    }
+
     let mut row: Vec<f32> = vec![];
     
     for num in src.row(i).iter() {
         row.push(*num);
     }
 
-    row
+    Some(row)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    #[test]
+    fn test_row() {
+        let mat = mvp::identity();
+        assert_eq!(Some(vec![1.0, 0.0, 0.0, 0.0]), mvp::row(&mat, 0));
+        assert_eq!(Some(vec![0.0, 0.0, 0.0, 1.0]), mvp::row(&mat, 3));
+        assert_eq!(None, mvp::row(&mat, 100));
+    }
+
+    #[test]
+    fn test_col() {
+        let mat = mvp::identity();
+        assert_eq!(Some(vec![1.0, 0.0, 0.0, 0.0]), mvp::column(&mat, 0));
+        assert_eq!(Some(vec![0.0, 0.0, 0.0, 1.0]), mvp::column(&mat, 3));
+        assert_eq!(None, mvp::column(&mat, 100));
+    }
 }

@@ -122,3 +122,14 @@ impl Default for Transform {
         Transform::new()
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    #[test]
+    fn test_new_transform() {
+
+    }
+}

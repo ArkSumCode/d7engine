@@ -12,3 +12,22 @@ pub fn point_in_rect(point_x: f32, point_y: f32, rect_x: f32, rect_y: f32, rect_
 pub trait Collision {
     fn collides(&self, x: f32, y: f32) -> bool;
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    #[test]
+    fn test_point_in_rect() {
+        let rect_x = 1.0;
+        let rect_y = 1.0;
+        let rect_width = 100.0;
+        let rect_height = 100.0;
+
+        assert_eq!(true, collision::point_in_rect(2.0, 1.0, rect_x, rect_y, rect_width, rect_height));
+        assert_eq!(false, collision::point_in_rect(0.5, 50.0, rect_x, rect_y, rect_width, rect_height));
+        assert_eq!(true, collision::point_in_rect(101.0, 101.0, rect_x, rect_y, rect_width, rect_height));
+        assert_eq!(false, collision::point_in_rect(101.0, 102.0, rect_x, rect_y, rect_width, rect_height));
+        assert_eq!(true, collision::point_in_rect(1.0, 1.0, rect_x, rect_y, rect_width, rect_height));
+    } 
+}
