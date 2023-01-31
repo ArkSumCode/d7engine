@@ -1,6 +1,6 @@
-#d7engine
-##A project by Markus Dick
-###d7engine is a homemade games engine for fun.
+# d7engine
+## A project by Markus Dick
+### d7engine is a homemade games engine for fun.
 
 Basic setup:
 
