@@ -32,7 +32,7 @@ cargo add d7engine
 use d7engine::*;
 
 struct Runt {
-    components: Vec<Box<dyn Component>>,
+    components: ComponentContainer,
     camera: Transform,
 }
 
@@ -42,7 +42,7 @@ impl Runtime for Runt {
     }
 
     fn draw(&mut self, draw: &Draw) {
-        for component in &self.components {
+        for (_, component) in &mut self.components {
             component.draw(draw, &self.camera).unwrap();
         }
     }
@@ -50,7 +50,7 @@ impl Runtime for Runt {
 
 fn main() {
     init(Config::default(), &mut Runt{
-        components: vec![],
+        components: HashMap::new(),
         camera: Transform::new(),
     });
 }
