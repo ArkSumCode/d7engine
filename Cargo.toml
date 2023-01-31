@@ -20,6 +20,6 @@ sha2 = "0.10.6"
 rusttype = "0.9.3"
 
 [dependencies.sdl2]
-version = "0.35.1"
+version = "0.35.2"
 default-features = false
 features = ["bundled", "static-link"]
