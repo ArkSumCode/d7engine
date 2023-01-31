@@ -38,7 +38,12 @@ struct Runt {
 
 impl Runtime for Runt {
     fn load(&mut self) {
-        
+        let color = Color::rgb(255, 0, 0);
+        let mut rect1 = Component::rect().unwrap();
+        rect1.set_color(&color);
+        rect1.set_dim(100.0, 100.0);
+        rect1.transform.set(50.0, 50.0, 0.0);
+        self.components.insert("1".to_string(), rect1);
     }
 
     fn draw(&mut self, draw: &Draw) {
