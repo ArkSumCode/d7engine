@@ -150,14 +150,14 @@ impl Component {
     // the offset os mainly used for 
     // better positioning of rotation
     // or when using instanced drawing
-    pub fn set_pos(&mut self, x: f32, y: f32) {
-        self.component_data.offset = (x, y);
+    pub fn set_offset(&mut self, x_offset: f32, y_offset: f32) {
+        self.component_data.offset = (x_offset, y_offset);
         self.object.set(0, &self.component_data);
         self.object.set_state(object::ObjectState::Reload);
     }
 
     // get the offset data of the component
-    pub fn pos(&self) -> (f32, f32) {
+    pub fn offset(&self) -> (f32, f32) {
         self.component_data.offset
     }
 
@@ -394,16 +394,16 @@ impl InstancedComponent {
     // the offset os mainly used for 
     // better positioning of rotation
     // or when using instanced drawing
-    pub fn set_pos(&mut self, i: usize, x: f32, y: f32) -> Result<(), String> {
+    pub fn set_offset(&mut self, i: usize, x_offset: f32, y_offset: f32) -> Result<(), String> {
         self.index_oob(i)?;
-        self.component_data[i].offset = (x, y);
+        self.component_data[i].offset = (x_offset, y_offset);
         self.object.set(i, &self.component_data[i]);
         self.object.set_state(object::ObjectState::Reload);
         Ok(())
     }
 
     // get the offset of transform data i of the component
-    pub fn pos(&self, i: usize) -> Result<(f32, f32), String> {
+    pub fn offset(&self, i: usize) -> Result<(f32, f32), String> {
         self.index_oob(i)?;
         Ok(self.component_data[i].offset)
     }
@@ -426,7 +426,7 @@ impl InstancedComponent {
     // collision for an instance
     pub fn instance_collides(&self, i: usize, x: f32, y: f32) -> Result<bool, String> {
         let (tx, ty, _) = self.transform.pos();
-        let (x_offset, y_offset) = self.pos(i)?;
+        let (x_offset, y_offset) = self.offset(i)?;
         let (width, height) = self.dim(i)?;
         let collides = collision::point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height);
         Ok(collides)
@@ -473,7 +473,7 @@ pub type InstancedComponentContainer = HashMap<String, InstancedComponent>;
 impl Collision for Component {
     fn collides(&self, x: f32, y: f32) -> bool {
         let (tx, ty, _) = self.transform.pos();
-        let (x_offset, y_offset) = self.pos();
+        let (x_offset, y_offset) = self.offset();
         let (width, height) = self.dim();
         collision::point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height)
     }
