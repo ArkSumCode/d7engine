@@ -1,7 +1,7 @@
 // defines the mouse wheel to be 
 // in one of 3 positions
 // up, down and nothing 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum MouseWheelState {
     Up,
     Down,
@@ -47,3 +47,16 @@ impl Mouse {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mouse() {
+        let mouse = Mouse::new(100, 250, false, true, MouseWheelState::None);
+        assert_eq!(mouse.pos(), (100, 250));
+        assert_eq!(mouse.left(), false);
+        assert_eq!(mouse.right(), true);
+        assert_eq!(mouse.mws(), MouseWheelState::None);
+    }
+}

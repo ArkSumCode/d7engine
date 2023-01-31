@@ -8,7 +8,7 @@ pub fn lerp(start: f32, end: f32, step: f32) -> f32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use super::*;
 
     #[test]
     fn test_lerp() {

@@ -159,10 +159,10 @@ impl PartialEq for Node {
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use super::*;
     struct Solvable {}
 
-    impl pathfinding::Maze for Solvable {
+    impl Maze for Solvable {
         fn height(&self) -> usize {
             10
         }
@@ -184,7 +184,7 @@ mod tests {
 
     struct Unsolvable {}
 
-    impl pathfinding::Maze for Unsolvable {
+    impl Maze for Unsolvable {
         fn height(&self) -> usize {
             10
         }
@@ -204,11 +204,11 @@ mod tests {
 
     #[test]
     fn test_astar() {
-        let result = pathfinding::astar(&Solvable {}, (0, 0), (9, 0));
+        let result = astar(&Solvable {}, (0, 0), (9, 0));
         let solution = vec![(0, 0), (0, 1), (1, 2), (2, 1), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0)];
         assert_eq!(Some(solution), result);
 
-        let result = pathfinding::astar(&Unsolvable {}, (0, 0), (9, 9));
+        let result = astar(&Unsolvable {}, (0, 0), (9, 9));
         assert_eq!(None, result);
     }
 }

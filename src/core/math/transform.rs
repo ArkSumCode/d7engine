@@ -126,10 +126,14 @@ impl Default for Transform {
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use super::*;
 
     #[test]
-    fn test_new_transform() {
-
+    fn test_transform() {
+        let mut transform = Transform::new();
+        assert_eq!(transform.x, 0.0);
+        assert_ne!(transform.y, 1.0);
+        transform.add_z(50.0);
+        assert_eq!(transform.z, 50.0);
     }
 }

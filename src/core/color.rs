@@ -36,3 +36,30 @@ impl Default for Color {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_color() {
+        let default = Color::default();
+        assert_eq!(default.r, 0.0);
+        assert_eq!(default.g, 0.0);
+        assert_eq!(default.b, 0.0);
+        assert_eq!(default.a, 0.0);
+
+        let some_grey = Color::grey(77);
+        let assert_color = 77.0 / 255.0;
+        assert_eq!(some_grey.r, assert_color);
+        assert_eq!(some_grey.g, assert_color);
+        assert_eq!(some_grey.b, assert_color);
+        assert_eq!(some_grey.a, 1.0);
+
+        let red = Color::rgb(255, 0, 0);
+        assert_eq!(red.r, 1.0);
+        assert_eq!(red.g, 0.0);
+        assert_eq!(red.b, 0.0);
+        assert_eq!(red.a, 1.0);
+    }
+}

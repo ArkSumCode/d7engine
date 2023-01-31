@@ -61,7 +61,7 @@ pub fn row(src: &Mat4, i: usize) -> Option<Vec<f32>> {
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use super::*;
 
     #[test]
     fn test_row() {

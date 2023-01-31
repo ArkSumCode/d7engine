@@ -1,9 +1,10 @@
-d7engine
-A project by Markus Dick
-d7engine is a homemade games engine for fun.
+#d7engine
+##A project by Markus Dick
+###d7engine is a homemade games engine for fun.
 
 Basic setup:
 
+```
 //#![windows_subsystem = "windows"]
 use d7engine::prelude::*;
 
@@ -30,3 +31,4 @@ fn main() {
         camera: Transform::new(),
     });
 }
+```
