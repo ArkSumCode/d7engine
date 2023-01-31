@@ -29,7 +29,7 @@ cargo add d7engine
 
 ```
 //#![windows_subsystem = "windows"]
-use d7engine::prelude::*;
+use d7engine::*;
 
 struct Runt {
     components: Vec<Box<dyn Component>>,
