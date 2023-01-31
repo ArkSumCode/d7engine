@@ -2,7 +2,7 @@
 ## A project by Markus Dick
 ### d7engine is a homemade games engine for fun.
 
-### Instalation
+### Installation
 
 Make sure that you have Rust installed on your pc by using:
 
