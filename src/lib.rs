@@ -26,8 +26,9 @@ pub use crate::core::{file, file::installation::Installation};
 pub use std::path::{PathBuf, Path};
 pub use crate::core::shader::program::Program;
 pub use crate::core::shader::object;
-pub use crate::core::component::{Default, Component, ComponentData, InstancedComponent};
+pub use crate::core::component::{Default, Component, ComponentData};
 pub use crate::core::component::{ComponentContainer};
+pub use crate::core::instanced_component::InstancedComponent;
 
 /*
 entry function for every project
