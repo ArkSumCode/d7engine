@@ -254,17 +254,3 @@ enum InstancedComponentState {
     Ok,
 }
 
-// impl iterator for InstancedComponent
-// iterates over the vec of componentdata
-impl Iterator for InstancedComponent {
-    type Item = ComponentData;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.component_data.len() {
-            self.index += 1;
-            Some(self.component_data[self.index])
-        } else {
-            None
-        }
-    }
-}
