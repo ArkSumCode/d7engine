@@ -464,10 +464,6 @@ enum InstancedComponentState {
     Ok,
 }
 
-// helps to store components in your struct
-pub type ComponentContainer = HashMap<String, Component>;
-pub type InstancedComponentContainer = HashMap<String, InstancedComponent>;
-
 // implement collision on 
 // both component types
 impl Collision for Component {
@@ -476,5 +472,40 @@ impl Collision for Component {
         let (x_offset, y_offset) = self.offset();
         let (width, height) = self.dim();
         collision::point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height)
+    }
+}
+
+use std::collections::HashMap;
+
+// helps to store components in your struct
+pub struct ComponentContainer {
+    map: HashMap<String, Component>,
+}
+
+impl ComponentContainer {
+    // standard Hashmap function
+    pub fn new() -> Self {
+        Self { map: HashMap::new() }
+    }
+    // standard Hashmap function
+    pub fn insert(&mut self, key: &str, value: Component) {
+        self.map.insert(key.to_string(), value);
+    }
+    // standard Hashmap function
+    pub fn get(&self, key: &str) -> Option<&Component> {
+        self.map.get(key)
+    }
+    // standard Hashmap function
+    pub fn get_mut(&mut self, key: &str) -> Option<&mut Component> {
+        self.map.get_mut(key)
+    }
+    // adds drawing for loop for cleaner user code
+    // draws all components in map
+    pub fn draw(&mut self, draw: &Draw, camera: &Transform) -> Result<(), String> {
+        for (_, component) in &mut self.map {
+            component.draw(draw, camera)?;
+        }
+
+        Ok(())
     }
 }
