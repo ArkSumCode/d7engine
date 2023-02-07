@@ -43,19 +43,17 @@ impl Runtime for Runt {
         rect1.set_color(&color);
         rect1.set_dim(100.0, 100.0);
         rect1.transform.set(50.0, 50.0, 0.0);
-        self.components.insert("1".to_string(), rect1);
+        self.components.insert("1", rect1);
     }
 
     fn draw(&mut self, draw: &Draw) {
-        for (_, component) in &mut self.components {
-            component.draw(draw, &self.camera).unwrap();
-        }
+        self.components.draw(draw, &self.camera).unwrap();
     }
 }
 
 fn main() {
     init(Config::default(), &mut Runt{
-        components: HashMap::new(),
+        components: ComponentContainer::new(),
         camera: Transform::new(),
     });
 }

@@ -33,6 +33,25 @@ impl Component {
         Ok(component)
     }
 
+    // create a new circle component
+    pub fn circle() -> Result<Self, String> {
+        // create the data that is used to create 
+        // the transform buffer in the shader
+        let component_data = ComponentData::default();
+
+        let mut circle = object::circle::Circle::new();
+        circle.add(&component_data);
+        circle.load()?;
+
+        let component = Self {
+            object: Box::new(circle),
+            component_data, 
+            transform: Transform::default(),
+        };
+
+        Ok(component)
+    }
+
     // create a new texture component
     pub fn texture(image: &Image) -> Result<Self, String> {
         // create the data that is used to create 

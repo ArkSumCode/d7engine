@@ -12,7 +12,6 @@ pub struct InstancedComponent {
     component_data: Vec<ComponentData>,
     object: Box<dyn object::Object>,
     state: InstancedComponentState,
-    index: usize, // for iterator
 } 
 
 impl InstancedComponent {
@@ -25,7 +24,20 @@ impl InstancedComponent {
             component_data: vec![], 
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
-            index: 0,
+        };
+
+        Ok(component)
+    }
+
+    // create a new circle component
+    pub fn circle() -> Result<Self, String> {
+        let circle = object::circle::Circle::new();
+
+        let component = Self {
+            object: Box::new(circle),
+            component_data: vec![], 
+            transform: Transform::default(),
+            state: InstancedComponentState::NotLoaded,
         };
 
         Ok(component)
@@ -40,7 +52,6 @@ impl InstancedComponent {
             component_data: vec![], 
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
-            index: 0,
         };
 
         Ok(component)
@@ -59,7 +70,6 @@ impl InstancedComponent {
             component_data: vec![], 
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
-            index: 0,
         };
 
         Ok(component)

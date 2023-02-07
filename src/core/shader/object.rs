@@ -4,6 +4,7 @@ use crate::*;
 pub mod rect;
 pub mod texture;
 pub mod text;
+pub mod circle;
 
 /*
 a buffer holds the information
