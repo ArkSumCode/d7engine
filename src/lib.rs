@@ -1,34 +1,21 @@
 //! d7engine dokumentation
+//! basic setup
 
 pub mod core;
 
+pub use crate::core::project::{Config, Runtime, Draw};
+pub use crate::core::resource::image::Image;
+pub use crate::core::math::transform::Transform;
+pub use crate::core::shader::{shader::Shader, instanced::InstancedShader};
+pub use crate::core::shader::data::{ObjectData, ShaderContainer};
+
+
+use gl;
 use sdl2::surface::Surface;
 use sdl2::keyboard::Keycode;
 use std::collections::HashSet;
-
 use crate::core::mouse;
-
-pub use gl;
-pub use nalgebra_glm;
-pub use std::ffi::CString;
-pub use std::f32::consts::PI;
-pub use crate::core::shader::Shader;
-pub use crate::core::project::{Config, Runtime, Draw, Performance};
-pub use crate::core::color::{Color};
-pub use crate::core::mouse::{MouseWheelState, Mouse};
-pub use std::collections::HashMap;
-pub use crate::core::resource::{font::Font, tilemap, image::Image, tilemap::TileMap};
-pub use crate::core::{seed, seed::Seed};
-pub use crate::core::math::{mvp, collision, collision::Collision, pathfinding, interpolation::lerp};
-pub use crate::core::window::Window;
-pub use crate::core::math::transform::Transform;
-pub use crate::core::{file, file::installation::Installation};
-pub use std::path::{PathBuf, Path};
-pub use crate::core::shader::program::Program;
-pub use crate::core::shader::object;
-pub use crate::core::component::{Default, Component, ComponentData};
-pub use crate::core::component::{ComponentContainer};
-pub use crate::core::instanced_component::InstancedComponent;
+use crate::core::project::Performance;
 
 /*
 entry function for every project

@@ -1,4 +1,6 @@
-use crate::*;
+use crate::core::shader::object::TextureCoordinate;
+use crate::core::resource::image::Image;
+use crate::core::file;
 
 /*
 this struct holds the information that is 
@@ -32,7 +34,7 @@ impl TileData {
     from the data in the tiles
     Standard TileDataRotation is bottom (no rotation)
     */
-    pub fn texcoord(&self, tile_data_rotation: &TileDataRotation) -> object::TextureCoordinate {
+    pub fn texcoord(&self, tile_data_rotation: &TileDataRotation) -> TextureCoordinate {
         match tile_data_rotation {
             TileDataRotation::Bottom => {
                 [

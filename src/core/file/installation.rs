@@ -1,6 +1,6 @@
 use std::fs::create_dir;
 use std::path::PathBuf;
-use crate::*;
+use crate::core::file;
 
 /* 
 files system only works with an installation struct, so 

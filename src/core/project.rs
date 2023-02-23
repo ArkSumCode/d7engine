@@ -1,5 +1,7 @@
 use std::time::Instant;
-use crate::*;
+use crate::core::color::Color;
+use crate::core::window::Window;
+use crate::core::mouse::Mouse;
 
 /*
 used as argument in the main init function

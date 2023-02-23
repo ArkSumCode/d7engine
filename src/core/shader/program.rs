@@ -1,5 +1,6 @@
-use crate::*;
+use crate::core::shader::Shader;
 use gl::types::*;
+use std::ffi::CString;
 
 // the ShaderProgram will be the 
 // compiled vertex and fragment shader

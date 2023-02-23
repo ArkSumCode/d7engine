@@ -1,5 +1,11 @@
-use crate::*;
-use object::{VertexArray, Buffer, TextureBuffer, ObjectState, Object};
+use crate::core::shader::object::{VertexArray, Buffer, ObjectState, Object, TextureBuffer};
+use crate::core::shader::program::Program;
+use crate::core::resource::image::Image;
+use crate::core::shader::data::ObjectData;
+use crate::core::math::mvp;
+use crate::core::project::Draw;
+use crate::core::math::transform::Transform;
+use crate::core::shader::Shader;
 
 const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330
@@ -85,11 +91,11 @@ impl Texture {
 
 impl Object for Texture {
     // add an new Texture to the transform data
-    fn add(&mut self, component_data: &ComponentData) {
-        let texcoord = component_data.texcoord;
-        let (x_offset, y_offset) = component_data.offset;
-        let (width, height) = component_data.dim;
-        let opacity = component_data.opacity;
+    fn add(&mut self, object_data: &ObjectData) {
+        let texcoord = object_data.texcoord;
+        let (x_offset, y_offset) = object_data.offset;
+        let (width, height) = object_data.dim;
+        let opacity = object_data.opacity;
 
         let transform_data: TransformData = [
             x_offset, y_offset, width, height, opacity, 
@@ -102,11 +108,11 @@ impl Object for Texture {
 
     /// set the component data
     /// for a specific element 'i' of the transform data vector
-    fn set(&mut self, i: usize, component_data: &ComponentData) {
-        let texcoord = component_data.texcoord;
-        let (x_offset, y_offset) = component_data.offset;
-        let (width, height) = component_data.dim;
-        let opacity = component_data.opacity;
+    fn set(&mut self, i: usize, object_data: &ObjectData) {
+        let texcoord = object_data.texcoord;
+        let (x_offset, y_offset) = object_data.offset;
+        let (width, height) = object_data.dim;
+        let opacity = object_data.opacity;
 
         let transform_data: TransformData = [
             x_offset, y_offset, width, height, opacity, 

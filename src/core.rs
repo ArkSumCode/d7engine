@@ -7,5 +7,4 @@ pub mod file;
 pub mod math;
 pub mod project;
 pub mod shader;
-pub mod component;
-pub mod instanced_component;
+pub mod default;

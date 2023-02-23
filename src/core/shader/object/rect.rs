@@ -1,5 +1,10 @@
-use crate::*;
-use object::{VertexArray, Buffer, ObjectState, Object};
+use crate::core::shader::object::{VertexArray, Buffer, ObjectState, Object};
+use crate::core::shader::program::Program;
+use crate::core::shader::data::ObjectData;
+use crate::core::math::mvp;
+use crate::core::project::Draw;
+use crate::core::math::transform::Transform;
+use crate::core::shader::Shader;
 
 const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330
@@ -69,11 +74,11 @@ impl Rect {
 
 impl Object for Rect {
     // add an new Rect to the transform data
-    fn add(&mut self, component_data: &ComponentData) {
-        let color = component_data.color;
-        let opacity = component_data.opacity;
-        let (offset_x, offset_y) = component_data.offset;
-        let (width, height) = component_data.dim;
+    fn add(&mut self, object_data: &ObjectData) {
+        let color = object_data.color;
+        let opacity = object_data.opacity;
+        let (offset_x, offset_y) = object_data.offset;
+        let (width, height) = object_data.dim;
 
         let transform_data: TransformData = [
             color.r, color.g, color.b, opacity, offset_x, offset_y, width, height, 
@@ -84,11 +89,11 @@ impl Object for Rect {
 
     /// set the component data
     /// for a specific element 'i' of the transform data vector
-    fn set(&mut self, i: usize, component_data: &ComponentData) {
-        let color = component_data.color;
-        let opacity = component_data.opacity;
-        let (offset_x, offset_y) = component_data.offset;
-        let (width, height) = component_data.dim;
+    fn set(&mut self, i: usize, object_data: &ObjectData) {
+        let color = object_data.color;
+        let opacity = object_data.opacity;
+        let (offset_x, offset_y) = object_data.offset;
+        let (width, height) = object_data.dim;
 
         let transform_data: TransformData = [
             color.r, color.g, color.b, opacity, offset_x, offset_y, width, height, 

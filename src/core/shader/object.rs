@@ -209,8 +209,8 @@ impl Drop for TextureBuffer {
 // Implement this Trait on shader objects
 // so we can use them in the component system
 pub trait Object {
-    fn add(&mut self, component_data: &ComponentData);
-    fn set(&mut self, i: usize, component_data: &ComponentData);
+    fn add(&mut self, component_data: &ObjectData);
+    fn set(&mut self, i: usize, component_data: &ObjectData);
     fn load(&mut self) -> Result<(), String>;
     fn reload(&mut self);
     fn remove(&mut self, i: usize);

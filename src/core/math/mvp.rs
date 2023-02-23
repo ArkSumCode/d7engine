@@ -1,5 +1,5 @@
-use crate::*;
 use nalgebra_glm::{vec3, Mat4};
+use crate::core::window::Window;
 
 // returns an othogonal projection matrix
 pub fn ortho(window: &Window) -> Mat4 {
@@ -65,17 +65,17 @@ mod tests {
 
     #[test]
     fn test_row() {
-        let mat = mvp::identity();
-        assert_eq!(Some(vec![1.0, 0.0, 0.0, 0.0]), mvp::row(&mat, 0));
-        assert_eq!(Some(vec![0.0, 0.0, 0.0, 1.0]), mvp::row(&mat, 3));
-        assert_eq!(None, mvp::row(&mat, 100));
+        let mat = identity();
+        assert_eq!(Some(vec![1.0, 0.0, 0.0, 0.0]), row(&mat, 0));
+        assert_eq!(Some(vec![0.0, 0.0, 0.0, 1.0]), row(&mat, 3));
+        assert_eq!(None, row(&mat, 100));
     }
 
     #[test]
     fn test_col() {
-        let mat = mvp::identity();
-        assert_eq!(Some(vec![1.0, 0.0, 0.0, 0.0]), mvp::column(&mat, 0));
-        assert_eq!(Some(vec![0.0, 0.0, 0.0, 1.0]), mvp::column(&mat, 3));
-        assert_eq!(None, mvp::column(&mat, 100));
+        let mat = identity();
+        assert_eq!(Some(vec![1.0, 0.0, 0.0, 0.0]), column(&mat, 0));
+        assert_eq!(Some(vec![0.0, 0.0, 0.0, 1.0]), column(&mat, 3));
+        assert_eq!(None, column(&mat, 100));
     }
 }

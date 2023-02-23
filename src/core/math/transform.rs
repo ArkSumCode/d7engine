@@ -1,5 +1,5 @@
-use crate::*;
 use nalgebra_glm::Mat4;
+use crate::core::math::mvp;
 
 // holds transform data in the form of a matrix
 // and the x, y and z values
