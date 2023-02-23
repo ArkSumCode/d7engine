@@ -3,7 +3,7 @@
 
 [package]
 name = "d7engine"
-version = "1.0.15"
+version = "1.0.16"
 authors = ["Markus Dick"]
 edition = "2018"
 description = "A game engine in rust with SDL2 and opengl."
