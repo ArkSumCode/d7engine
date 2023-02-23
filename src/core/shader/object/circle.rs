@@ -33,11 +33,9 @@ const FRAGMENT_SHADER_SOURCE: &str = r#"
 
     void main() {
         float dist = distance(oPosition, vec2(0.5));
-        if(dist < 0.5) {
-            color = oColor;
-        } else {
-            color = vec4(0.0, 0.0, 0.0, 0.0);
-        }
+        float delta = fwidth(dist);
+        float alpha = smoothstep(0.49-delta, 0.49, dist);
+        color = mix(oColor, vec4(0.0), alpha);
     }
 "#;
 
