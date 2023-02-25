@@ -145,7 +145,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
         }
 
         // call the projects draw method
-        runtime.draw(&draw);
+        runtime.update(&draw);
         
         // sdl will change the window its draing to
         window.gl_swap_window();

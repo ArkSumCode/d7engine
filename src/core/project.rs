@@ -42,8 +42,8 @@ pub trait Runtime {
     // load is called before the actual gameloop
     fn load(&mut self);
 
-    // draw is called every frame
-    fn draw(&mut self, draw: &Draw);
+    // update is called every frame
+    fn update(&mut self, draw: &Draw);
 }
 
 /*
