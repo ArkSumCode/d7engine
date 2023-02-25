@@ -3,13 +3,6 @@
 
 pub mod core;
 
-pub use crate::core::project::{Config, Runtime, Draw};
-pub use crate::core::resource::image::Image;
-pub use crate::core::math::transform::Transform;
-pub use crate::core::shader::{shader::Shader, instanced::InstancedShader};
-pub use crate::core::shader::data::{ObjectData, ShaderContainer};
-
-
 use gl;
 use sdl2::surface::Surface;
 use sdl2::keyboard::Keycode;

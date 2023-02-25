@@ -1,5 +1,5 @@
 use crate::core::shader::object::{Object, ObjectState};
-use crate::*;
+use crate::core::*;
 use crate::core::shader::object::{circle::Circle, rect::Rect, text::Text, texture::Texture};
 use crate::core::color::Color;
 use crate::core::resource::font::Font;

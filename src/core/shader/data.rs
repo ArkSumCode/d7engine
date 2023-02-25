@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use crate::core::color::Color;
 use crate::core::shader::object::TextureCoordinate;
 use crate::core::shader::shader::Shader;
-use crate::*;
+use crate::core::*;
 
 /// add an Instance to a [InstancedShader](InstancedShader)
 /// ```rust
