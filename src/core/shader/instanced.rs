@@ -109,6 +109,15 @@ impl InstancedShader {
         Ok(())
     }
 
+    // remove all Component Data
+    // this will remove an instance within the object
+    // of the InstancedShader
+    pub fn remove_all(&mut self) {
+        self.object_data = vec![];
+        self.object.remove_all();
+        self.object.set_state(ObjectState::Reload);
+    }
+
     // loads the object with the model data
     // call this after adding all the transform/component data
     pub fn load(&mut self) -> Result<(), String> {

@@ -214,6 +214,7 @@ pub trait Object {
     fn load(&mut self) -> Result<(), String>;
     fn reload(&mut self);
     fn remove(&mut self, i: usize);
+    fn remove_all(&mut self);
     fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String>;
     fn set_state(&mut self, object_state: ObjectState);
 }

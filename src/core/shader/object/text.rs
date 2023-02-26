@@ -117,6 +117,12 @@ impl Object for Text {
         self.transform_data.remove(i);
     }
 
+    // removes all rect from 
+    // the transform data
+    fn remove_all(&mut self) {
+        self.transform_data = vec![];
+    }
+
     // load the shaders 
     // and create all data for the program
     fn load(&mut self) -> Result<(), String> {

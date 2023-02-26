@@ -108,6 +108,13 @@ impl Object for Rect {
         self.transform_data.remove(i);
     }
 
+    // removes all rect from 
+    // the transform data
+    fn remove_all(&mut self) {
+        self.transform_data = vec![];
+    }
+
+
     // create shaders and buffers
     fn load(&mut self) -> Result<(), String> {
         let model_data: [f32; 4*2] = [
