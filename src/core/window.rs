@@ -5,13 +5,13 @@
 
 #[derive(Copy,Clone)]
 pub struct Window {
-    pub width: i32,
-    pub height: i32,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl Window {
     // create a new window struct
-    pub fn new(width: i32, height: i32) -> Window {
-        Window {width, height}
+    pub fn new(width: f32, height: f32) -> Window {
+        Window {width: width, height}
     }
 }

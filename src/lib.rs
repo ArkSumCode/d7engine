@@ -69,7 +69,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
     }
 
     // create the window struct with width and height
-    let mut win = core::window::Window::new(config.width as i32, config.height as i32);
+    let mut win = core::window::Window::new(config.width as f32, config.height as f32);
 
     // create the performance object
     let mut performance = Performance::new();
@@ -91,7 +91,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
             if let sdl2::event::Event::Window { win_event, .. } = event {
                 if let sdl2::event::WindowEvent::Resized(width, height) = win_event {
                     // create the window struct with width and height
-                    win = core::window::Window::new(width as i32, height as i32);
+                    win = core::window::Window::new(width as f32, height as f32);
                     set_viewport(width, height);
                 }
             }
