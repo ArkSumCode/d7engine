@@ -3,7 +3,7 @@
 
 [package]
 name = "d7engine"
-version = "1.1.4"
+version = "1.1.5"
 authors = ["Markus Dick"]
 edition = "2018"
 description = "A game engine in rust with SDL2 and opengl."
@@ -15,7 +15,7 @@ repository = "https://github.com/debugseven/d7engine"
 gl = "0.14.0"
 nalgebra-glm = "0.18.0"
 image = "0.24.5"
-directories = "4.0.1"
+directories = "5.0.0"
 sha2 = "0.10.6"
 rusttype = "0.9.3"
 
