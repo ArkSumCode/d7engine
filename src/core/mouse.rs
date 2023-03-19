@@ -13,8 +13,8 @@ a little structure to hold the data
 from the mouse it comes from sdl2 and is set in lib.rs
 */
 pub struct Mouse {
-    x: i32,
-    y: i32,
+    pub x: f32,
+    pub y: f32,
     left: bool,
     right: bool,
     mws: MouseWheelState,
@@ -22,12 +22,12 @@ pub struct Mouse {
 
 impl Mouse {
     // create a new mouse structures
-    pub fn new(x: i32, y: i32, left: bool, right: bool, mws: MouseWheelState) -> Mouse {
+    pub fn new(x: f32, y: f32, left: bool, right: bool, mws: MouseWheelState) -> Mouse {
         Mouse {x, y, left, right, mws}
     }
 
     // returns the x and y position of the mouse realtive to top left
-    pub fn pos(&self) -> (i32, i32) {
+    pub fn pos(&self) -> (f32, f32) {
         (self.x, self.y)
     } 
 
@@ -53,8 +53,8 @@ mod tests {
 
     #[test]
     fn test_mouse() {
-        let mouse = Mouse::new(100, 250, false, true, MouseWheelState::None);
-        assert_eq!(mouse.pos(), (100, 250));
+        let mouse = Mouse::new(100.0, 250.0, false, true, MouseWheelState::None);
+        assert_eq!(mouse.pos(), (100.0, 250.0));
         assert_eq!(mouse.left(), false);
         assert_eq!(mouse.right(), true);
         assert_eq!(mouse.mws(), MouseWheelState::None);

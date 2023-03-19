@@ -109,8 +109,8 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
         // create a new mouse struct thats holds the data for our draw struct
         let mouse_state = event_pump.mouse_state();
         let mouse = mouse::Mouse::new(
-            mouse_state.x(), 
-            mouse_state.y(), 
+            mouse_state.x() as f32, 
+            mouse_state.y() as f32, 
             mouse_state.left(), 
             mouse_state.right(), 
             mws

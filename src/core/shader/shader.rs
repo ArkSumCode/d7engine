@@ -3,7 +3,6 @@ use crate::core::*;
 use crate::core::shader::object::{circle::Circle, rect::Rect, text::Text, texture::Texture};
 use crate::core::color::Color;
 use crate::core::resource::font::Font;
-use crate::core::math::{collision, collision::Collision};
 use crate::core::shader::object::TextureCoordinate;
 
 /// The api to draw to the screen
@@ -204,12 +203,10 @@ impl Shader {
     pub fn texcoord(&self) -> TextureCoordinate {
         self.object_data.texcoord
     }
-}
 
-// implement collision on 
-// both Shader types
-impl Collision for Shader {
-    fn collides(&self, x: f32, y: f32) -> bool {
+    // implement collision on 
+    // both Shader types
+    pub fn collides(&self, x: f32, y: f32) -> bool {
         let (tx, ty, _) = self.transform.pos();
         let (x_offset, y_offset) = self.offset();
         let (width, height) = self.dim();
