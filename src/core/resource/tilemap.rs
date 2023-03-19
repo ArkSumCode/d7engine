@@ -89,7 +89,7 @@ impl TileMap {
     */
     pub fn new(path: &str, image: Image, dim: usize) -> Result<Self, String> {
         let file = file::read(path)?;
-        let image_dim = (image.width() as f32, image.height() as f32);
+        let image_dim = (image.width, image.height);
 
         let mut tiles = vec![];
       

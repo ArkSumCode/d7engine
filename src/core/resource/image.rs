@@ -8,15 +8,15 @@ use image;
 #[derive(Clone)]
 pub struct Image {
     data: Box<image::RgbaImage>,
-    width: u32,
-    height: u32,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl Image {
     pub fn new(path: &str) -> Result<Image, String> {
         let data = Self::data(path)?; 
-        let width = data.width();
-        let height = data.height();
+        let width = data.width() as f32;
+        let height = data.height() as f32;
         Ok(Image{
             data: Box::new(data),
             width, height
@@ -26,8 +26,8 @@ impl Image {
     // create the image struct from a image::RgbaImage 
     // this will consume the image
     pub fn from(image: image::RgbaImage) -> Self {
-        let width = image.width();
-        let height = image.height();
+        let width = image.width() as f32;
+        let height = image.height() as f32;
 
         Image {
             data: Box::new(image),
@@ -61,17 +61,7 @@ impl Image {
         let img = image::imageops::crop(&mut data, x, y, width, height);
         Image{
             data: Box::new(img.to_image()),
-            width, height,
+            width: width as f32, height: height as f32,
         }
-    }
-
-    // returns the width of the image
-    pub fn width(&self) -> u32 {
-        self.width
-    }
-
-    // returns the height of the image
-    pub fn height(&self) -> u32 {
-        self.height
     }
 }

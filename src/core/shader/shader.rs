@@ -70,7 +70,7 @@ impl Shader {
         // create the data that is used to create 
         // the transform buffer in the shader
         let mut object_data = ObjectData::default();
-        object_data.dim = (image.width() as f32, image.height() as f32);
+        object_data.dim = (image.width, image.height);
 
         let mut texture = Texture::new(image);
         texture.add(&object_data);
@@ -94,8 +94,8 @@ impl Shader {
         // create the data that is used to create 
         // the transform buffer in the shader
         let mut object_data = ObjectData::default();
-        object_data.dim.0 = image.width() as f32;
-        object_data.dim.1 = image.height() as f32;
+        object_data.dim.0 = image.width;
+        object_data.dim.1 = image.height;
         object_data.color = color.clone();
 
         let mut text = Text::new(&image)?;
