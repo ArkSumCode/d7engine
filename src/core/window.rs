@@ -12,6 +12,6 @@ pub struct Window {
 impl Window {
     // create a new window struct
     pub fn new(width: f32, height: f32) -> Window {
-        Window {width: width, height}
+        Window {width, height}
     }
 }
