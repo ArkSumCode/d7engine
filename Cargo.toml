@@ -23,3 +23,6 @@ rusttype = "0.9.3"
 version = "0.35.2"
 default-features = false
 features = ["bundled", "static-link"]
+
+[lib]
+doctest = false
