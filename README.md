@@ -1,6 +1,8 @@
 # d7engine
+
 ## A project by Markus Dick
-### d7engine is a homemade games engine for fun.
+
+### d7engine is a homemade games engine for fun
 
 ### Installation
 
@@ -11,8 +13,7 @@ cargo version
 ```
 
 or install Rust by using the [official Rust installation guid](https://www.rust-lang.org/tools/install).
-You also need [cmake](https://cmake.org/download/) installed on your system. 
-
+You also need [cmake](https://cmake.org/download/) installed on your system.
 
 Create a new project:
 
@@ -27,9 +28,9 @@ cd your_game_name
 cargo add d7engine
 ```
 
-### Basic setup:
+### Basic setup
 
-```
+```rust
 //#![windows_subsystem = "windows"]
 use d7engine::*;
 
