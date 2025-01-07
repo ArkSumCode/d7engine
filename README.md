@@ -11,6 +11,8 @@ cargo version
 ```
 
 or install Rust by using the [official Rust installation guid](https://www.rust-lang.org/tools/install).
+You also need [cmake](https://cmake.org/download/) installed on your system. 
+
 
 Create a new project:
 
