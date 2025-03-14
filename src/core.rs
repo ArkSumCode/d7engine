@@ -1,20 +1,21 @@
-pub mod seed;
 pub mod color;
-pub mod window;
-pub mod resource;
-pub mod mouse;
+pub mod default;
 pub mod file;
 pub mod math;
+pub mod mouse;
 pub mod project;
+pub mod resource;
+pub mod seed;
 pub mod shader;
-pub mod default;
+pub mod window;
 
-pub use crate::core::project::{Config, Runtime, Draw};
-pub use crate::core::math::transform::Transform;
-pub use crate::core::shader::{shader::Shader, instanced::InstancedShader};
-pub use crate::core::shader::data::ObjectData;
-pub use crate::core::color::Color;
-pub use crate::core::resource::image::Image;
-pub use crate::core::resource::font::Font;
-pub use crate::core::seed::Seed;
-pub use crate::core::math::collision;
+pub use color::Color;
+pub use math::collision;
+pub use math::transform::Transform;
+pub use project::{Config, Draw, Runtime};
+pub use resource::font::Font;
+pub use resource::image::Image;
+pub use seed::Seed;
+pub use shader::data::ObjectData;
+pub use shader::{instanced::InstancedShader, shader::Shader};
+
