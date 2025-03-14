@@ -3,12 +3,24 @@
 
 pub mod core;
 
-use gl;
-use sdl2::surface::Surface;
-use sdl2::keyboard::Keycode;
-use std::collections::HashSet;
+// reexports
+
+pub use crate::core::color::Color;
+pub use crate::core::math::collision;
+pub use crate::core::math::transform::Transform;
+pub use crate::core::project::{Config, Draw, Runtime};
+pub use crate::core::resource::font::Font;
+pub use crate::core::resource::image::Image;
+pub use crate::core::seed::Seed;
+pub use crate::core::shader::data::ObjectData;
+pub use crate::core::shader::{instanced::InstancedShader, shader::Shader};
+
 use crate::core::mouse;
 use crate::core::project::Performance;
+use gl;
+use sdl2::keyboard::Keycode;
+use sdl2::surface::Surface;
+use std::collections::HashSet;
 
 /*
 entry function for every project
@@ -16,7 +28,10 @@ supply the config and runtime structs
 
 init sdl and opengl and run the gameloop
 */
-pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core::project::Runtime) {
+pub fn init(
+    config: crate::core::project::Config,
+    runtime: &mut impl crate::core::project::Runtime,
+) {
     // init sdl and the video subsystem
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
@@ -46,9 +61,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
     }
 
     // tell opengl where the video subsystem is on the memeory
-    let _gl = gl::load_with(
-        |ptr| video_subsystem.gl_get_proc_address(ptr) as *const _
-    );
+    let _gl = gl::load_with(|ptr| video_subsystem.gl_get_proc_address(ptr) as *const _);
 
     // set vsync
     video_subsystem.gl_set_swap_interval(1).unwrap();
@@ -76,14 +89,14 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
 
     // call the projects load funtion
     runtime.load();
-  
+
     'main: loop {
         let mut mws = crate::core::mouse::MouseWheelState::None;
-      
+
         // handling of events
         for event in event_pump.poll_iter() {
             match event {
-                sdl2::event::Event::Quit{..} => break 'main,
+                sdl2::event::Event::Quit { .. } => break 'main,
                 _ => {}
             }
 
@@ -95,9 +108,9 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
                     set_viewport(width, height);
                 }
             }
-           
-            // handle the mouse wheel, check if y greater or less than 0 
-            if let sdl2::event::Event::MouseWheel {y, ..} = event {
+
+            // handle the mouse wheel, check if y greater or less than 0
+            if let sdl2::event::Event::MouseWheel { y, .. } = event {
                 mws = if y < 0 {
                     crate::core::mouse::MouseWheelState::Down
                 } else {
@@ -109,11 +122,11 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
         // create a new mouse struct thats holds the data for our draw struct
         let mouse_state = event_pump.mouse_state();
         let mouse = mouse::Mouse::new(
-            mouse_state.x() as f32, 
-            mouse_state.y() as f32, 
-            mouse_state.left(), 
-            mouse_state.right(), 
-            mws
+            mouse_state.x() as f32,
+            mouse_state.y() as f32,
+            mouse_state.left(),
+            mouse_state.right(),
+            mws,
         );
 
         // Create a set of pressed Keys.
@@ -123,14 +136,14 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
             .filter_map(Keycode::from_scancode)
             .collect();
 
-        // Create a vec of Strings to 
+        // Create a vec of Strings to
         // pass to draw functions
         let mut keys = vec![];
         for key in hashset_keys {
             keys.push(key.to_string());
         }
 
-        // create the draw struct 
+        // create the draw struct
         // that will be passed to draw functions
         let draw = crate::core::project::Draw {
             performance: performance.clone(),
@@ -138,7 +151,7 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
             mouse: mouse,
             keys: keys,
         };
-     
+
         unsafe {
             // clear the screen
             gl::Clear(gl::COLOR_BUFFER_BIT);
@@ -146,18 +159,17 @@ pub fn init(config: crate::core::project::Config, runtime: &mut impl crate::core
 
         // call the projects draw method
         runtime.update(&draw);
-        
+
         // sdl will change the window its draing to
         window.gl_swap_window();
 
         // performance tick
         performance.frame();
     }
-
 }
 
 /*
-always set the viewport to be a square so 
+always set the viewport to be a square so
 rects on different resolutions are the same ratio
 */
 fn set_viewport(width: i32, height: i32) {
