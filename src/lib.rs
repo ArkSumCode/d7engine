@@ -17,7 +17,6 @@ pub use crate::core::shader::{instanced::InstancedShader, shader::Shader};
 
 use crate::core::mouse;
 use crate::core::project::Performance;
-use gl;
 use sdl2::keyboard::Keycode;
 use sdl2::surface::Surface;
 use std::collections::HashSet;

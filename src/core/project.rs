@@ -1,7 +1,7 @@
-use std::time::Instant;
 use crate::core::color::Color;
-use crate::core::window::Window;
 use crate::core::mouse::Mouse;
+use crate::core::window::Window;
+use std::time::Instant;
 
 /*
 used as argument in the main init function
@@ -35,7 +35,7 @@ used as argument in the main init function
 in the project make a struct that implements Runtime
 and pass it over to the engine
 
-this is your main struct then startpoint of your project 
+this is your main struct then startpoint of your project
 and holds a lot of opengl code
 */
 pub trait Runtime {
@@ -57,8 +57,6 @@ pub struct Draw {
     pub keys: Vec<String>,
 }
 
-
-
 /*
 structure for keeping track of performance
 it holds the timestamp of the last frame and the current fps
@@ -66,7 +64,7 @@ it holds the timestamp of the last frame and the current fps
 #[derive(Clone)]
 pub struct Performance {
     last_frame: Instant,
-    fps: f32, 
+    fps: f32,
     delta: f32,
 }
 
@@ -76,7 +74,11 @@ impl Performance {
         let last_frame = Instant::now();
         let fps = 0.0;
         let delta = 0.0;
-        Performance { last_frame, fps, delta }
+        Performance {
+            last_frame,
+            fps,
+            delta,
+        }
     }
 
     // calculates fps and returns the delta time

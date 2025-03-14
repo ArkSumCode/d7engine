@@ -1,12 +1,13 @@
-use crate::core::shader::object::{Object, ObjectState};
-use crate::core::*;
-use crate::core::shader::object::{circle::Circle, rect::Rect, text::Text, texture::Texture};
+use crate::collision::point_in_rect;
 use crate::core::color::Color;
 use crate::core::resource::font::Font;
 use crate::core::shader::object::TextureCoordinate;
+use crate::core::shader::object::{circle::Circle, rect::Rect, text::Text, texture::Texture};
+use crate::core::shader::object::{Object, ObjectState};
+use crate::{Draw, Image, ObjectData, Transform};
 
 /// The api to draw to the screen
-/// 
+///
 /// create a new rect in load
 /// ```rust
 /// let mut rect = Shader::rect().unwrap();
@@ -14,7 +15,7 @@ use crate::core::shader::object::TextureCoordinate;
 /// rect.transform.set(50.0, 50.0, 0.0);
 /// rect.set_dim(100.0, 75.0);
 /// ```
-/// 
+///
 /// draw the rect in update
 /// ```rust
 /// rect.draw(&draw, &camera).unwrap();
@@ -28,7 +29,7 @@ pub struct Shader {
 impl Shader {
     // create a new rect Shader
     pub fn rect() -> Result<Self, String> {
-        // create the data that is used to create 
+        // create the data that is used to create
         // the transform buffer in the shader
         let object_data = ObjectData::default();
 
@@ -38,7 +39,7 @@ impl Shader {
 
         let component = Self {
             object: Box::new(rect),
-            object_data, 
+            object_data,
             transform: Transform::default(),
         };
 
@@ -47,7 +48,7 @@ impl Shader {
 
     // create a new circle Shader
     pub fn circle() -> Result<Self, String> {
-        // create the data that is used to create 
+        // create the data that is used to create
         // the transform buffer in the shader
         let object_data = ObjectData::default();
 
@@ -57,7 +58,7 @@ impl Shader {
 
         let component = Self {
             object: Box::new(circle),
-            object_data, 
+            object_data,
             transform: Transform::default(),
         };
 
@@ -66,7 +67,7 @@ impl Shader {
 
     // create a new texture Shader
     pub fn texture(image: &Image) -> Result<Self, String> {
-        // create the data that is used to create 
+        // create the data that is used to create
         // the transform buffer in the shader
         let mut object_data = ObjectData::default();
         object_data.dim = (image.width, image.height);
@@ -77,7 +78,7 @@ impl Shader {
 
         let component = Self {
             object: Box::new(texture),
-            object_data, 
+            object_data,
             transform: Transform::default(),
         };
 
@@ -90,7 +91,7 @@ impl Shader {
         let image = font.snapshot(text, font_size as f32)?;
         let image = Image::from(image);
 
-        // create the data that is used to create 
+        // create the data that is used to create
         // the transform buffer in the shader
         let mut object_data = ObjectData::default();
         object_data.dim.0 = image.width;
@@ -103,7 +104,7 @@ impl Shader {
 
         let component = Self {
             object: Box::new(text),
-            object_data, 
+            object_data,
             transform: Transform::default(),
         };
 
@@ -114,7 +115,7 @@ impl Shader {
     pub fn draw(&mut self, draw: &Draw, camera: &Transform) -> Result<(), String> {
         self.object.draw(draw, camera, &self.transform)?;
         Ok(())
-    } 
+    }
 
     // set the width and the height of the Shader
     pub fn set_dim(&mut self, width: f32, height: f32) {
@@ -178,7 +179,7 @@ impl Shader {
     }
 
     // set the offset of the Shader
-    // the offset os mainly used for 
+    // the offset os mainly used for
     // better positioning of rotation
     // or when using instanced drawing
     pub fn set_offset(&mut self, x_offset: f32, y_offset: f32) {
@@ -204,12 +205,13 @@ impl Shader {
         self.object_data.texcoord
     }
 
-    // implement collision on 
+    // implement collision on
     // both Shader types
     pub fn collides(&self, x: f32, y: f32) -> bool {
         let (tx, ty, _) = self.transform.pos();
         let (x_offset, y_offset) = self.offset();
         let (width, height) = self.dim();
-        collision::point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height)
+        point_in_rect(x, y, tx + x_offset, ty + y_offset, width, height)
     }
 }
+

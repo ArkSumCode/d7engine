@@ -1,12 +1,12 @@
-use crate::core::shader::object::{Object, ObjectState};
-use crate::core::*;
-use crate::core::shader::object::{circle::Circle, rect::Rect, text::Text, texture::Texture};
 use crate::core::color::Color;
-use crate::core::resource::font::Font;
 use crate::core::math::collision;
+use crate::core::resource::font::Font;
 use crate::core::shader::object::TextureCoordinate;
+use crate::core::shader::object::{circle::Circle, rect::Rect, text::Text, texture::Texture};
+use crate::core::shader::object::{Object, ObjectState};
+use crate::{Draw, Image, ObjectData, Transform};
 
-// this enum will 
+// this enum will
 // help in not rendering something because you forgot the
 // load method
 enum InstancedComponentState {
@@ -15,10 +15,10 @@ enum InstancedComponentState {
 }
 
 /*
-while the Component is used for drawing single 
-elements to the screen 
-the instanced component is used to 
-draw a single element multiple times at once 
+while the Component is used for drawing single
+elements to the screen
+the instanced component is used to
+draw a single element multiple times at once
 with different transformations
 */
 pub struct InstancedShader {
@@ -26,7 +26,7 @@ pub struct InstancedShader {
     object_data: Vec<ObjectData>,
     object: Box<dyn Object>,
     state: InstancedComponentState,
-} 
+}
 
 impl InstancedShader {
     // create a new rect InstancedShader
@@ -35,7 +35,7 @@ impl InstancedShader {
 
         let component = Self {
             object: Box::new(rect),
-            object_data: vec![], 
+            object_data: vec![],
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
         };
@@ -49,7 +49,7 @@ impl InstancedShader {
 
         let component = Self {
             object: Box::new(circle),
-            object_data: vec![], 
+            object_data: vec![],
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
         };
@@ -63,7 +63,7 @@ impl InstancedShader {
 
         let component = Self {
             object: Box::new(texture),
-            object_data: vec![], 
+            object_data: vec![],
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
         };
@@ -81,7 +81,7 @@ impl InstancedShader {
 
         let component = Self {
             object: Box::new(text),
-            object_data: vec![], 
+            object_data: vec![],
             transform: Transform::default(),
             state: InstancedComponentState::NotLoaded,
         };
@@ -90,7 +90,7 @@ impl InstancedShader {
     }
 
     // add a new Component Data
-    // this will create a new instance within the object 
+    // this will create a new instance within the object
     // of the InstancedShader
     pub fn add(&mut self, object_data: &ObjectData) {
         self.object_data.push(object_data.clone());
@@ -135,7 +135,7 @@ impl InstancedShader {
 
         self.object.draw(draw, camera, &self.transform)?;
         Ok(())
-    } 
+    }
 
     // set the width and the height of a transform data i of the InstancedShader
     pub fn set_dim(&mut self, i: usize, width: f32, height: f32) -> Result<(), String> {
@@ -214,7 +214,7 @@ impl InstancedShader {
     }
 
     // set the offset of a transform data i of the InstancedShader
-    // the offset os mainly used for 
+    // the offset os mainly used for
     // better positioning of rotation
     // or when using instanced drawing
     pub fn set_offset(&mut self, i: usize, x_offset: f32, y_offset: f32) -> Result<(), String> {
@@ -231,8 +231,8 @@ impl InstancedShader {
         Ok(self.object_data[i].offset)
     }
 
-      // set the texture coordinate of transform data i of the InstancedShader
-      pub fn set_texcoord(&mut self, i: usize, texcoord: TextureCoordinate) -> Result<(), String> {
+    // set the texture coordinate of transform data i of the InstancedShader
+    pub fn set_texcoord(&mut self, i: usize, texcoord: TextureCoordinate) -> Result<(), String> {
         self.index_oob(i)?;
         self.object_data[i].texcoord = texcoord;
         self.object.set(i, &self.object_data[i]);
@@ -268,7 +268,7 @@ impl InstancedShader {
         Ok(None)
     }
 
-    // checks if a item is in the 
+    // checks if a item is in the
     // InstancedShader data vector
     fn index_oob(&self, i: usize) -> Result<(), String> {
         if i >= self.object_data.len() {
@@ -278,6 +278,3 @@ impl InstancedShader {
         }
     }
 }
-
-
-

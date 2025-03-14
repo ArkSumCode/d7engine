@@ -1,8 +1,8 @@
-pub mod program;
-pub mod object;
 pub mod data;
-pub mod shader;
 pub mod instanced;
+pub mod object;
+pub mod program;
+pub mod shader;
 
 use gl::types::*;
 use std::ffi::CString;
@@ -15,24 +15,24 @@ pub struct Shader {
 }
 
 impl Shader {
-    // create a new shader from source code with 
+    // create a new shader from source code with
     // either the type gl::VERTEX_SHADER or gl::FRAGMENT_SHADER
     pub fn new(source_code: &str, shader_type: GLenum) -> Result<Self, String> {
         unsafe {
             let shader = Self {
                 id: gl::CreateShader(shader_type),
             };
-    
+
             match CString::new(source_code) {
                 Ok(source_code) => {
                     // compile the shader
                     gl::ShaderSource(shader.id, 1, &source_code.as_ptr(), ptr::null());
                     gl::CompileShader(shader.id);
-    
+
                     // check error status
                     let mut success: GLint = 0;
                     gl::GetShaderiv(shader.id, gl::COMPILE_STATUS, &mut success);
-    
+
                     if success != 1 {
                         // get opengl compiler message
                         // and throw error
@@ -45,15 +45,15 @@ impl Shader {
                             &mut error_log_size,
                             error_log.as_mut_ptr() as *mut _,
                         );
-    
+
                         error_log.set_len(error_log_size as usize);
                         let log = String::from_utf8(error_log).unwrap();
                         return Err(log);
                     }
-                },
-                _ => return Err("Could not create a CString.".to_string())
+                }
+                _ => return Err("Could not create a CString.".to_string()),
             }
-    
+
             Ok(shader)
         }
     }

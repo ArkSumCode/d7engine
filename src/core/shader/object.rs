@@ -1,10 +1,11 @@
 use gl::types::*;
-use crate::core::*;
 
-pub mod rect;
-pub mod texture;
-pub mod text;
+use crate::{Draw, ObjectData, Transform};
+
 pub mod circle;
+pub mod rect;
+pub mod text;
+pub mod texture;
 
 /*
 a buffer holds the information
@@ -30,7 +31,7 @@ impl Buffer {
         Self { id, target, usage }
     }
 
-    // set the buffer to active, 
+    // set the buffer to active,
     // only 1 buffer can be active at a time
     pub fn bind(&self) {
         unsafe {
@@ -51,7 +52,7 @@ impl Buffer {
                 self.target,
                 size as gl::types::GLsizeiptr,
                 data as *const gl::types::GLvoid,
-                self.usage
+                self.usage,
             );
         }
     }
@@ -89,7 +90,7 @@ pub struct VertexArray {
 }
 
 impl VertexArray {
-    // generate the id 
+    // generate the id
     pub fn new() -> Self {
         let mut id: GLuint = 0;
         unsafe {
@@ -98,7 +99,7 @@ impl VertexArray {
         Self { id }
     }
 
-    // set the Vertex Array to active 
+    // set the Vertex Array to active
     // there can only one vertex array be active at a time
     pub fn bind(&self) {
         unsafe {
@@ -110,13 +111,11 @@ impl VertexArray {
 impl Default for VertexArray {
     // create an empty vertex array
     fn default() -> Self {
-        Self {
-            id: 0,
-        }
+        Self { id: 0 }
     }
 }
 
-// delete the vertex array on the graphics card 
+// delete the vertex array on the graphics card
 // when VertexArray gets dropped
 impl Drop for VertexArray {
     fn drop(&mut self) {
@@ -126,7 +125,6 @@ impl Drop for VertexArray {
     }
 }
 
-
 // a Texture Buffer
 // holds information from textures
 // we need a seperate location on the grapics card
@@ -135,7 +133,7 @@ pub struct TextureBuffer {
 }
 
 impl TextureBuffer {
-    // generate the id 
+    // generate the id
     pub fn new() -> Self {
         let mut id: GLuint = 0;
         unsafe {
@@ -144,7 +142,7 @@ impl TextureBuffer {
         Self { id }
     }
 
-    // set the texture buffer to active 
+    // set the texture buffer to active
     // there can only one texture buffer be active at a time
     pub fn bind(&self) {
         unsafe {
@@ -190,13 +188,11 @@ impl TextureBuffer {
 impl Default for TextureBuffer {
     // an empty TextureBuffer
     fn default() -> Self {
-        Self {
-            id: 0,
-        }
+        Self { id: 0 }
     }
 }
 
-// delete the texture buffer on the graphics card 
+// delete the texture buffer on the graphics card
 // when VertexArray gets dropped
 impl Drop for TextureBuffer {
     fn drop(&mut self) {
@@ -215,7 +211,12 @@ pub trait Object {
     fn reload(&mut self);
     fn remove(&mut self, i: usize);
     fn remove_all(&mut self);
-    fn draw(&mut self, draw: &Draw, camera: &Transform, model_transform: &Transform) -> Result<(), String>;
+    fn draw(
+        &mut self,
+        draw: &Draw,
+        camera: &Transform,
+        model_transform: &Transform,
+    ) -> Result<(), String>;
     fn set_state(&mut self, object_state: ObjectState);
 }
 
@@ -223,11 +224,11 @@ pub trait Object {
 // used so that we dont reload unnecessarily
 pub enum ObjectState {
     Ok,
-    Reload
+    Reload,
 }
-
 
 // a type that describes the array of
 // 8 floats which is 4 times 2 floats uv data
 // 2 for every corner of the rectangle
 pub type TextureCoordinate = [f32; 8];
+
